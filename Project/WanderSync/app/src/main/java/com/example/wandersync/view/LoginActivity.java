@@ -36,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordInput = findViewById(R.id.password_input);
         loginButton = findViewById(R.id.login_button);
         createAccountLink = findViewById(R.id.create_account_link);
-        backButtonMain = findViewById(R.id.back_button_main);
+        //backButtonMain = findViewById(R.id.back_button_main);
 
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
 
