@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.wandersync.R;
+import com.google.firebase.database.DatabaseReference;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -20,6 +21,9 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginButton;
     private ImageButton backButtonMain;
     private TextView createAccountLink;
+
+    //created a firebase reference just to tell the the firebase is working
+    DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
