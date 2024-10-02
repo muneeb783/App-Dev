@@ -13,7 +13,7 @@ public class NavBarActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main); // Link to XML layout
+        setContentView(R.layout.activity_main); // Link to XML layout
 
         // Initialize buttons
         // Testing first using only one class button
@@ -25,7 +25,7 @@ public class NavBarActivity extends AppCompatActivity {
         //Button buttonCommunity = findViewById(R.id.button_community);
 
         // Set click listeners for each button
-        //buttonLogistics.setOnClickListener(v -> openActivity(LogisticsPlaceholderActivity.class));
+        buttonLogistics.setOnClickListener(v -> openActivity(LogisticsPlaceholderActivity.class));
         //buttonDestination.setOnClickListener(v -> openActivity(DestinationActivity.class));
         //buttonDining.setOnClickListener(v -> openActivity(DiningActivity.class));
         //buttonAccommodation.setOnClickListener(v -> openActivity(AccommodationActivity.class));
