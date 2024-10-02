@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.wandersync.R;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -37,6 +38,8 @@ public class LoginActivity extends AppCompatActivity {
         createAccountLink = findViewById(R.id.create_account_link);
         backButtonMain = findViewById(R.id.back_button_main);
 
+        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -44,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
                 String password = passwordInput.getText().toString();
 
                 //make sure to change the password validation logic
-                if (username.equals("admin") && password.equals("password")) {
+                if (username.equals("") && password.equals("")) {
                     Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(LoginActivity.this, "Invalid username or password", Toast.LENGTH_SHORT).show();

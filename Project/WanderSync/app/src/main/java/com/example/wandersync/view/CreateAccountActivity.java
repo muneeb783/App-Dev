@@ -12,8 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 import com.example.wandersync.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
 
 
 public class CreateAccountActivity extends AppCompatActivity {
@@ -23,15 +21,11 @@ public class CreateAccountActivity extends AppCompatActivity {
     private Button createAccountButton;
     private ImageButton backButtonLogin;
 
-    private FirebaseAuth mAuth;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
-
-        mAuth = FirebaseAuth.getInstance();
 
 
         createUsernameInput = findViewById(R.id.create_username_input);
@@ -70,5 +64,4 @@ public class CreateAccountActivity extends AppCompatActivity {
             }
         });
     }
-
 }
