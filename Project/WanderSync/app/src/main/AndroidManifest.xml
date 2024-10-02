@@ -16,9 +16,6 @@
             android:name=".view.placeholders.LogisticsPlaceholderActivity"
             android:exported="false" />
         <activity
-            android:name=".view.placeholders.LogisticsActivity"
-            android:exported="false" />
-        <activity
             android:name=".view.NavBarActivity"
             android:exported="false" />
         <activity
