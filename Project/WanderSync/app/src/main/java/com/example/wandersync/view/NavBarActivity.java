@@ -37,10 +37,10 @@ public class NavBarActivity extends AppCompatActivity {
         buttonLogistics.setOnClickListener(v -> loadFragment(new LogisticsFragment()));
         buttonDestination.setOnClickListener(v -> loadFragment(new DestinationFragment()));
         //the classes below as backend should be fully developed
-        //buttonDining.setOnClickListener(v -> loadFragment(new DiningEstablishmentFragment()));
-        //buttonAccommodation.setOnClickListener(v -> loadFragment(new AccommodationFragment()));
-        //buttonTransportation.setOnClickListener(v -> loadFragment(new TransportationFragment()));
-        //buttonCommunity.setOnClickListener(v -> loadFragment(new TravelCommunityFragment()));
+        buttonDining.setOnClickListener(v -> loadFragment(new DiningEstablishmentFragment()));
+        buttonAccommodation.setOnClickListener(v -> loadFragment(new AccommodationFragment()));
+        buttonTransportation.setOnClickListener(v -> loadFragment(new TransportationFragment()));
+        buttonCommunity.setOnClickListener(v -> loadFragment(new TravelCommunityFragment()));
     }
 
     // Method to load the selected fragment into the content_frame
