@@ -1,41 +1,53 @@
-package com.example.wandersync.view;
+package com.example.wandersync.view; // Change to your package name
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
-import com.example.wandersync.view.placeholders.LogisticsPlaceholderActivity;
+import android.widget.Button;
+
+import com.example.wandersync.R;
+import com.example.wandersync.view.Fragments.AccommodationFragment;
+import com.example.wandersync.view.Fragments.DestinationFragment;
+import com.example.wandersync.view.Fragments.DiningEstablishmentFragment;
+import com.example.wandersync.view.Fragments.LogisticsFragment;
+import com.example.wandersync.view.Fragments.TransportationFragment;
+import com.example.wandersync.view.Fragments.TravelCommunityFragment;
 
 public class NavBarActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main); // Link to XML layout
+        setContentView(R.layout.activity_nav_bar); // Link to XML layout
 
+        if (savedInstanceState == null) {
+            loadFragment(new LogisticsFragment());
+        }
         // Initialize buttons
-        // Testing first using only one class button
         Button buttonLogistics = findViewById(R.id.button_logistics);
-        //Button buttonDestination = findViewById(R.id.button_destination);
-        //Button buttonDining = findViewById(R.id.button_dining);
-        //Button buttonAccommodation = findViewById(R.id.button_accommodation);
-        //Button buttonTransportation = findViewById(R.id.button_transportation);
-        //Button buttonCommunity = findViewById(R.id.button_community);
+        Button buttonDestination = findViewById(R.id.button_destination);
+        Button buttonDining = findViewById(R.id.button_dining);
+        Button buttonAccommodation = findViewById(R.id.button_accommodation);
+        Button buttonTransportation = findViewById(R.id.button_transportation);
+        Button buttonCommunity = findViewById(R.id.button_community);
 
-        // Set click listeners for each button
-        buttonLogistics.setOnClickListener(v -> openActivity(LogisticsPlaceholderActivity.class));
-        //buttonDestination.setOnClickListener(v -> openActivity(DestinationActivity.class));
-        //buttonDining.setOnClickListener(v -> openActivity(DiningActivity.class));
-        //buttonAccommodation.setOnClickListener(v -> openActivity(AccommodationActivity.class));
-        //buttonTransportation.setOnClickListener(v -> openActivity(TransportationActivity.class));
-        //buttonCommunity.setOnClickListener(v -> openActivity(CommunityActivity.class));
+        // Set click listeners for each button to load the corresponding fragment
+        buttonLogistics.setOnClickListener(v -> loadFragment(new LogisticsFragment()));
+        buttonDestination.setOnClickListener(v -> loadFragment(new DestinationFragment()));
+        //the classes below as backend should be fully developed
+        //buttonDining.setOnClickListener(v -> loadFragment(new DiningEstablishmentFragment()));
+        //buttonAccommodation.setOnClickListener(v -> loadFragment(new AccommodationFragment()));
+        //buttonTransportation.setOnClickListener(v -> loadFragment(new TransportationFragment()));
+        //buttonCommunity.setOnClickListener(v -> loadFragment(new TravelCommunityFragment()));
     }
 
-    // Method to start a new activity
-    private void openActivity(Class<?> activityClass) {
-        Intent intent = new Intent(NavBarActivity.this, activityClass);
-        startActivity(intent);
+    // Method to load the selected fragment into the content_frame
+    private void loadFragment(Fragment fragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.content_frame, fragment); // Replace the content in the FrameLayout
+        transaction.addToBackStack(null);
+        transaction.commit(); // Commit the transaction
     }
 }
