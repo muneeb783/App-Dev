@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.wandersync.R;
+import com.example.wandersync.view.Fragments.LogisticsFragment;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordInput = findViewById(R.id.password_input);
         loginButton = findViewById(R.id.login_button);
         createAccountLink = findViewById(R.id.create_account_link);
-        //backButtonMain = findViewById(R.id.back_button_main);
+        backButtonMain = findViewById(R.id.back_button_main);
 
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
 
@@ -59,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
                             String storedPw = snapshot.child("password").getValue(String.class);
                             if (storedPw != null && storedPw.equals(password)) {
                                 Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                Intent intent = new Intent(LoginActivity.this, NavBarActivity.class);
                                 startActivity(intent);
                             } else {
                                 Toast.makeText(LoginActivity.this, "Invalid password", Toast.LENGTH_SHORT).show();
