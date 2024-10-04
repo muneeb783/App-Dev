@@ -1,8 +1,6 @@
 package com.example.wandersync.view;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,16 +22,5 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        Button quitButton = findViewById(R.id.buttonQuit);
-        quitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
-
     }
-
-
 }

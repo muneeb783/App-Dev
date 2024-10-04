@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- Placeholder for dynamic content that will be replaced with Fragments -->
+    <FrameLayout
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- Navigation Bar at the bottom -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="?attr/colorPrimary"
+        android:gravity="center">
+
+        <ImageButton
+            android:id="@+id/button_logistics"
+            android:layout_height="48dp"
+            android:layout_width="48dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:padding="8dp"
+            android:src="@drawable/logistics_icon"
+            android:contentDescription="@string/logistics"
+            />
+
+        <ImageButton
+            android:id="@+id/button_destination"
+            android:layout_height="48dp"
+            android:layout_width="48dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:padding="8dp"
+            android:src="@drawable/location_icon"
+            android:contentDescription="@string/destination"/>
+
+        <ImageButton
+            android:id="@+id/button_dining"
+            android:layout_height="48dp"
+            android:layout_width="48dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:padding="8dp"
+            android:src="@drawable/dining_icon"
+            android:contentDescription="@string/dining" />
+
+        <ImageButton
+            android:id="@+id/button_accommodation"
+            android:layout_height="48dp"
+            android:layout_width="48dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:padding="8dp"
+            android:src="@drawable/accomodation_icon"
+            android:contentDescription="@string/accomodation"/>
+
+        <ImageButton
+            android:id="@+id/button_transportation"
+            android:layout_height="48dp"
+            android:layout_width="48dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:padding="8dp"
+            android:src="@drawable/transportation_icon"
+            android:contentDescription="@string/transportation" />
+
+        <ImageButton
+            android:id="@+id/button_community"
+            android:layout_height="48dp"
+            android:layout_width="48dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:padding="8dp"
+            android:src="@drawable/travel_icon"
+            android:contentDescription="@string/travel_community" />
+    </LinearLayout>
+</LinearLayout>
