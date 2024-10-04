@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.example.wandersync.R;
 import com.example.wandersync.view.Fragments.AccommodationFragment;
@@ -26,12 +27,12 @@ public class NavBarActivity extends AppCompatActivity {
             loadFragment(new LogisticsFragment());
         }
         // Initialize buttons
-        Button buttonLogistics = findViewById(R.id.button_logistics);
-        Button buttonDestination = findViewById(R.id.button_destination);
-        Button buttonDining = findViewById(R.id.button_dining);
-        Button buttonAccommodation = findViewById(R.id.button_accommodation);
-        Button buttonTransportation = findViewById(R.id.button_transportation);
-        Button buttonCommunity = findViewById(R.id.button_community);
+        ImageButton buttonLogistics = findViewById(R.id.button_logistics);
+        ImageButton buttonDestination = findViewById(R.id.button_destination);
+        ImageButton buttonDining = findViewById(R.id.button_dining);
+        ImageButton buttonAccommodation = findViewById(R.id.button_accommodation);
+        ImageButton buttonTransportation = findViewById(R.id.button_transportation);
+        ImageButton buttonCommunity = findViewById(R.id.button_community);
 
         // Set click listeners for each button to load the corresponding fragment
         buttonLogistics.setOnClickListener(v -> loadFragment(new LogisticsFragment()));
@@ -47,7 +48,6 @@ public class NavBarActivity extends AppCompatActivity {
     private void loadFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.content_frame, fragment); // Replace the content in the FrameLayout
-        transaction.addToBackStack(null);
         transaction.commit(); // Commit the transaction
     }
 }
