@@ -16,7 +16,7 @@
         android:layout_gravity="top"
         android:background="@drawable/curved_background"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="32dp">
 
         <TextView
             android:id="@+id/create_account_title"
@@ -81,7 +81,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start|top"
-        android:layout_margin="16dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="32dp"
         android:background="#FFFFFF"
         android:src="@drawable/left_arrow" />
 </FrameLayout>
