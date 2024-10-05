@@ -1,4 +1,4 @@
-package com.example.wandersync.view.Fragments; // Change to your package name
+package com.example.wandersync.view; // Change to your package name
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,8 +14,8 @@ public class LogisticsFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_logistics, container, false);
     }
 }
