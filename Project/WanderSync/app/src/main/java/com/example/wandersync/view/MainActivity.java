@@ -16,6 +16,7 @@ import com.example.wandersync.R;
 public class MainActivity extends AppCompatActivity {
 
     private Button buttonStart;
+    private Button buttonQuit; // Declare buttonQuit as a class variable
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,14 +24,26 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
+        // Initialize buttons
         buttonStart = findViewById(R.id.button_start);
+        buttonQuit = findViewById(R.id.buttonQuit);
 
+        // Set onClickListener for the Quit button
+        buttonQuit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish(); // This will close the activity
+            }
+        });
+
+        // Apply window insets to ensure proper padding
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
+        // Set onClickListener for the Start button
         buttonStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
