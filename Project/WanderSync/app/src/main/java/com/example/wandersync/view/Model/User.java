@@ -1,9 +1,9 @@
 package com.example.wandersync.view.Model;
 
 public class User {
-    public String username;
-    public String email;
-    public String password;
+    private String username;
+    private String email;
+    private String password;
 
     public User(String username, String email, String password) {
         this.username = username;
@@ -11,6 +11,17 @@ public class User {
         this.password = password;
     }
 
-    public User() {}
+    public User() { }
+
+    public String getUsername() {
+        return username;
+    }
+    public String getEmail() {
+        return email;
+    }
+    public String getPassword() {
+        return password;
+    }
+
 }
 

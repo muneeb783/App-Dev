@@ -16,10 +16,10 @@
             android:name=".view.placeholders.LogisticsPlaceholderActivity"
             android:exported="false" />
         <activity
-            android:name=".view.NavBarActivity"
+            android:name=".view.view.NavBarActivity"
             android:exported="false" />
         <activity
-            android:name=".view.MainActivity"
+            android:name=".view.view.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,8 +27,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.LoginActivity" />
-        <activity android:name=".view.CreateAccountActivity" />
+        <activity android:name=".view.view.LoginActivity" />
+        <activity android:name=".view.view.CreateAccountActivity" />
     </application>
 
 </manifest>

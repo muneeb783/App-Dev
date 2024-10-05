@@ -1,4 +1,4 @@
-package com.example.wandersync.view;
+package com.example.wandersync.view.view;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,43 +8,51 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.wandersync.R;
-import com.example.wandersync.view.Model.User;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
+import com.example.wandersync.view.viewmodel.CreateAccountViewModel;
 
 public class CreateAccountActivity extends AppCompatActivity {
 
-
-    private EditText createUsernameInput, createEmailInput, createPasswordInput;
+    private EditText createUsernameInput;
+    private EditText createEmailInput;
+    private EditText createPasswordInput;
     private Button createAccountButton;
     private ImageButton backButtonLogin;
-    private DatabaseReference databaseReference;
-
+    private CreateAccountViewModel createAccountViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
 
-
         createUsernameInput = findViewById(R.id.create_username_input);
         createEmailInput = findViewById(R.id.create_email_input);
         createPasswordInput = findViewById(R.id.create_password_input);
         createAccountButton = findViewById(R.id.create_account_button);
         backButtonLogin = findViewById(R.id.button_back_login);
-        databaseReference = FirebaseDatabase.getInstance().getReference("users");
 
+        createAccountViewModel = new ViewModelProvider(this).get(CreateAccountViewModel.class);
 
-
-
+        createAccountViewModel.getCreateAccountSuccess().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean isSuccess) {
+                if (isSuccess) {
+                    Toast.makeText(CreateAccountActivity.this,
+                            "Account created successfully", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            }
+        });
+        createAccountViewModel.getCreateAccountError().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String errorMessage) {
+                Toast.makeText(CreateAccountActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
         createAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -52,28 +60,9 @@ public class CreateAccountActivity extends AppCompatActivity {
                 String email = createEmailInput.getText().toString();
                 String password = createPasswordInput.getText().toString();
 
-
-                //updated to work w/ firebase
-                if (!username.isEmpty() && !email.isEmpty() && !password.isEmpty()) {
-                    User newUser = new User(username, email, password);
-
-                    databaseReference.child(username).setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(CreateAccountActivity.this, "Account created successfully", Toast.LENGTH_SHORT).show();
-                                finish();
-                            } else {
-                                Toast.makeText(CreateAccountActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-
-                }
+                createAccountViewModel.createAccount(username, email, password);
             }
         });
-
-
         backButtonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
