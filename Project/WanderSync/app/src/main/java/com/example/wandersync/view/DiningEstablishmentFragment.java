@@ -1,4 +1,4 @@
-package com.example.wandersync.view.view;
+package com.example.wandersync.view;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,11 +11,11 @@ import androidx.fragment.app.Fragment;
 
 import com.example.wandersync.R;
 
-public class TransportationFragment extends Fragment {
+public class DiningEstablishmentFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_transportation, container, false);
+        return inflater.inflate(R.layout.fragment_dining_establishment, container, false);
     }
 }

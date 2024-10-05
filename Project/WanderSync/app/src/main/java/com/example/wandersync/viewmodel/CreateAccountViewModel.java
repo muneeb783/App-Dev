@@ -1,10 +1,10 @@
-package com.example.wandersync.view.viewmodel;
+package com.example.wandersync.viewmodel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.wandersync.view.Model.User;
+import com.example.wandersync.Model.User;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 

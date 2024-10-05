@@ -1,4 +1,4 @@
-package com.example.wandersync.view.view;
+package com.example.wandersync.view;
 
 import android.content.Intent;
 import android.os.Bundle;

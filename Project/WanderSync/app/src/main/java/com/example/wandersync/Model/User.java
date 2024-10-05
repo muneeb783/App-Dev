@@ -1,4 +1,4 @@
-package com.example.wandersync.view.Model;
+package com.example.wandersync.Model;
 
 public class User {
     private String username;

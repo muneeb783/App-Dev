@@ -1,4 +1,4 @@
-package com.example.wandersync.view.view; // Change to your package name
+package com.example.wandersync.view; // Change to your package name
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;

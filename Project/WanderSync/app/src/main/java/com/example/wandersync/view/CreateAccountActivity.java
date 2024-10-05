@@ -1,4 +1,4 @@
-package com.example.wandersync.view.view;
+package com.example.wandersync.view;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +13,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.wandersync.R;
-import com.example.wandersync.view.viewmodel.CreateAccountViewModel;
+import com.example.wandersync.viewmodel.CreateAccountViewModel;
 
 public class CreateAccountActivity extends AppCompatActivity {
 

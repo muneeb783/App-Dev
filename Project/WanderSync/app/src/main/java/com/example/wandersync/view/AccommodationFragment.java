@@ -1,4 +1,4 @@
-package com.example.wandersync.view.view;
+package com.example.wandersync.view;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

@@ -1,12 +1,12 @@
 // ViewModel: LoginViewModel.java
-package com.example.wandersync.view.viewmodel;
+package com.example.wandersync.viewmodel;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.wandersync.view.Model.User;
+import com.example.wandersync.Model.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
