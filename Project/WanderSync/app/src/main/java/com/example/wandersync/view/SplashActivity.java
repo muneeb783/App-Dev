@@ -45,7 +45,7 @@ public class SplashActivity extends AppCompatActivity {
         // Initialize the text with "WS"
         StringBuilder currentText = new StringBuilder(INITIAL_TEXT);
 
-// Animate the addition of "ander"
+        // Animate the addition of "ander"
         for (int i = 1; i <= 5; i++) {  // Indices for "ander" (1 to 5)
             final int index = i; // Use final variable for the handler
             int delay = ANIMATION_DELAY * (index - 1);
@@ -56,7 +56,7 @@ public class SplashActivity extends AppCompatActivity {
             }, delay);
         }
 
-// Animate the addition of "ync"
+        // Animate the addition of "ync"
         for (int i = 7; i < fullText.length(); i++) {  // Indices for "ync" (6 to 8)
             final int index = i; // Use final variable for the handler
             int delay = ANIMATION_DELAY * (i - 5);
