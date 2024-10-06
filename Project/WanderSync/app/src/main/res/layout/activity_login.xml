@@ -4,21 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Background Image -->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:src="@drawable/background_image" />
 
-    <!-- White Background Container with Curved Bottom Right -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
         android:background="@drawable/curved_background"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="32dp">
 
         <TextView
             android:id="@+id/login_title"
@@ -58,7 +56,7 @@
 
         <Button
             android:id="@+id/login_button"
-            android:layout_width="341dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="16dp"
@@ -79,13 +77,13 @@
 
     </LinearLayout>
 
-    <!-- Back Button positioned for visibility -->
     <ImageButton
         android:id="@+id/back_button_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start|top"
-        android:layout_margin="16dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="32dp"
         android:background="#FFFFFF"
         android:src="@drawable/left_arrow" />
 
