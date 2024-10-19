@@ -1,5 +1,7 @@
 package com.example.wandersync.Model;
 
+//User model created to save instances in Firebase.
+
 public class User {
     private String username;
     private String email;
