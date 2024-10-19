@@ -34,7 +34,6 @@ public class Developer implements IDeveloper {
 
     @Override
     public void completeTask(Task task) {
-        task.setStatus(TaskStatus.COMPLETED);
-        System.out.println(name + " completed task: " + task.getTitle());
+        task.execute();
     } 
 }
