@@ -1,7 +1,6 @@
 import java.time.LocalDate;
 
 public class Task implements ITask {
-    // Title of task
     private String title;
     private String description;
     private int dueDate;
