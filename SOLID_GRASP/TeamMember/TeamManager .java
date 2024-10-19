@@ -1,4 +1,4 @@
-public class TeamManager {
+public class TeamManager implements ITeamManager {
 
     private String name;
     private String email;

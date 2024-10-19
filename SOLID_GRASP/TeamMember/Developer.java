@@ -3,7 +3,7 @@ public class Developer implements IDeveloper {
     private String name;
     private String email;
 
-    public TeamManager(String name, String email) {
+    public Developer(String name, String email) {
         this.name = name;
         this.email = email;
     }
@@ -36,6 +36,5 @@ public class Developer implements IDeveloper {
     public void completeTask(Task task) {
         task.setStatus(TaskStatus.COMPLETED);
         System.out.println(name + " completed task: " + task.getTitle());
-    }
-    
+    } 
 }

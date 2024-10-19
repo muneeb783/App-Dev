@@ -1,9 +1,9 @@
-public class Tester implements ITester {
+public class TeamManager implements ITeamManager {
 
     private String name;
     private String email;
 
-    public Tester(String name, String email) {
+    public TeamManager(String name, String email) {
         this.name = name;
         this.email = email;
     }
@@ -23,18 +23,18 @@ public class Tester implements ITester {
         project.addTeamMember(this);
     }
 
-    @Override
     public void leaveProject(Project project) {
         project.removeTeamMemeber(this);
     }
 
     @Override
-    public void reportBug(String bugReport) {
-        System.out.println(name + " reported bug: " + bugReport);
+    public void assignTask(Task task, TeamMember member) {
+        System.out.println("Assigning task " + task.getTitle() + " to " + member.getName());
     }
 
     @Override
-    public void receiveTestCase(String testCase) {
-        System.out.println(name + " received test case: " + testCase);
+    public void updateProjectStatus(Project project, String status) {
+        project.setStatus(status);
+        System.out.println("Project status updated to: " + status);
     }
 }

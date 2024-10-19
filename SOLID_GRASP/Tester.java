@@ -3,7 +3,7 @@ public class Tester implements ITester {
     private String name;
     private String email;
 
-    public Tester(String name, String email) {
+    public Developer(String name, String email) {
         this.name = name;
         this.email = email;
     }
@@ -31,10 +31,5 @@ public class Tester implements ITester {
     @Override
     public void reportBug(String bugReport) {
         System.out.println(name + " reported bug: " + bugReport);
-    }
-
-    @Override
-    public void receiveTestCase(String testCase) {
-        System.out.println(name + " received test case: " + testCase);
     }
 }

@@ -1,6 +1,5 @@
-public interface Tester extends TeamMember {
+public interface ITester extends ITeamMember {
     
     void receiveTestCase(String testCase);
     void reportBug(String bugReport);
-    void verifyTaskCompletion(Task task);
 }
