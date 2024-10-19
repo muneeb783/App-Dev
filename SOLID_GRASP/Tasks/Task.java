@@ -3,25 +3,15 @@ import java.time.LocalDate;
 public class Task implements ITask {
     // Title of task
     private String title;
-
-    // Description of task
     private String description;
-
-    // int representing day of month
-    // Defaults to last day of month
     private int dueDate;
-
-    // Status of a task, defaults to pending, changed to complete once executed
     private TaskStatus status;
-
-    // Integer representing task priority, with 1 being highest and 10 being lowest
-    // Defaults to 5, being middle priority
     private int priority;
 
     public Task(String title, String description, int dueDate, int priority) {
         this.title = title;
         this.description = description;
-        int currDays = LocalDate.now().getMonth().length(false); // days in this month
+        int currDays = LocalDate.now().getMonth().length(false);
         this.dueDate = (dueDate <= currDays) ? dueDate : currDays;
         this.status = TaskStatus.PENDING;
         this.priority = (priority <= 10 && priority >= 0) ? priority : 5;
