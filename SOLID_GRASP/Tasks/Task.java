@@ -24,7 +24,7 @@ public class Task implements ITask {
         int currDays = LocalDate.now().getMonth().length(false); // days in this month
         this.dueDate = (dueDate <= currDays) ? dueDate : currDays;
         this.status = TaskStatus.PENDING;
-        this.priority = (priority <= 10 || priority >= 0) ? priority : 5;
+        this.priority = (priority <= 10 && priority >= 0) ? priority : 5;
     }
 
     public Task(String title, String description, int dueDate) {
