@@ -1,4 +1,5 @@
-import java.time.LocalDate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Task implements ITask {
     private String title;
@@ -6,12 +7,12 @@ public class Task implements ITask {
     private int dueDate;
     private TaskStatus status;
     private int priority;
+    private static final Logger logger = Logger.getLogger("Task Logger");
 
     public Task(String title, String description, int dueDate, int priority) {
         this.title = title;
         this.description = description;
-        int currDays = LocalDate.now().getMonth().length(false);
-        this.dueDate = (dueDate <= currDays) ? dueDate : currDays;
+        this.dueDate = (dueDate <= 31) ? dueDate : 31;
         this.status = TaskStatus.PENDING;
         this.priority = (priority <= 10 && priority >= 0) ? priority : 5;
     }
@@ -73,13 +74,13 @@ public class Task implements ITask {
 
     @Override
     public boolean execute() {
-        System.out.println("Executing task: " + this.title);
+        logger.log(Level.INFO, "Executing Task - " + this.getTitle());
         if (this.status == TaskStatus.COMPLETE) {
-            System.out.println("This task has already been completed.");
+            logger.log(Level.WARNING, "This task has already been completed.");
             return false;
         } else {
             this.setStatus(TaskStatus.COMPLETE);
-            System.out.println("Task Successfully Completed!");
+            logger.log(Level.INFO, "Task Successfully Completed!");
             return true;
         }
     }
