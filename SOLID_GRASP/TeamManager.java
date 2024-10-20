@@ -33,11 +33,6 @@ public class TeamManager implements ITeamManager {
     }
 
     @Override
-    public void reviewProgress(Project project) {
-        System.out.println("Reviewing progress for project: " + project.getName());
-    }
-
-    @Override
     public void updateProjectStatus(Project project, String status) {
         project.setStatus(status);
         System.out.println("Project status updated to: " + status);
