@@ -1,5 +1,4 @@
 public class TeamMember implements ITeamMember {
-    
     private String name;
     private String email;
 
@@ -21,6 +20,6 @@ public class TeamMember implements ITeamMember {
     }
 
     public void leaveProject(Project project) {
-        project.removeTeamMemeber(this);
+        project.removeTeamMember(this);
     }
 }

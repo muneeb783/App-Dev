@@ -1,7 +1,10 @@
+import java.util.logging.Logger;
+
 public class Developer implements IDeveloper {
 
     private String name;
     private String email;
+    private static final Logger logger = Logger.getLogger(TeamManager.class.getName());
 
     public Developer(String name, String email) {
         this.name = name;
@@ -9,7 +12,7 @@ public class Developer implements IDeveloper {
     }
 
     @Override
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
@@ -24,16 +27,17 @@ public class Developer implements IDeveloper {
     }
 
     public void leaveProject(Project project) {
-        project.removeTeamMemeber(this);
+        project.removeTeamMember(this);
     }
 
     @Override
     public void receiveTask(Task task) {
-        System.out.println(name + " received task: " + task.getTitle());
+        if (logger.isLoggable(Level.INFO)) {
+            logger.info(String.format("%s received task: %s", name, task.getTitle()));
+        }
     }
-
     @Override
     public void completeTask(Task task) {
         task.execute();
-    } 
+    }
 }

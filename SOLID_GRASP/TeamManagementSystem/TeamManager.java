@@ -1,9 +1,11 @@
-public class Tester implements ITester {
+import java.util.logging.Logger;
+public class TeamManager implements ITeamManager {
 
     private String name;
     private String email;
+    private static final Logger logger = Logger.getLogger(TeamManager.class.getName());
 
-    public Tester(String name, String email) {
+    public TeamManager(String name, String email) {
         this.name = name;
         this.email = email;
     }
@@ -23,18 +25,12 @@ public class Tester implements ITester {
         project.addTeamMember(this);
     }
 
-    @Override
     public void leaveProject(Project project) {
-        project.removeTeamMemeber(this);
+        project.removeTeamMember(this);
     }
 
     @Override
-    public void reportBug(String bugReport) {
-        System.out.println(name + " reported bug: " + bugReport);
-    }
-
-    @Override
-    public void receiveTestCase(String testCase) {
-        System.out.println(name + " received test case: " + testCase);
+    public void assignTask(Task task, TeamMember member) {
+        logger.info("Assigning task " + task.getTitle() + " to " + member.getName());
     }
 }
