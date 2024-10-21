@@ -1,13 +1,14 @@
-package solid_grasp.team_management_system;
+package SOLID_GRASP.TeamManagementSystem;
 import java.util.logging.Logger;
 import java.util.logging.Level;
-public class Developer implements IDeveloper {
+
+public class Tester implements ITester {
 
     private String name;
     private String email;
-    private static final Logger logger = Logger.getLogger(Developer.class.getName());
+    private static final Logger logger = Logger.getLogger(Tester.class.getName());
 
-    public Developer(String name, String email) {
+    public Tester(String name, String email) {
         this.name = name;
         this.email = email;
     }
@@ -27,18 +28,22 @@ public class Developer implements IDeveloper {
         project.addTeamMember(this);
     }
 
+    @Override
     public void leaveProject(Project project) {
         project.removeTeamMember(this);
     }
 
     @Override
-    public void receiveTask(Task task) {
+    public void reportBug(String bugReport) {
         if (logger.isLoggable(Level.INFO)) {
-            logger.info(String.format("%s received task: %s", name, task.getTitle()));
-        }
+        logger.info(String.format("%s reported bug: %s", name, bugReport));
     }
+    }
+
     @Override
-    public void completeTask(Task task) {
-        task.execute();
+    public void receiveTestCase(String testCase) {
+        if (logger.isLoggable(Level.INFO)) {
+            logger.info(String.format("%s received test case: %s", name, testCase));
+        }
     }
 }
