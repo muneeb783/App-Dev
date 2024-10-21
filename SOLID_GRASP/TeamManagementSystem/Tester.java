@@ -33,11 +33,15 @@ public class Tester implements ITester {
 
     @Override
     public void reportBug(String bugReport) {
+        if (logger.isLoggable(Level.INFO)) {
         logger.info(String.format("%s reported bug: %s", name, bugReport));
+    }
     }
 
     @Override
     public void receiveTestCase(String testCase) {
-        logger.info(String.format("%s received test case: %s", name, testCase));
+        if (logger.isLoggable(Level.INFO)) {
+            logger.info(String.format("%s received test case: %s", name, testCase));
+        }
     }
 }
