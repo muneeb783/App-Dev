@@ -1,4 +1,6 @@
+package SOLID_GRASP.TeamManagementSystem;
 import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class Tester implements ITester {
 

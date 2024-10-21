@@ -1,3 +1,4 @@
+package SOLID_GRASP.TeamManagementSystem;
 public interface ITeamMember {
 
     String getName();
