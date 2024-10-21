@@ -1,4 +1,4 @@
-package solid_grasp.team_management_system;
+package SOLID_GRASP.TeamManagementSystem;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
