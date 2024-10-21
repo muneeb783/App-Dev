@@ -1,3 +1,4 @@
+package SOLID_GRASP.TeamManagementSystem;
 public class TeamMember implements ITeamMember {
     private String name;
     private String email;
