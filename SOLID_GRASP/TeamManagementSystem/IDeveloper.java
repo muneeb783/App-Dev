@@ -1,4 +1,4 @@
-package solid_grasp.team_management_system;
+package SOLID_GRASP.TeamManagementSystem;
 public interface IDeveloper extends ITeamMember {
 
 
