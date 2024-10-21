@@ -21,7 +21,6 @@ public class Task implements ITask {
         this(title, description, dueDate, 5);
     }
 
-
     @Override
     public String getTitle() {
         return this.title;
@@ -74,7 +73,7 @@ public class Task implements ITask {
 
     @Override
     public boolean execute() {
-        logger.log(Level.INFO, "Executing Task - " + this.getTitle());
+        logger.log(Level.INFO, () -> String.format("Executing Task - %s", this.getTitle()));
         if (this.status == TaskStatus.COMPLETE) {
             logger.log(Level.WARNING, "This task has already been completed.");
             return false;

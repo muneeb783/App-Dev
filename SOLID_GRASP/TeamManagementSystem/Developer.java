@@ -30,7 +30,7 @@ public class Developer implements IDeveloper {
 
     @Override
     public void receiveTask(Task task) {
-        logger.info(name + " received task: " + task.getTitle());
+        logger.info(String.format("%s received task: %s", name, task.getTitle()));
     }
 
     @Override
