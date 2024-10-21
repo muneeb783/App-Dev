@@ -50,4 +50,16 @@ public class Project {
             throw new NoSuchElementException("TeamMember is not in Project's TeamMember list");
         }
     }
+    public String getName() {
+        return this.name;
+    }
+    public String getDescription() {
+        return this.description;
+    }
+    public String getStartDate() {
+        return this.startDate;
+    }
+    public String getEndDate() {
+        return this.endDate;
+    }
 }

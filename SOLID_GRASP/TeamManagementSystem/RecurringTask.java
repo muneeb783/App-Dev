@@ -1,7 +1,7 @@
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class RecurringTask extends Task  {
+public class RecurringTask extends Task {
     private String recurrencePattern;
     private static final Logger logger = Logger.getLogger("Task Logger");
 
@@ -25,10 +25,10 @@ public class RecurringTask extends Task  {
 
     @Override
     public boolean execute() {
-        logger.log(Level.INFO, "Executing Recurring Task - " + this.getTitle());
+        logger.log(Level.INFO, () -> String.format("Executing Recurring Task - %s", this.getTitle()));
         if (super.execute()) {
             updateDueDate();
-            logger.log(Level.INFO, "Next occurrence scheduled on day: " + this.getDueDate());
+            logger.log(Level.INFO, () -> String.format("Next occurrence scheduled on day: %s", this.getDueDate()));
             return true;
         }
         return false;
