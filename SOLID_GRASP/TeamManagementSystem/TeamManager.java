@@ -1,4 +1,4 @@
-package SOLID_GRASP.TeamManagementSystem;
+package solid_grasp.team_management_system;
 import java.util.logging.Logger;
 public class TeamManager implements ITeamManager {
 

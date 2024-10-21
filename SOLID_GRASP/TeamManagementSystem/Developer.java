@@ -1,11 +1,11 @@
-package SOLID_GRASP.TeamManagementSystem;
+package solid_grasp.team_management_system;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 public class Developer implements IDeveloper {
 
     private String name;
     private String email;
-    private static final Logger logger = Logger.getLogger(TeamManager.class.getName());
+    private static final Logger logger = Logger.getLogger(Developer.class.getName());
 
     public Developer(String name, String email) {
         this.name = name;
