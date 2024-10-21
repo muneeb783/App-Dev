@@ -8,7 +8,7 @@ public class Project {
     private String startDate;
     private String endDate;
     private List<Task> tasks;
-    private List<TeamMember> teamMembers;
+    private List<ITeamMember> teamMembers;
 
     public Project(String name, String description, String startDate, String endDate) {
         this.name = name;
@@ -22,7 +22,7 @@ public class Project {
     public void addTask(Task task) {
         if (task != null) {
             tasks.add(task);
-        } else { 
+        } else {
             throw new IllegalArgumentException("Cannot add null task");
         }
     }
@@ -35,15 +35,15 @@ public class Project {
         }
     }
 
-    public void addTeamMember(TeamMember teamMember) {
+    public void addTeamMember(ITeamMember teamMember) {
         if (teamMember != null) {
             teamMembers.add(teamMember);
-        } else { 
+        } else {
             throw new IllegalArgumentException("Cannot add null teamMember");
         }
     }
 
-    public void removeTeamMember(TeamMember teamMember) {
+    public void removeTeamMember(ITeamMember teamMember) {
         if (teamMembers.contains(teamMember)) {
             teamMembers.remove(teamMember);
         } else {
