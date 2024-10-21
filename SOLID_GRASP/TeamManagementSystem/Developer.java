@@ -1,8 +1,9 @@
+import java.util.logging.Logger;
 public class Developer implements IDeveloper {
 
     private String name;
     private String email;
-
+    private static final Logger logger = Logger.getLogger(TeamManager.class.getName());
     public Developer(String name, String email) {
         this.name = name;
         this.email = email;
@@ -24,16 +25,16 @@ public class Developer implements IDeveloper {
     }
 
     public void leaveProject(Project project) {
-        project.removeTeamMemeber(this);
+        project.removeTeamMember(this);
     }
 
     @Override
     public void receiveTask(Task task) {
-        System.out.println(name + " received task: " + task.getTitle());
+        logger.info(name + " received task: " + task.getTitle());
     }
 
     @Override
     public void completeTask(Task task) {
         task.execute();
-    } 
+    }
 }
