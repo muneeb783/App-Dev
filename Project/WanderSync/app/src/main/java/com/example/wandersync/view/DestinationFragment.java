@@ -33,9 +33,8 @@ public class DestinationFragment extends Fragment {
 
         // Create some dummy data for the destinations
         destinationList = new ArrayList<>();
-        destinationList.add(new Destination("Paris", 5));
-        destinationList.add(new Destination("New York", 3));
-        destinationList.add(new Destination("Tokyo", 7));
+        destinationList.add(new Destination("Destination1", 5));
+        destinationList.add(new Destination("Destination2", 3));
 
         adapter = new DestinationAdapter(destinationList);
         recyclerView.setAdapter(adapter);
