@@ -1,3 +1,4 @@
+package SOLID_GRASP.TeamManagementSystem;
 public interface ITask {
     String getTitle();
     void setTitle(String title);

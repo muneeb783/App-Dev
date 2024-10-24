@@ -1,10 +1,12 @@
+package SOLID_GRASP.TeamManagementSystem;
 import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class Tester implements ITester {
 
     private String name;
     private String email;
-    private static final Logger logger = Logger.getLogger(TeamManager.class.getName());
+    private static final Logger logger = Logger.getLogger(Tester.class.getName());
 
     public Tester(String name, String email) {
         this.name = name;
