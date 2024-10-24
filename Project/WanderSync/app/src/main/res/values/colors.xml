@@ -4,7 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="colorPrimary">#6200EE</color>
     <color name="colorAccent">#03DAC5</color>
-    <color name="colorUsedDays">#FF5733</color>
+    <color name="colorPlannedDays">#FF5733</color>
     <color name="colorAllottedDays">#90EE90</color>
     <color name="buttonBackground">#6200EE</color>
     <color name="buttonTextColor">#FFFFFF</color>
