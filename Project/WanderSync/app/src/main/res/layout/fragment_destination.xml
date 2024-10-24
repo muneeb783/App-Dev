@@ -20,43 +20,48 @@
         android:textColor="#007BFF"
         android:textSize="50dp"
         android:textStyle="bold"
-        tools:layout_editor_absoluteX="63dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         tools:layout_editor_absoluteY="40dp" />
+
 
     <Button
         android:id="@+id/log_travel_button"
         android:layout_width="222dp"
         android:layout_height="66dp"
+        android:layout_marginTop="24dp"
         android:backgroundTint="#1E90FF"
         android:padding="16dp"
         android:text="Log Travel"
         android:textSize="22sp"
         android:textStyle="bold"
-        tools:layout_editor_absoluteX="94dp"
-        tools:layout_editor_absoluteY="139dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/destination_title" />
 
     <Button
         android:id="@+id/calc_button"
         android:layout_width="284dp"
         android:layout_height="71dp"
+        android:layout_marginTop="40dp"
         android:backgroundTint="#1E90FF"
         android:padding="16dp"
         android:text="Calculate vacation time"
         android:textSize="22sp"
         android:textStyle="bold"
-        tools:layout_editor_absoluteX="63dp"
-        tools:layout_editor_absoluteY="223dp" />
-
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/log_travel_button" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_destinations"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_width="360dp"
+        android:layout_height="325dp"
         android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/calc_button"
-        app:layout_constraintVertical_bias="0.0"
-        tools:layout_editor_absoluteX="107dp"
+        app:layout_constraintVertical_bias="0.479"
+        tools:layout_editor_absoluteX="25dp"
         tools:listitem="@layout/item_destination" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
