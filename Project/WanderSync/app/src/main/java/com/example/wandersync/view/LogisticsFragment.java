@@ -1,4 +1,4 @@
-package com.example.wandersync.view; // Change to your package name
+package com.example.wandersync.view;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -20,6 +20,11 @@ import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +38,8 @@ public class LogisticsFragment extends Fragment {
     private LinearLayout notesListLayout;
     private EditText inviteUsernameInput;
     private EditText noteInput;
+    private DatabaseReference databaseReference;
+    private String currentUsername;
 
     @Nullable
     @Override
@@ -49,8 +56,12 @@ public class LogisticsFragment extends Fragment {
         contributorsLayout = view.findViewById(R.id.contributors_layout);
         notesListLayout = view.findViewById(R.id.notes_list_layout);
 
+        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+
         invitedUsers = new ArrayList<>();
         userNotesMap = new HashMap<>();
+
+        currentUsername = getCurrentUsername();
 
         visualizeButton.setOnClickListener(v -> visualizeTripDays());
         inviteButton.setOnClickListener(v -> inviteUser());
@@ -59,61 +70,81 @@ public class LogisticsFragment extends Fragment {
         return view;
     }
 
-    private void visualizeTripDays() {
-        // Sample data for allotted vs planned trip days
-        int allottedDays = 10; // Example value
-        int usedDays = 6; // Example value
+    private String getCurrentUsername() {
+        return "current_user";
+    }
 
-        // Check current visibility of the pie chart
+    private void visualizeTripDays() {
+        int allottedDays = 10;
+        int plannedDays = 6;
+
         if (pieChart.getVisibility() == View.VISIBLE) {
-            pieChart.setVisibility(View.GONE); // Hide the pie chart
+            pieChart.setVisibility(View.GONE);
         } else {
-            // Prepare data for the pie chart
             ArrayList<PieEntry> entries = new ArrayList<>();
-            entries.add(new PieEntry(usedDays, "User Days"));
+            entries.add(new PieEntry(plannedDays, "Planned Days"));
             entries.add(new PieEntry(allottedDays, "Allotted Days"));
 
             PieDataSet dataSet = new PieDataSet(entries, "Trip Days");
-            dataSet.setColors(new int[]{R.color.colorUsedDays, R.color.colorAllottedDays}); // Replace with actual colors
-            PieData pieData = new PieData(dataSet);
 
+            int[] colors = {0xFFFF5733, 0xFF33FF57};
+            dataSet.setColors(colors);
+
+            PieData pieData = new PieData(dataSet);
             pieChart.setData(pieData);
-            pieChart.invalidate(); // Refresh chart
-            pieChart.setVisibility(View.VISIBLE); // Show the chart
+            pieChart.invalidate();
+            pieChart.setVisibility(View.VISIBLE);
         }
     }
-
-
 
 
     private void inviteUser() {
         String username = inviteUsernameInput.getText().toString();
-        if (!username.isEmpty()) {
-            invitedUsers.add(username);
-            userNotesMap.put(username, new ArrayList<>()); // Initialize an empty list for notes
-
-            // Create a TextView to represent the contributor
-            TextView contributorView = new TextView(getContext());
-            contributorView.setText(username);
-            contributorView.setPadding(16, 8, 16, 8);
-            contributorView.setBackgroundResource(R.drawable.button_background); // Set the background to the button style
-            contributorView.setTextColor(getResources().getColor(R.color.buttonTextColor)); // Set text color
-
-            // Set OnClickListener to show notes for the selected user
-            contributorView.setOnClickListener(v -> showUserNotes(username));
-
-            // Add the contributor to the contributors list layout
-            contributorsLayout.addView(contributorView);
-
-            // Clear the invite username input field
-            inviteUsernameInput.setText("");
-            Toast.makeText(getContext(), username + " invited!", Toast.LENGTH_SHORT).show();
-        } else {
+        if (username.isEmpty()) {
             Toast.makeText(getContext(), "Please enter a username", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        if (username.equals(currentUsername)) {
+            Toast.makeText(getContext(), "You cannot invite yourself.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (invitedUsers.contains(username)) {
+            Toast.makeText(getContext(), username + " is already invited.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String safeUsername = username.replace(".", ",").replace("@", ",");
+
+        databaseReference.child(safeUsername).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    invitedUsers.add(username);
+                    userNotesMap.put(username, new ArrayList<>());
+
+                    TextView contributorView = new TextView(getContext());
+                    contributorView.setText(username);
+                    contributorView.setPadding(16, 8, 16, 8);
+                    contributorView.setBackgroundResource(R.drawable.button_background);
+                    contributorView.setTextColor(getResources().getColor(R.color.buttonTextColor));
+
+                    contributorView.setOnClickListener(v -> showUserNotes(username));
+                    contributorsLayout.addView(contributorView);
+                    inviteUsernameInput.setText("");
+                    Toast.makeText(getContext(), username + " invited!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "User " + username + " does not exist.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getContext(), "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
-
-
 
     private void showUserNotes(String username) {
         ArrayList<String> notes = userNotesMap.get(username);
