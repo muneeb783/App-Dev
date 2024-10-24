@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp">
+
+    <!-- TextView for the destination name -->
+    <TextView
+        android:id="@+id/text_destination"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Destination"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="start" />
+
+    <!-- TextView for the number of days planned -->
+    <TextView
+        android:id="@+id/text_days_planned"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0 days planned"
+        android:textSize="16sp"
+        android:gravity="end" />
+
+</LinearLayout>
