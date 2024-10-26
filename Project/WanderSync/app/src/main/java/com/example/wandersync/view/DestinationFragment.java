@@ -1,5 +1,6 @@
 package com.example.wandersync.view;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,8 +19,10 @@ import com.example.wandersync.Model.Destination;
 import com.example.wandersync.R;
 import com.example.wandersync.viewmodel.DestinationAdapter;
 
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate;
 
 public class DestinationFragment extends Fragment {
 
@@ -71,13 +75,18 @@ public class DestinationFragment extends Fragment {
         });
 
         submitButton.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View v) {
                 String location = travelLocationEditText.getText().toString();
                 String start = estimatedStartEditText.getText().toString();
                 String end = estimatedEndEditText.getText().toString();
+                LocalDate startDate = LocalDate.parse(start);
+                LocalDate endDate = LocalDate.parse(end);
+                long amount = startDate.until(endDate, ChronoUnit.DAYS);
 
-                destinationList.add(new Destination(location, 0));
+
+                destinationList.add(new Destination(location, amount));
                 adapter.notifyDataSetChanged();
 
                 travelLocationEditText.setText("");
