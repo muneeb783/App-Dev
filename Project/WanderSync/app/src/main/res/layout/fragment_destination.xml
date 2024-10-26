@@ -76,7 +76,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Estimated Start (YYYY-MM-DD)"
+                android:hint="Start (YYYY-MM-DD)"
                 app:boxStrokeColor="#1E90FF"
                 app:hintTextColor="#1E90FF"> <!-- Added hintTextColor -->
 
@@ -92,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
-                android:hint="Estimated End (YYYY-MM-DD)"
+                android:hint="End (YYYY-MM-DD)"
                 app:boxStrokeColor="#1E90FF"
                 app:hintTextColor="#1E90FF"> <!-- Added hintTextColor -->
 
