@@ -61,14 +61,14 @@
             android:id="@+id/estimated_start"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Estimated Start"
+            android:hint="Estimated Start (YYYY-MM-DD)"
             android:inputType="date" />
 
         <EditText
             android:id="@+id/estimated_end"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Estimated End"
+            android:hint="Estimated End (YYYY-MM-DD)"
             android:inputType="date" />
 
         <LinearLayout

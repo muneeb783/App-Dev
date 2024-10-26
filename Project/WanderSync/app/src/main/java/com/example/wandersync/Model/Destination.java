@@ -2,9 +2,9 @@ package com.example.wandersync.Model;
 
 public class Destination {
     private String name;
-    private int daysPlanned;
+    private long daysPlanned;
 
-    public Destination(String name, int daysPlanned) {
+    public Destination(String name, long daysPlanned) {
         this.name = name;
         this.daysPlanned = daysPlanned;
     }
@@ -13,7 +13,7 @@ public class Destination {
         return name;
     }
 
-    public int getDaysPlanned() {
+    public long getDaysPlanned() {
         return daysPlanned;
     }
 }
