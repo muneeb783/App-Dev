@@ -176,6 +176,7 @@ public class DestinationFragment extends Fragment {
                     daysPlanned = ChronoUnit.DAYS.between(startDate, endDate);
                     resultAmountTextView.setText(daysPlanned + " days");
                     resultLayout.setVisibility(View.VISIBLE);
+                    viewModel.saveVacationTime(daysPlanned);
                     resetVacationForm();
                 } catch (Exception e) {
                     Toast.makeText(requireContext(), "Please enter dates in YYYY-MM-DD format", Toast.LENGTH_SHORT).show();
@@ -192,6 +193,7 @@ public class DestinationFragment extends Fragment {
                     LocalDate endDate = LocalDate.parse(startDate.plusDays(durationLong).toString());
                     resultAmountTextView.setText(durationLong + " days");
                     resultLayout.setVisibility(View.VISIBLE);
+                    viewModel.saveVacationTime(durationLong);
                     resetVacationForm();
                 } catch (Exception e) {
                     Toast.makeText(requireContext(), "Please enter dates in YYYY-MM-DD format", Toast.LENGTH_SHORT).show();
@@ -209,6 +211,7 @@ public class DestinationFragment extends Fragment {
                     System.out.println(startDate.toString());
                     resultAmountTextView.setText(durationLong + " days");
                     resultLayout.setVisibility(View.VISIBLE);
+                    viewModel.saveVacationTime(durationLong);
                     resetVacationForm();
                 } catch (Exception e) {
                     Toast.makeText(requireContext(), "Please enter dates in YYYY-MM-DD format", Toast.LENGTH_SHORT).show();
@@ -230,8 +233,8 @@ public class DestinationFragment extends Fragment {
                     } else {
                         resultAmountTextView.setText(durationLong + " days");
                         resultLayout.setVisibility(View.VISIBLE);
+                        viewModel.saveVacationTime(durationLong);
                     }
-                    viewModel.saveVacationTime(durationLong);
                     resetVacationForm();
                 } catch (Exception e) {
                     Toast.makeText(requireContext(), "Please enter dates in YYYY-MM-DD format", Toast.LENGTH_SHORT).show();
