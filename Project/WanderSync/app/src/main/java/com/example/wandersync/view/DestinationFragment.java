@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -70,6 +72,9 @@ public class DestinationFragment extends Fragment {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                travelLocationEditText.setText("");
+                estimatedStartEditText.setText("");
+                estimatedEndEditText.setText("");
                 formLayout.setVisibility(View.GONE);
             }
         });
@@ -79,10 +84,26 @@ public class DestinationFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String location = travelLocationEditText.getText().toString();
+                if (location.isEmpty()) {
+                    Toast.makeText(requireContext(), "Location must be a valid name", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 String start = estimatedStartEditText.getText().toString();
                 String end = estimatedEndEditText.getText().toString();
-                LocalDate startDate = LocalDate.parse(start);
-                LocalDate endDate = LocalDate.parse(end);
+                LocalDate startDate;
+                try {
+                    startDate = LocalDate.parse(start);
+                } catch (Exception e) {
+                    Toast.makeText(requireContext(), "Start date must be in valid format", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                LocalDate endDate;
+                try {
+                    endDate = LocalDate.parse(end);
+                } catch (Exception e) {
+                    Toast.makeText(requireContext(), "End date must be in valid format", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 long amount = startDate.until(endDate, ChronoUnit.DAYS);
 
 
