@@ -31,8 +31,6 @@ public class DestinationViewModel extends AndroidViewModel {
         databaseReference = FirebaseDatabase.getInstance().getReference("destinations");
         destinationsLiveData = new MutableLiveData<>(new ArrayList<>());
         errorLiveData = new MutableLiveData<>();
-
-        // Retrieve username from SharedPreferences
         SharedPreferences sharedPreferences = application.getSharedPreferences("WanderSyncPrefs", Context.MODE_PRIVATE);
         username = sharedPreferences.getString("username", null);
 
@@ -49,9 +47,7 @@ public class DestinationViewModel extends AndroidViewModel {
 
     public void addDestination(Destination destination) {
         if (username != null) {
-            // Set the username in the destination
             destination.setUsername(username);
-
             String destinationId = databaseReference.push().getKey();
             if (destinationId != null) {
                 databaseReference.child(destinationId).setValue(destination)
@@ -91,7 +87,6 @@ public class DestinationViewModel extends AndroidViewModel {
                     .child(username).child("allotedTime");
             userVacationRef.setValue(duration)
                     .addOnSuccessListener(aVoid -> {
-                        // Vacation time successfully saved
                     })
                     .addOnFailureListener(e -> errorLiveData.setValue("Failed to save vacation time: " + e.getMessage()));
         } else {
