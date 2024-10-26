@@ -14,12 +14,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.wandersync.R;
+import com.example.wandersync.viewmodel.LogisticsViewModel;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.DataSnapshot;
@@ -30,15 +33,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class LogisticsFragment extends Fragment {
-
     private PieChart pieChart;
-    private ArrayList<String> invitedUsers;
-    private HashMap<String, ArrayList<String>> userNotesMap;
+    private LogisticsViewModel viewModel;
     private LinearLayout contributorsLayout;
     private LinearLayout notesListLayout;
     private EditText inviteUsernameInput;
     private EditText noteInput;
-    private DatabaseReference databaseReference;
     private String currentUsername;
 
     @Nullable
@@ -46,34 +46,34 @@ public class LogisticsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_logistics, container, false);
-
         Button visualizeButton = view.findViewById(R.id.visualize_button);
+        viewModel = new ViewModelProvider(this).get(LogisticsViewModel.class);
         Button inviteButton = view.findViewById(R.id.invite_button);
         Button addNoteButton = view.findViewById(R.id.add_note_button);
         inviteUsernameInput = view.findViewById(R.id.invite_username_input);
         noteInput = view.findViewById(R.id.note_input);
-        pieChart = view.findViewById(R.id.pie_chart);
         contributorsLayout = view.findViewById(R.id.contributors_layout);
         notesListLayout = view.findViewById(R.id.notes_list_layout);
+        pieChart = view.findViewById(R.id.pie_chart);
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("users");
-
-        invitedUsers = new ArrayList<>();
-        userNotesMap = new HashMap<>();
 
         currentUsername = getCurrentUsername();
 
+        inviteButton.setOnClickListener(v -> viewModel.inviteUser(inviteUsernameInput.getText().toString(), currentUsername));
+        addNoteButton.setOnClickListener(v -> viewModel.addNoteForCurrentUser(noteInput.getText().toString()));
+
         visualizeButton.setOnClickListener(v -> visualizeTripDays());
-        inviteButton.setOnClickListener(v -> inviteUser());
-        addNoteButton.setOnClickListener(v -> addNote());
 
+        observeViewModel();
         return view;
-    }
+        }
 
-    private String getCurrentUsername() {
-        return "current_user";
-    }
-
+        private void observeViewModel() {
+        viewModel.getInvitedUsers().observe(getViewLifecycleOwner(), this::displayInvitedUsers);
+        viewModel.getUserNotesMap().observe(getViewLifecycleOwner(), this::displayUserNotes);
+        viewModel.getInviteStatus().observe(getViewLifecycleOwner(), status -> Toast.makeText(getContext(), status, Toast.LENGTH_SHORT).show());
+        viewModel.getNoteStatus().observe(getViewLifecycleOwner(), status -> Toast.makeText(getContext(), status, Toast.LENGTH_SHORT).show());
+        }
     private void visualizeTripDays() {
         int allottedDays = 10;
         int plannedDays = 6;
@@ -96,93 +96,54 @@ public class LogisticsFragment extends Fragment {
             pieChart.setVisibility(View.VISIBLE);
         }
     }
-
-
-    private void inviteUser() {
-        String username = inviteUsernameInput.getText().toString();
-        if (username.isEmpty()) {
-            Toast.makeText(getContext(), "Please enter a username", Toast.LENGTH_SHORT).show();
-            return;
+        private String getCurrentUsername() {
+            return "current_user";
         }
 
-        if (username.equals(currentUsername)) {
-            Toast.makeText(getContext(), "You cannot invite yourself.", Toast.LENGTH_SHORT).show();
-            return;
+        private void displayInvitedUsers(ArrayList<String> users) {
+            contributorsLayout.removeAllViews();
+            for (String user : users) {
+                TextView contributorView = new TextView(getContext());
+                contributorView.setText(user);
+                contributorView.setPadding(16, 8, 16, 8);
+                contributorView.setBackgroundResource(R.drawable.button_background);
+                contributorView.setTextColor(getResources().getColor(R.color.buttonTextColor));
+
+                contributorView.setOnClickListener(v -> showUserNotes(user));
+                contributorsLayout.addView(contributorView);
+            }
         }
 
-        if (invitedUsers.contains(username)) {
-            Toast.makeText(getContext(), username + " is already invited.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String safeUsername = username.replace(".", ",").replace("@", ",");
-
-        databaseReference.child(safeUsername).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    invitedUsers.add(username);
-                    userNotesMap.put(username, new ArrayList<>());
-
-                    TextView contributorView = new TextView(getContext());
-                    contributorView.setText(username);
-                    contributorView.setPadding(16, 8, 16, 8);
-                    contributorView.setBackgroundResource(R.drawable.button_background);
-                    contributorView.setTextColor(getResources().getColor(R.color.buttonTextColor));
-
-                    contributorView.setOnClickListener(v -> showUserNotes(username));
-                    contributorsLayout.addView(contributorView);
-                    inviteUsernameInput.setText("");
-                    Toast.makeText(getContext(), username + " invited!", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getContext(), "User " + username + " does not exist.", Toast.LENGTH_SHORT).show();
+        private void displayUserNotes(HashMap<String, ArrayList<String>> userNotesMap) {
+            notesListLayout.removeAllViews();
+            ArrayList<String> currentUserNotes = userNotesMap.get(currentUsername);
+            if (currentUserNotes != null) {
+                for (String note : currentUserNotes) {
+                    displayNoteInList(note);
                 }
             }
+        }
+        private void showUserNotes(String username) {
+            ArrayList<String> notes = viewModel.getUserNotesMap().getValue().get(username);
+            if (notes != null && !notes.isEmpty()) {
+                StringBuilder notesDisplay = new StringBuilder();
+                for (String note : notes) {
+                    notesDisplay.append(note).append("\n");
+                }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getContext(), "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Notes for " + username)
+                        .setMessage(notesDisplay.toString())
+                        .setPositiveButton("OK", (dialog, id) -> dialog.dismiss())
+                        .create()
+                        .show();
+            } else {
+                Toast.makeText(getContext(), username + " has no notes.", Toast.LENGTH_SHORT).show();
             }
-        });
-    }
-
-    private void showUserNotes(String username) {
-        ArrayList<String> notes = userNotesMap.get(username);
-        if (notes != null && !notes.isEmpty()) {
-            StringBuilder notesDisplay = new StringBuilder();
-            for (String note : notes) {
-                notesDisplay.append(note).append("\n");
-            }
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle("Notes for " + username)
-                    .setMessage(notesDisplay.toString())
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.dismiss();
-                        }
-                    });
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        } else {
-            Toast.makeText(getContext(), username + " has no notes.", Toast.LENGTH_SHORT).show();
+        }
+        private void displayNoteInList(String note) {
+            TextView noteView = new TextView(getContext());
+            noteView.setText(note);
+            notesListLayout.addView(noteView);
         }
     }
-
-    private void addNote() {
-        String note = noteInput.getText().toString();
-        if (!note.isEmpty()) {
-            displayNoteInList(note);
-            noteInput.setText("");
-            Toast.makeText(getContext(), "Note added.", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getContext(), "Note cannot be empty", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void displayNoteInList(String note) {
-        TextView noteView = new TextView(getContext());
-        noteView.setText(note);
-        notesListLayout.addView(noteView);
-    }
-}

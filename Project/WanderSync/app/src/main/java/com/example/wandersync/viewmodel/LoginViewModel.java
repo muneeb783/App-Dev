@@ -18,12 +18,14 @@ public class LoginViewModel extends ViewModel {
     private DatabaseReference databaseReference;
     private MutableLiveData<Boolean> loginSuccess;
     private MutableLiveData<String> loginError;
+    private MutableLiveData<String> username;
     private User user;
 
     public LoginViewModel() {
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
         loginSuccess = new MutableLiveData<>();
         loginError = new MutableLiveData<>();
+        username = new MutableLiveData<>();
     }
 
     public LiveData<Boolean> getLoginSuccess() {
@@ -33,6 +35,11 @@ public class LoginViewModel extends ViewModel {
     public LiveData<String> getLoginError() {
         return loginError;
     }
+
+    public LiveData<String> getUsername() {
+        return username;  // Provide access to the username
+    }
+
 
     public void login(String username, String password) {
         databaseReference.child(username).addListenerForSingleValueEvent(
