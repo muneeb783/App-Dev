@@ -140,6 +140,9 @@ public class DestinationFragment extends Fragment {
         cancelButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                duration.setText("");
+                estimatedStartEditText1.setText("");
+                estimatedEndEditText1.setText("");
                 formLayout1.setVisibility(View.GONE);
             }
         });
@@ -149,12 +152,47 @@ public class DestinationFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String durationstr = duration.getText().toString();
+                long durationLong;
+                if (!durationstr.isEmpty()) {
+                    try {
+                        durationLong = Long.parseLong(durationstr);
+                    } catch (Exception e) {
+                        Toast.makeText(requireContext(), "Duration must be in correct format of 'DAYS'", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                } else {
+                    Toast.makeText(requireContext(), "Duration must be in correct format of 'DAYS'", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 String start = estimatedStartEditText1.getText().toString();
                 String end = estimatedEndEditText1.getText().toString();
-                LocalDate startDate = LocalDate.parse(start);
-                LocalDate endDate = LocalDate.parse(end);
+                LocalDate startDate;
+                try {
+                    startDate = LocalDate.parse(start);
+                } catch (Exception e) {
+                    Toast.makeText(requireContext(), "Start date must have form of YYYY-MM-DD", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                LocalDate endDate;
+                try {
+                    endDate = LocalDate.parse(end);
+                } catch (Exception e) {
+                    Toast.makeText(requireContext(), "End date must have form of YYYY-MM-DD", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 long amount = startDate.until(endDate, ChronoUnit.DAYS);
+                long finalAmount;
+                if (amount == durationLong) {
+                    finalAmount = durationLong;
+                } else {
+                    Toast.makeText(requireContext(), "Duration must equal days between start and end date", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
+                estimatedStartEditText1.setText("");
+                estimatedEndEditText1.setText("");
+                formLayout1.setVisibility(View.GONE);
             }
         });
 
