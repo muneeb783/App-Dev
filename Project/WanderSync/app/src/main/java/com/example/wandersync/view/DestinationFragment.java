@@ -105,6 +105,10 @@ public class DestinationFragment extends Fragment {
                     return;
                 }
                 long amount = startDate.until(endDate, ChronoUnit.DAYS);
+                if (amount <= 0) {
+                    Toast.makeText(requireContext(), "Start date must be before end date", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
 
                 destinationList.add(new Destination(location, amount));
