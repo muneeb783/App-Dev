@@ -75,45 +75,35 @@ public class DestinationFragment extends Fragment {
         formLayout1.setVisibility(View.GONE);
         resultLayout.setVisibility(View.GONE);
 
-        // Initialize ViewModel
         viewModel = new ViewModelProvider(this).get(DestinationViewModel.class);
 
-        // Observe changes to the destination list
         viewModel.getDestinations().observe(getViewLifecycleOwner(), destinations -> {
             destinationList.clear();
             destinationList.addAll(destinations);
             adapter.notifyDataSetChanged();
         });
 
-        // Observe error messages
         viewModel.getError().observe(getViewLifecycleOwner(), errorMessage -> {
             if (errorMessage != null) {
                 Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Show the form layout for adding destinations
         logTravelButton.setOnClickListener(v -> formLayout.setVisibility(View.VISIBLE));
 
-        // Hide the form layout and reset inputs
         cancelButton.setOnClickListener(v -> resetDestinationForm());
 
-        // Submit new destination to the list
         submitButton.setOnClickListener(v -> addDestination());
 
-        // Show the form layout for calculating vacation time
         calculateButton.setOnClickListener(v -> {
             formLayout1.setVisibility(View.VISIBLE);
             resultLayout.setVisibility(View.GONE);
         });
 
-        // Hide the vacation time form and reset inputs
         cancelButton1.setOnClickListener(v -> resetVacationForm());
 
-        // Submit vacation time calculations
         submitButton1.setOnClickListener(v -> calculateVacationTime());
-
-        // Reset result display
+        
         resetResultButton.setOnClickListener(v -> resultAmountTextView.setText("0 days"));
 
         return view;
