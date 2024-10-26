@@ -1,4 +1,4 @@
-package com.example.wandersync.view; // Change to your package name
+package com.example.wandersync.view;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,7 +26,6 @@ public class DestinationFragment extends Fragment {
     private DestinationAdapter adapter;
     private List<Destination> destinationList;
 
-    // New Views for Log Travel Form
     private LinearLayout formLayout;
     private EditText travelLocationEditText, estimatedStartEditText, estimatedEndEditText;
     private Button logTravelButton, cancelButton, submitButton;
@@ -36,11 +35,9 @@ public class DestinationFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_destination, container, false);
 
-        // Initialize RecyclerView
         recyclerView = view.findViewById(R.id.recycler_view_destinations);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Create some dummy data for the destinations
         destinationList = new ArrayList<>();
         destinationList.add(new Destination("Paris", 5));
         destinationList.add(new Destination("New York", 3));
@@ -49,7 +46,6 @@ public class DestinationFragment extends Fragment {
         adapter = new DestinationAdapter(destinationList);
         recyclerView.setAdapter(adapter);
 
-        // Initialize Log Travel Form Views
         formLayout = view.findViewById(R.id.form_layout);
         travelLocationEditText = view.findViewById(R.id.travel_location);
         estimatedStartEditText = view.findViewById(R.id.estimated_start);
@@ -58,39 +54,32 @@ public class DestinationFragment extends Fragment {
         cancelButton = view.findViewById(R.id.cancel_button);
         submitButton = view.findViewById(R.id.submit_button);
 
-        // Initially hide the form
         formLayout.setVisibility(View.GONE);
 
-        // Set up Log Travel Button click to show the form
         logTravelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                formLayout.setVisibility(View.VISIBLE);  // Show the form
+                formLayout.setVisibility(View.VISIBLE);
             }
         });
 
-        // Set up Cancel Button to hide the form
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                formLayout.setVisibility(View.GONE);  // Hide the form on cancel
+                formLayout.setVisibility(View.GONE);
             }
         });
 
-        // Set up Submit Button logic to add new travel details and hide the form
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Retrieve values from the form
                 String location = travelLocationEditText.getText().toString();
                 String start = estimatedStartEditText.getText().toString();
                 String end = estimatedEndEditText.getText().toString();
 
-                // Add the new destination to the list and refresh the RecyclerView
-                destinationList.add(new Destination(location, 0)); // Assuming "0" days planned for now
+                destinationList.add(new Destination(location, 0));
                 adapter.notifyDataSetChanged();
 
-                // Clear form fields and hide the form
                 travelLocationEditText.setText("");
                 estimatedStartEditText.setText("");
                 estimatedEndEditText.setText("");
