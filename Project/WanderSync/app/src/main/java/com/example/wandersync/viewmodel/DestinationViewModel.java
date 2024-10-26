@@ -85,4 +85,18 @@ public class DestinationViewModel extends AndroidViewModel {
             }
         });
     }
+    public void saveVacationTime(long duration) {
+        if (username != null) {
+            DatabaseReference userVacationRef = FirebaseDatabase.getInstance().getReference("users")
+                    .child(username).child("allotedTime");
+            userVacationRef.setValue(duration)
+                    .addOnSuccessListener(aVoid -> {
+                        // Vacation time successfully saved
+                    })
+                    .addOnFailureListener(e -> errorLiveData.setValue("Failed to save vacation time: " + e.getMessage()));
+        } else {
+            errorLiveData.setValue("Username is not available");
+        }
+    }
+
 }

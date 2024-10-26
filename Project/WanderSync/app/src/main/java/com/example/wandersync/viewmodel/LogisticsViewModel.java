@@ -20,6 +20,9 @@ public class LogisticsViewModel extends AndroidViewModel {
     private final MutableLiveData<HashMap<String, ArrayList<String>>> userNotesMap = new MutableLiveData<>(new HashMap<>());
     private final MutableLiveData<String> inviteStatus = new MutableLiveData<>();
     private final MutableLiveData<String> noteStatus = new MutableLiveData<>();
+    private final MutableLiveData<Long> allottedTime = new MutableLiveData<>();
+    private final MutableLiveData<Integer> plannedDays = new MutableLiveData<>(0);
+
     private String username;
 
     public LogisticsViewModel(@NonNull Application application) {
@@ -27,8 +30,15 @@ public class LogisticsViewModel extends AndroidViewModel {
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
         SharedPreferences sharedPreferences = application.getSharedPreferences("WanderSyncPrefs", Context.MODE_PRIVATE);
         username = sharedPreferences.getString("username", null);
+        loadAllottedTime();
+        calculatePlannedDays(username);
     }
-
+    public LiveData<Integer> getPlannedDays() {
+        return plannedDays;
+    }
+    public LiveData<Long> getAllottedTime() {
+        return allottedTime;
+    }
     public LiveData<ArrayList<String>> getInvitedUsers() {
         return invitedUsers;
     }
@@ -44,7 +54,44 @@ public class LogisticsViewModel extends AndroidViewModel {
     public LiveData<String> getNoteStatus() {
         return noteStatus;
     }
+    public void calculatePlannedDays(String currentUsername) {
+        DatabaseReference destinationRef = FirebaseDatabase.getInstance().getReference("destinations");
+        destinationRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int totalPlannedDays = 0;
+                for (DataSnapshot destination : snapshot.getChildren()) {
+                    String username = destination.child("username").getValue(String.class);
+                    if (currentUsername.equals(username)) {
+                        Integer duration = destination.child("daysPlanned").getValue(Integer.class);
+                        if (duration != null) {
+                            totalPlannedDays += duration;
+                        }
+                    }
+                }
+                plannedDays.setValue(totalPlannedDays);
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle any database errors here
+            }
+        });
+    }
+    private void loadAllottedTime() {
+        databaseReference.child(username).child("allotedTime").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Long time = snapshot.getValue(Long.class);
+                allottedTime.setValue(time != null ? time : 0L);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                allottedTime.setValue(0L); // Set a default if loading fails
+            }
+        });
+    }
     public void inviteUser(String username, String currentUsername) {
         if (username.isEmpty()) {
             inviteStatus.setValue("Please enter a username");

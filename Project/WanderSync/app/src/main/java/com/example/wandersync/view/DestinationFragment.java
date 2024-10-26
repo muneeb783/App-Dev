@@ -231,7 +231,7 @@ public class DestinationFragment extends Fragment {
                         resultAmountTextView.setText(durationLong + " days");
                         resultLayout.setVisibility(View.VISIBLE);
                     }
-
+                    viewModel.saveVacationTime(durationLong);
                     resetVacationForm();
                 } catch (Exception e) {
                     Toast.makeText(requireContext(), "Please enter dates in YYYY-MM-DD format", Toast.LENGTH_SHORT).show();

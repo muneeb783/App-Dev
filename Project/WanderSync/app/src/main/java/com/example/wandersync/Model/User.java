@@ -6,6 +6,7 @@ public class User {
     private String username;
     private String email;
     private String password;
+    private long allotedTime;
     private ArrayList<String> notes;
     private ArrayList<String> contributors; // List of contributor usernames
 
@@ -22,6 +23,7 @@ public class User {
         this.password = password;
         this.notes = new ArrayList<>();
         this.contributors = new ArrayList<>();
+        this.allotedTime = 0;
     }
 
     // Getters
@@ -36,7 +38,9 @@ public class User {
     public String getPassword() {
         return password;
     }
-
+    public long getAllotedTime() {
+        return allotedTime;
+    }
     public ArrayList<String> getNotes() {
         return notes;
     }
