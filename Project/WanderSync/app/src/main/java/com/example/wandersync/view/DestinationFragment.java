@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,10 +35,11 @@ public class DestinationFragment extends Fragment {
     private List<Destination> destinationList;
     private DestinationViewModel viewModel;
 
-    private LinearLayout formLayout, formLayout1;
+    private LinearLayout formLayout, formLayout1, resultLayout;
     private EditText travelLocationEditText, estimatedStartEditText, estimatedEndEditText;
     private EditText duration, estimatedStartEditText1, estimatedEndEditText1;
     private Button logTravelButton, cancelButton, submitButton, cancelButton1, submitButton1, calculateButton;
+    private TextView resultAmountTextView, resetResultButton;
 
     @Nullable
     @Override
@@ -53,6 +55,7 @@ public class DestinationFragment extends Fragment {
 
         formLayout = view.findViewById(R.id.form_layout);
         formLayout1 = view.findViewById(R.id.form_layout1);
+        resultLayout = view.findViewById(R.id.result_layout);
         travelLocationEditText = view.findViewById(R.id.travel_location);
         estimatedStartEditText = view.findViewById(R.id.estimated_start);
         estimatedEndEditText = view.findViewById(R.id.estimated_end);
@@ -65,18 +68,21 @@ public class DestinationFragment extends Fragment {
         submitButton = view.findViewById(R.id.submit_button);
         submitButton1 = view.findViewById(R.id.submit_button1);
         calculateButton = view.findViewById(R.id.calc_button);
+        resultAmountTextView = view.findViewById(R.id.result_amount);
+        resetResultButton = view.findViewById(R.id.reset_result_button);
 
         formLayout.setVisibility(View.GONE);
         formLayout1.setVisibility(View.GONE);
+        resultLayout.setVisibility(View.GONE);
 
         // Initialize ViewModel
         viewModel = new ViewModelProvider(this).get(DestinationViewModel.class);
 
         // Observe changes to the destination list
         viewModel.getDestinations().observe(getViewLifecycleOwner(), destinations -> {
-            destinationList.clear(); // Clear existing items
-            destinationList.addAll(destinations); // Add the new list of destinations
-            adapter.notifyDataSetChanged(); // Notify the adapter of data changes
+            destinationList.clear();
+            destinationList.addAll(destinations);
+            adapter.notifyDataSetChanged();
         });
 
         // Observe error messages
@@ -96,13 +102,19 @@ public class DestinationFragment extends Fragment {
         submitButton.setOnClickListener(v -> addDestination());
 
         // Show the form layout for calculating vacation time
-        calculateButton.setOnClickListener(v -> formLayout1.setVisibility(View.VISIBLE));
+        calculateButton.setOnClickListener(v -> {
+            formLayout1.setVisibility(View.VISIBLE);
+            resultLayout.setVisibility(View.GONE);
+        });
 
         // Hide the vacation time form and reset inputs
         cancelButton1.setOnClickListener(v -> resetVacationForm());
 
         // Submit vacation time calculations
         submitButton1.setOnClickListener(v -> calculateVacationTime());
+
+        // Reset result display
+        resetResultButton.setOnClickListener(v -> resultAmountTextView.setText("0 days"));
 
         return view;
     }
@@ -127,12 +139,8 @@ public class DestinationFragment extends Fragment {
                 return;
             }
 
-            // Create a new Destination object
             Destination newDestination = new Destination(location, daysPlanned);
-            // Use the ViewModel to add the destination to Firebase
             viewModel.addDestination(newDestination);
-
-            // Reset the form and update the UI after successful addition
             resetDestinationForm();
 
         } catch (Exception e) {
@@ -167,7 +175,8 @@ public class DestinationFragment extends Fragment {
             if (daysPlanned != durationLong) {
                 Toast.makeText(requireContext(), "Duration does not match the days planned", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(requireContext(), "Duration matches the days planned!", Toast.LENGTH_SHORT).show();
+                resultAmountTextView.setText(durationLong + " days");
+                resultLayout.setVisibility(View.VISIBLE);
             }
 
             resetVacationForm();
@@ -190,3 +199,4 @@ public class DestinationFragment extends Fragment {
         formLayout1.setVisibility(View.GONE);
     }
 }
+
