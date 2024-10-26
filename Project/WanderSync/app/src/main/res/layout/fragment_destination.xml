@@ -17,7 +17,7 @@
         android:shadowDy="1"
         android:shadowRadius="2"
         android:text="Destination"
-        android:textColor="#007BFF"
+        android:textColor="#1E90FF"
         android:textSize="50dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -44,57 +44,95 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone"
         android:padding="16dp"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/log_travel_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <EditText
-            android:id="@+id/travel_location"
+        <!-- Travel Location TextInputLayout with Outline -->
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Travel Location"
-            android:inputType="text" />
+            app:boxStrokeColor="#1E90FF"
+            app:hintTextColor="#1E90FF"> <!-- Added hintTextColor -->
 
-        <EditText
-            android:id="@+id/estimated_start"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Estimated Start (YYYY-MM-DD)"
-            android:inputType="date" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/travel_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/estimated_end"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Estimated End (YYYY-MM-DD)"
-            android:inputType="date" />
-
+        <!-- Start and End Date Fields Side by Side -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Start (YYYY-MM-DD)"
+                app:boxStrokeColor="#1E90FF"
+                app:hintTextColor="#1E90FF"> <!-- Added hintTextColor -->
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/estimated_start"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="date" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:hint="End (YYYY-MM-DD)"
+                app:boxStrokeColor="#1E90FF"
+                app:hintTextColor="#1E90FF"> <!-- Added hintTextColor -->
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/estimated_end"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="date" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <!-- Cancel and Submit Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
 
             <Button
                 android:id="@+id/cancel_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Cancel" />
+                android:backgroundTint="#1E90FF"
+                android:text="Cancel"
+                android:textColor="@android:color/white" />
 
             <Button
                 android:id="@+id/submit_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Submit" />
+                android:layout_marginStart="8dp"
+                android:backgroundTint="#1E90FF"
+                android:text="Submit"
+                android:textColor="@android:color/white" />
 
         </LinearLayout>
-
     </LinearLayout>
 
-    <!-- The Calculate button and RecyclerView will automatically adjust their positions -->
     <Button
         android:id="@+id/calc_button"
         android:layout_width="284dp"
