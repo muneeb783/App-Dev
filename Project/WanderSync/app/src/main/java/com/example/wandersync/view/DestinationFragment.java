@@ -1,7 +1,7 @@
 package com.example.wandersync.view;
 
-import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,31 +12,32 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.wandersync.Model.Destination;
 import com.example.wandersync.R;
+import com.example.wandersync.Model.Destination;
 import com.example.wandersync.viewmodel.DestinationAdapter;
+import com.example.wandersync.viewmodel.DestinationViewModel;
 
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.time.LocalDate;
 
 public class DestinationFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private DestinationAdapter adapter;
     private List<Destination> destinationList;
-    private int totalPlannedDays= 0;
+    private DestinationViewModel viewModel;
 
-    private LinearLayout formLayout;
-    private LinearLayout formLayout1;
-    private EditText travelLocationEditText, estimatedStartEditText, estimatedEndEditText, duration, estimatedStartEditText1, estimatedEndEditText1;
-    private Button logTravelButton, cancelButton, submitButton, cancelButton1, submitButton1;
+    private LinearLayout formLayout, formLayout1;
+    private EditText travelLocationEditText, estimatedStartEditText, estimatedEndEditText;
+    private EditText duration, estimatedStartEditText1, estimatedEndEditText1;
+    private Button logTravelButton, cancelButton, submitButton, cancelButton1, submitButton1, calculateButton;
 
     @Nullable
     @Override
@@ -47,158 +48,145 @@ public class DestinationFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         destinationList = new ArrayList<>();
-        destinationList.add(new Destination("Destination", 0));
-        destinationList.add(new Destination("Destination", 0));
-
         adapter = new DestinationAdapter(destinationList);
         recyclerView.setAdapter(adapter);
 
         formLayout = view.findViewById(R.id.form_layout);
         formLayout1 = view.findViewById(R.id.form_layout1);
         travelLocationEditText = view.findViewById(R.id.travel_location);
-        duration = view.findViewById(R.id.duration);
         estimatedStartEditText = view.findViewById(R.id.estimated_start);
-        estimatedStartEditText1 = view.findViewById(R.id.estimated_start1);
         estimatedEndEditText = view.findViewById(R.id.estimated_end);
+        duration = view.findViewById(R.id.duration);
+        estimatedStartEditText1 = view.findViewById(R.id.estimated_start1);
         estimatedEndEditText1 = view.findViewById(R.id.estimated_end1);
         logTravelButton = view.findViewById(R.id.log_travel_button);
         cancelButton = view.findViewById(R.id.cancel_button);
         cancelButton1 = view.findViewById(R.id.cancel_button1);
         submitButton = view.findViewById(R.id.submit_button);
         submitButton1 = view.findViewById(R.id.submit_button1);
-        Button calculateButton = view.findViewById(R.id.calc_button);
+        calculateButton = view.findViewById(R.id.calc_button);
 
         formLayout.setVisibility(View.GONE);
         formLayout1.setVisibility(View.GONE);
 
-        logTravelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                formLayout.setVisibility(View.VISIBLE);
+        // Initialize ViewModel
+        viewModel = new ViewModelProvider(this).get(DestinationViewModel.class);
+
+        // Observe changes to the destination list
+        viewModel.getDestinations().observe(getViewLifecycleOwner(), destinations -> {
+            destinationList.clear(); // Clear existing items
+            destinationList.addAll(destinations); // Add the new list of destinations
+            adapter.notifyDataSetChanged(); // Notify the adapter of data changes
+        });
+
+        // Observe error messages
+        viewModel.getError().observe(getViewLifecycleOwner(), errorMessage -> {
+            if (errorMessage != null) {
+                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show();
             }
         });
 
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                travelLocationEditText.setText("");
-                estimatedStartEditText.setText("");
-                estimatedEndEditText.setText("");
-                formLayout.setVisibility(View.GONE);
-            }
-        });
+        // Show the form layout for adding destinations
+        logTravelButton.setOnClickListener(v -> formLayout.setVisibility(View.VISIBLE));
 
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onClick(View v) {
-                String location = travelLocationEditText.getText().toString();
-                if (location.isEmpty()) {
-                    Toast.makeText(requireContext(), "Location must be a valid name", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                String start = estimatedStartEditText.getText().toString();
-                String end = estimatedEndEditText.getText().toString();
-                LocalDate startDate;
-                try {
-                    startDate = LocalDate.parse(start);
-                } catch (Exception e) {
-                    Toast.makeText(requireContext(), "Start date must be in valid format", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                LocalDate endDate;
-                try {
-                    endDate = LocalDate.parse(end);
-                } catch (Exception e) {
-                    Toast.makeText(requireContext(), "End date must be in valid format", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                long amount = startDate.until(endDate, ChronoUnit.DAYS);
-                if (amount <= 0) {
-                    Toast.makeText(requireContext(), "Start date must be before end date", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+        // Hide the form layout and reset inputs
+        cancelButton.setOnClickListener(v -> resetDestinationForm());
 
+        // Submit new destination to the list
+        submitButton.setOnClickListener(v -> addDestination());
 
-                destinationList.add(new Destination(location, amount));
-                adapter.notifyDataSetChanged();
+        // Show the form layout for calculating vacation time
+        calculateButton.setOnClickListener(v -> formLayout1.setVisibility(View.VISIBLE));
 
-                travelLocationEditText.setText("");
-                estimatedStartEditText.setText("");
-                estimatedEndEditText.setText("");
-                formLayout.setVisibility(View.GONE);
-            }
-        });
+        // Hide the vacation time form and reset inputs
+        cancelButton1.setOnClickListener(v -> resetVacationForm());
 
-        calculateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                formLayout1.setVisibility(View.VISIBLE);
-            }
-        });
-
-        cancelButton1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                duration.setText("");
-                estimatedStartEditText1.setText("");
-                estimatedEndEditText1.setText("");
-                formLayout1.setVisibility(View.GONE);
-            }
-        });
-
-        submitButton1.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onClick(View v) {
-                String durationstr = duration.getText().toString();
-                long durationLong;
-                if (!durationstr.isEmpty()) {
-                    try {
-                        durationLong = Long.parseLong(durationstr);
-                    } catch (Exception e) {
-                        Toast.makeText(requireContext(), "Duration must be in correct format of 'DAYS'", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                } else {
-                    Toast.makeText(requireContext(), "Duration must be in correct format of 'DAYS'", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                String start = estimatedStartEditText1.getText().toString();
-                String end = estimatedEndEditText1.getText().toString();
-                LocalDate startDate;
-                try {
-                    startDate = LocalDate.parse(start);
-                } catch (Exception e) {
-                    Toast.makeText(requireContext(), "Start date must have form of YYYY-MM-DD", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                LocalDate endDate;
-                try {
-                    endDate = LocalDate.parse(end);
-                } catch (Exception e) {
-                    Toast.makeText(requireContext(), "End date must have form of YYYY-MM-DD", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                long amount = startDate.until(endDate, ChronoUnit.DAYS);
-                long finalAmount;
-                if (amount == durationLong) {
-                    finalAmount = durationLong;
-                } else {
-                    Toast.makeText(requireContext(), "Duration must equal days between start and end date", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                estimatedStartEditText1.setText("");
-                estimatedEndEditText1.setText("");
-                formLayout1.setVisibility(View.GONE);
-            }
-        });
-
-
-
+        // Submit vacation time calculations
+        submitButton1.setOnClickListener(v -> calculateVacationTime());
 
         return view;
+    }
+
+    private void addDestination() {
+        String location = travelLocationEditText.getText().toString();
+        String start = estimatedStartEditText.getText().toString();
+        String end = estimatedEndEditText.getText().toString();
+
+        if (TextUtils.isEmpty(location)) {
+            Toast.makeText(requireContext(), "Location must be a valid name", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            LocalDate startDate = LocalDate.parse(start);
+            LocalDate endDate = LocalDate.parse(end);
+            long daysPlanned = ChronoUnit.DAYS.between(startDate, endDate);
+
+            if (daysPlanned <= 0) {
+                Toast.makeText(requireContext(), "Start date must be before end date", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Create a new Destination object
+            Destination newDestination = new Destination(location, daysPlanned);
+            // Use the ViewModel to add the destination to Firebase
+            viewModel.addDestination(newDestination);
+
+            // Reset the form and update the UI after successful addition
+            resetDestinationForm();
+
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), "Please enter dates in YYYY-MM-DD format", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void calculateVacationTime() {
+        String durationStr = duration.getText().toString();
+        long durationLong;
+
+        if (TextUtils.isEmpty(durationStr)) {
+            Toast.makeText(requireContext(), "Duration must be specified", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            durationLong = Long.parseLong(durationStr);
+        } catch (NumberFormatException e) {
+            Toast.makeText(requireContext(), "Duration must be a valid number", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String start = estimatedStartEditText1.getText().toString();
+        String end = estimatedEndEditText1.getText().toString();
+
+        try {
+            LocalDate startDate = LocalDate.parse(start);
+            LocalDate endDate = LocalDate.parse(end);
+            long daysPlanned = ChronoUnit.DAYS.between(startDate, endDate);
+
+            if (daysPlanned != durationLong) {
+                Toast.makeText(requireContext(), "Duration does not match the days planned", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(requireContext(), "Duration matches the days planned!", Toast.LENGTH_SHORT).show();
+            }
+
+            resetVacationForm();
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), "Please enter dates in YYYY-MM-DD format", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void resetDestinationForm() {
+        travelLocationEditText.setText("");
+        estimatedStartEditText.setText("");
+        estimatedEndEditText.setText("");
+        formLayout.setVisibility(View.GONE);
+    }
+
+    private void resetVacationForm() {
+        duration.setText("");
+        estimatedStartEditText1.setText("");
+        estimatedEndEditText1.setText("");
+        formLayout1.setVisibility(View.GONE);
     }
 }
