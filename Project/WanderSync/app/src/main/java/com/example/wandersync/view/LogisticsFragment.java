@@ -40,6 +40,9 @@ public class LogisticsFragment extends Fragment {
     private EditText inviteUsernameInput;
     private EditText noteInput;
     private String currentUsername;
+    private Long allottedTime = null;
+    private Integer plannedDays = null;
+
 
     @Nullable
     @Override
@@ -62,8 +65,17 @@ public class LogisticsFragment extends Fragment {
         inviteButton.setOnClickListener(v -> viewModel.inviteUser(inviteUsernameInput.getText().toString(), currentUsername));
         addNoteButton.setOnClickListener(v -> viewModel.addNoteForCurrentUser(noteInput.getText().toString()));
 
-        visualizeButton.setOnClickListener(v -> visualizeTripDays());
+        visualizeButton.setOnClickListener(v -> viewModel.calculatePlannedDays(currentUsername));
 
+        visualizeButton.setOnClickListener(v -> {
+            Long allottedTime = viewModel.getAllottedTime().getValue();
+            int plannedDays = viewModel.getPlannedDays().getValue();
+            if (allottedTime != null) {
+                visualizeTripDays(allottedTime, plannedDays);
+            } else {
+                Toast.makeText(getContext(), "Allotted time data is not available.", Toast.LENGTH_SHORT).show();
+            }
+        });
         observeViewModel();
         return view;
         }
@@ -73,10 +85,24 @@ public class LogisticsFragment extends Fragment {
         viewModel.getUserNotesMap().observe(getViewLifecycleOwner(), this::displayUserNotes);
         viewModel.getInviteStatus().observe(getViewLifecycleOwner(), status -> Toast.makeText(getContext(), status, Toast.LENGTH_SHORT).show());
         viewModel.getNoteStatus().observe(getViewLifecycleOwner(), status -> Toast.makeText(getContext(), status, Toast.LENGTH_SHORT).show());
+        viewModel.getAllottedTime().observe(getViewLifecycleOwner(), time -> {
+                allottedTime = time;
+                if (allottedTime != null && plannedDays != null) {
+                    visualizeTripDays(allottedTime, plannedDays);
+                }
+            });
+        viewModel.getPlannedDays().observe(getViewLifecycleOwner(), days -> {
+                plannedDays = days;
+                if (allottedTime != null && plannedDays != null) {
+                    visualizeTripDays(allottedTime, plannedDays);
+                }
+            });
         }
-    private void visualizeTripDays() {
-        int allottedDays = 10;
-        int plannedDays = 6;
+    private void updateTripVisualization(Long allottedTime, int plannedDays) {
+        visualizeTripDays(allottedTime, plannedDays);
+    }
+
+    private void visualizeTripDays(long allottedDays, int plannedDays) {
 
         if (pieChart.getVisibility() == View.VISIBLE) {
             pieChart.setVisibility(View.GONE);
