@@ -24,6 +24,10 @@ import com.example.wandersync.viewmodel.DestinationAdapter;
 import com.example.wandersync.viewmodel.DestinationViewModel;
 
 import java.time.LocalDate;
+import android.app.DatePickerDialog;
+
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +44,8 @@ public class DestinationFragment extends Fragment {
     private EditText duration, estimatedStartEditText1, estimatedEndEditText1;
     private Button logTravelButton, cancelButton, submitButton, cancelButton1, submitButton1, calculateButton;
     private TextView resultAmountTextView, resetResultButton;
+    private LocalDate startDate, endDate, startDate1, endDate1;
+    private String lastErrorMessage;
 
     @Nullable
     @Override
@@ -106,36 +112,95 @@ public class DestinationFragment extends Fragment {
         
         resetResultButton.setOnClickListener(v -> resultAmountTextView.setText("0 days"));
 
+        estimatedStartEditText.setOnClickListener(v -> showDatePickerDialog(true));
+        estimatedEndEditText.setOnClickListener(v -> showDatePickerDialog(false));
+
+        estimatedStartEditText1.setOnClickListener(v -> showDatePickerDialog1(true));
+        estimatedEndEditText1.setOnClickListener(v -> showDatePickerDialog1(false));
+
         return view;
     }
 
-    private void addDestination() {
+    public void addDestination() {
         String location = travelLocationEditText.getText().toString();
-        String start = estimatedStartEditText.getText().toString();
-        String end = estimatedEndEditText.getText().toString();
+        LocalDate start = startDate;
+        LocalDate end = endDate;
+
+        if (end.isBefore(start)) {
+            Toast.makeText(requireContext(), "End date cannot be before start date.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         if (TextUtils.isEmpty(location)) {
+            lastErrorMessage = "Location must be a valid name";
             Toast.makeText(requireContext(), "Location must be a valid name", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        try {
-            LocalDate startDate = LocalDate.parse(start);
-            LocalDate endDate = LocalDate.parse(end);
-            long daysPlanned = ChronoUnit.DAYS.between(startDate, endDate);
+        long daysPlanned = ChronoUnit.DAYS.between(startDate, endDate);
+        Destination newDestination = new Destination(location, daysPlanned);
+        viewModel.addDestination(newDestination);
+        resetDestinationForm();
+    }
 
-            if (daysPlanned <= 0) {
-                Toast.makeText(requireContext(), "Start date must be before end date", Toast.LENGTH_SHORT).show();
-                return;
-            }
+    private void showDatePickerDialog(boolean isStartDate) {
+        LocalDate initialDate = isStartDate ? (startDate != null ? startDate : LocalDate.now()) :
+                (endDate != null ? endDate : LocalDate.now());
 
-            Destination newDestination = new Destination(location, daysPlanned);
-            viewModel.addDestination(newDestination);
-            resetDestinationForm();
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(),
+                (view, year, month, dayOfMonth) -> {
+                    LocalDate selectedDate = LocalDate.of(year, month + 1, dayOfMonth);
+                    if (isStartDate) {
+                        startDate = selectedDate;
+                        estimatedStartEditText.setText(selectedDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+                    } else {
+                        endDate = selectedDate;
+                        estimatedEndEditText.setText(selectedDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+                    }
+                },
+                initialDate.getYear(),
+                initialDate.getMonthValue() - 1,
+                initialDate.getDayOfMonth());
 
-        } catch (Exception e) {
-            Toast.makeText(requireContext(), "Please enter dates in YYYY-MM-DD format", Toast.LENGTH_SHORT).show();
+        if (isStartDate) {
+            datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
         }
+        else if (startDate != null) {
+            datePickerDialog.getDatePicker().setMinDate(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        } else {
+            datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+        }
+        datePickerDialog.show();
+    }
+
+    private void showDatePickerDialog1(boolean isStartDate) {
+        LocalDate initialDate = isStartDate ? (startDate1 != null ? startDate1 : LocalDate.now()) :
+                (endDate1 != null ? endDate1 : LocalDate.now());
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(),
+                (view, year, month, dayOfMonth) -> {
+                    LocalDate selectedDate = LocalDate.of(year, month + 1, dayOfMonth);
+                    if (isStartDate) {
+                        startDate1 = selectedDate;
+                        estimatedStartEditText1.setText(selectedDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+                    } else {
+                        endDate1 = selectedDate;
+                        estimatedEndEditText1.setText(selectedDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+                    }
+                },
+                initialDate.getYear(),
+                initialDate.getMonthValue() - 1,
+                initialDate.getDayOfMonth());
+
+        if (isStartDate) {
+            datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+        }
+        else if (startDate != null) {
+            datePickerDialog.getDatePicker().setMinDate(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        } else {
+            datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+        }
+        datePickerDialog.show();
     }
 
     private void calculateVacationTime() {
@@ -144,12 +209,12 @@ public class DestinationFragment extends Fragment {
         if (TextUtils.isEmpty(durationStr)) {
             blanks++;
         }
-        String start = estimatedStartEditText1.getText().toString();
-        if (TextUtils.isEmpty(start)) {
+        LocalDate start = startDate1;
+        if (start == null) {
             blanks++;
         }
-        String end = estimatedEndEditText1.getText().toString();
-        if (TextUtils.isEmpty(end)) {
+        LocalDate end = endDate1;
+        if (end == null) {
             blanks++;
         }
         long durationLong;
@@ -161,50 +226,54 @@ public class DestinationFragment extends Fragment {
         } else {
             if (TextUtils.isEmpty(durationStr)) {
                 try {
-                    LocalDate startDate = LocalDate.parse(start);
-                    LocalDate endDate = LocalDate.parse(end);
+                    LocalDate startDate = startDate1;
+                    LocalDate endDate = endDate1;
+                    if (endDate.isBefore(startDate)) {
+                        Toast.makeText(requireContext(), "End date cannot be before start date.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     daysPlanned = ChronoUnit.DAYS.between(startDate, endDate);
                     resultAmountTextView.setText(daysPlanned + " days");
                     resultLayout.setVisibility(View.VISIBLE);
                     viewModel.saveVacationTime(daysPlanned);
                     resetVacationForm();
                 } catch (Exception e) {
-                    Toast.makeText(requireContext(), "Please enter dates in YYYY-MM-DD format", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "An error occurred while calculating dates.", Toast.LENGTH_SHORT).show();
                 }
-            } else if (TextUtils.isEmpty(end)) {
+            } else if (end == null) {
                 try {
                     durationLong = Long.parseLong(durationStr);
                 } catch (Exception e) {
                     Toast.makeText(requireContext(), "Duration must be a valid number", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                try {
-                    LocalDate startDate = LocalDate.parse(start);
-                    LocalDate endDate = LocalDate.parse(startDate.plusDays(durationLong).toString());
-                    resultAmountTextView.setText(durationLong + " days");
-                    resultLayout.setVisibility(View.VISIBLE);
-                    viewModel.saveVacationTime(durationLong);
-                    resetVacationForm();
-                } catch (Exception e) {
-                    Toast.makeText(requireContext(), "Please enter dates in YYYY-MM-DD format", Toast.LENGTH_SHORT).show();
-                }
-            } else if (TextUtils.isEmpty(start)) {
+                LocalDate startDate = startDate1;
+                LocalDate endDate = startDate.plusDays(durationLong);
+                resultAmountTextView.setText(durationLong + " days");
+                resultLayout.setVisibility(View.VISIBLE);
+                viewModel.saveVacationTime(durationLong);
+                resetVacationForm();
+            } else if (start == null) {
                 try {
                     durationLong = Long.parseLong(durationStr);
-                } catch (Exception e) {
-                    Toast.makeText(requireContext(), "Duration must be a valid number", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                try {
-                    LocalDate endDate = LocalDate.parse(end);
-                    LocalDate startDate = LocalDate.parse(endDate.minusDays(durationLong).toString());
-                    System.out.println(startDate.toString());
+
+                    LocalDate endDate = endDate1;
+                    LocalDate startDate = endDate.minusDays(durationLong);
+
+                    if (startDate.isBefore(LocalDate.now())) {
+                        Toast.makeText(requireContext(), "Start date cannot be in the past.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
                     resultAmountTextView.setText(durationLong + " days");
                     resultLayout.setVisibility(View.VISIBLE);
                     viewModel.saveVacationTime(durationLong);
                     resetVacationForm();
+
+                } catch (NumberFormatException e) {
+                    Toast.makeText(requireContext(), "Duration must be a valid number.", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
-                    Toast.makeText(requireContext(), "Please enter dates in YYYY-MM-DD format", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "An error occurred while calculating dates.", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 try {
@@ -213,22 +282,18 @@ public class DestinationFragment extends Fragment {
                     Toast.makeText(requireContext(), "Duration must be a valid number", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                try {
-                    LocalDate startDate = LocalDate.parse(start);
-                    LocalDate endDate = LocalDate.parse(end);
-                    daysPlanned = ChronoUnit.DAYS.between(startDate, endDate);
+                LocalDate startDate = startDate1;
+                LocalDate endDate = endDate1;
+                daysPlanned = ChronoUnit.DAYS.between(startDate, endDate);
 
-                    if (daysPlanned != durationLong) {
-                        Toast.makeText(requireContext(), "Duration does not match the days planned", Toast.LENGTH_SHORT).show();
-                    } else {
-                        resultAmountTextView.setText(durationLong + " days");
-                        resultLayout.setVisibility(View.VISIBLE);
-                        viewModel.saveVacationTime(durationLong);
-                    }
-                    resetVacationForm();
-                } catch (Exception e) {
-                    Toast.makeText(requireContext(), "Please enter dates in YYYY-MM-DD format", Toast.LENGTH_SHORT).show();
+                if (daysPlanned != durationLong) {
+                    Toast.makeText(requireContext(), "Duration does not match the days planned", Toast.LENGTH_SHORT).show();
+                } else {
+                    resultAmountTextView.setText(durationLong + " days");
+                    resultLayout.setVisibility(View.VISIBLE);
+                    viewModel.saveVacationTime(durationLong);
                 }
+                resetVacationForm();
             }
         }
     }
@@ -237,6 +302,8 @@ public class DestinationFragment extends Fragment {
         travelLocationEditText.setText("");
         estimatedStartEditText.setText("");
         estimatedEndEditText.setText("");
+        startDate = null;
+        endDate = null;
         formLayout.setVisibility(View.GONE);
     }
 
@@ -244,7 +311,30 @@ public class DestinationFragment extends Fragment {
         duration.setText("");
         estimatedStartEditText1.setText("");
         estimatedEndEditText1.setText("");
+        startDate1 = null;
+        endDate1 = null;
         formLayout1.setVisibility(View.GONE);
+    }
+
+    public boolean isValidLocation(String location) {
+        return location != null && !location.trim().isEmpty();
+    }
+
+    public long calculateDaysBetween(LocalDate startDate, LocalDate endDate) {
+        return ChronoUnit.DAYS.between(startDate, endDate);
+    }
+
+    public boolean isEndDateAfterStartDate(LocalDate startDate, LocalDate endDate) {
+        return endDate != null && startDate != null && endDate.isAfter(startDate);
+    }
+
+    // Method to set an error message for testing purposes
+    public void setLastErrorMessage(String message) {
+        lastErrorMessage = message;
+    }
+
+    public String getLastErrorMessage() {
+        return lastErrorMessage;
     }
 }
 

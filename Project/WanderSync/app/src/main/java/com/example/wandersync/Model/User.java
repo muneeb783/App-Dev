@@ -1,5 +1,6 @@
 package com.example.wandersync.Model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class User {
@@ -10,13 +11,11 @@ public class User {
     private ArrayList<String> notes;
     private ArrayList<String> contributors; // List of contributor usernames
 
-    // Default constructor
     public User() {
         notes = new ArrayList<>();
         contributors = new ArrayList<>();
     }
 
-    // Constructor with parameters
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
@@ -26,7 +25,6 @@ public class User {
         this.allotedTime = 0;
     }
 
-    // Getters
     public String getUsername() {
         return username;
     }
@@ -51,7 +49,6 @@ public class User {
 
 
 
-    // Setters
     public void setUsername(String username) {
         this.username = username;
     }
@@ -71,9 +68,6 @@ public class User {
     public void setContributors(ArrayList<String> contributors) {
         this.contributors = contributors;
     }
-
-
-    // Additional methods
 
 
     public void addContributor(String contributor) {
