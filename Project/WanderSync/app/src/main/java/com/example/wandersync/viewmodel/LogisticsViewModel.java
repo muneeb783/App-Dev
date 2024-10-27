@@ -16,7 +16,7 @@ import java.util.HashMap;
 public class LogisticsViewModel extends AndroidViewModel {
 
     private final DatabaseReference databaseReference;
-    private final MutableLiveData<ArrayList<String>> invitedUsers = new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<ArrayList<String>> contributors = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<HashMap<String, ArrayList<String>>> userNotesMap = new MutableLiveData<>(new HashMap<>());
     private final MutableLiveData<String> inviteStatus = new MutableLiveData<>();
     private final MutableLiveData<String> noteStatus = new MutableLiveData<>();
@@ -39,8 +39,8 @@ public class LogisticsViewModel extends AndroidViewModel {
     public LiveData<Long> getAllottedTime() {
         return allottedTime;
     }
-    public LiveData<ArrayList<String>> getInvitedUsers() {
-        return invitedUsers;
+    public LiveData<ArrayList<String>> getContributors() {
+        return contributors;
     }
 
     public LiveData<HashMap<String, ArrayList<String>>> getUserNotesMap() {
@@ -53,6 +53,9 @@ public class LogisticsViewModel extends AndroidViewModel {
 
     public LiveData<String> getNoteStatus() {
         return noteStatus;
+    }
+    public String getUsername() {
+        return username;
     }
     public void calculatePlannedDays(String currentUsername) {
         DatabaseReference destinationRef = FirebaseDatabase.getInstance().getReference("destinations");
@@ -103,7 +106,7 @@ public class LogisticsViewModel extends AndroidViewModel {
             return;
         }
 
-        if (invitedUsers.getValue().contains(username)) {
+        if (contributors.getValue().contains(username)) {
             inviteStatus.setValue(username + " is already invited.");
             return;
         }
@@ -113,9 +116,15 @@ public class LogisticsViewModel extends AndroidViewModel {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    ArrayList<String> updatedUsers = new ArrayList<>(invitedUsers.getValue());
+                    // Update local contributors list and add it to the LiveData
+                    ArrayList<String> updatedUsers = new ArrayList<>(contributors.getValue());
                     updatedUsers.add(username);
-                    invitedUsers.setValue(updatedUsers);
+                    contributors.setValue(updatedUsers);
+
+                    DatabaseReference currentUserContributorsRef = databaseReference.child(currentUsername).child("contributors");
+                    currentUserContributorsRef.setValue(updatedUsers)
+                            .addOnSuccessListener(aVoid -> inviteStatus.setValue(username + " added as a contributor."))
+                            .addOnFailureListener(e -> inviteStatus.setValue("Failed to add contributor: " + e.getMessage()));
 
                     ArrayList<String> userNotes = new ArrayList<>();
                     for (DataSnapshot noteSnapshot : snapshot.child("notes").getChildren()) {
@@ -126,10 +135,10 @@ public class LogisticsViewModel extends AndroidViewModel {
                     }
 
                     HashMap<String, ArrayList<String>> updatedNotesMap = new HashMap<>(userNotesMap.getValue());
-                    updatedNotesMap.put(username, new ArrayList<>());
+                    updatedNotesMap.put(username, userNotes);  // Store the fetched notes
                     userNotesMap.setValue(updatedNotesMap);
 
-                    inviteStatus.setValue(username + " invited!");
+                    inviteStatus.setValue(username + " invited and notes fetched!");
                 } else {
                     inviteStatus.setValue("User " + username + " does not exist.");
                 }
@@ -142,22 +151,131 @@ public class LogisticsViewModel extends AndroidViewModel {
         });
     }
 
+
     public void addNoteForCurrentUser(String note) {
         if (note.isEmpty()) {
             noteStatus.setValue("Note cannot be empty");
             return;
         }
 
-        ArrayList<String> notes = userNotesMap.getValue().getOrDefault("current_user", new ArrayList<>());
+        ArrayList<String> notes = userNotesMap.getValue().getOrDefault(username, new ArrayList<>());
         notes.add(note);
 
         HashMap<String, ArrayList<String>> updatedNotesMap = new HashMap<>(userNotesMap.getValue());
-        updatedNotesMap.put("current_user", notes);
+        updatedNotesMap.put(username, notes);
         userNotesMap.setValue(updatedNotesMap);
         databaseReference.child(username).child("notes").setValue(notes)
                 .addOnSuccessListener(aVoid -> noteStatus.setValue("Note added."))
                 .addOnFailureListener(e -> noteStatus.setValue("Failed to add note: " + e.getMessage()));
         noteStatus.setValue("Note added.");
     }
+
+    public void fetchCurrentUserNotes() {
+        if (username == null) {
+            noteStatus.setValue("Username not available.");
+            return;
+        }
+
+        databaseReference.child(username).child("notes").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                ArrayList<String> currentUserNotes = new ArrayList<>();
+                for (DataSnapshot noteSnapshot : snapshot.getChildren()) {
+                    String note = noteSnapshot.getValue(String.class);
+                    if (note != null) {
+                        currentUserNotes.add(note);
+                    }
+                }
+                HashMap<String, ArrayList<String>> updatedNotesMap = new HashMap<>(userNotesMap.getValue());
+                updatedNotesMap.put(username, currentUserNotes);
+                userNotesMap.setValue(updatedNotesMap);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                noteStatus.setValue("Failed to load notes: " + error.getMessage());
+            }
+        });
+    }
+
+    private void fetchContributorsNotes() {
+        databaseReference.child(username).child("contributors").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot contributorSnapshot : snapshot.getChildren()) {
+                    String contributorUsername = contributorSnapshot.getValue(String.class);
+                    if (contributorUsername != null) {
+                        // Fetch notes for each contributor
+                        databaseReference.child(contributorUsername).child("notes").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot notesSnapshot) {
+                                ArrayList<String> contributorNotes = new ArrayList<>();
+                                for (DataSnapshot noteSnapshot : notesSnapshot.getChildren()) {
+                                    String note = noteSnapshot.getValue(String.class);
+                                    if (note != null) {
+                                        contributorNotes.add(note);
+                                    }
+                                }
+                                HashMap<String, ArrayList<String>> updatedNotesMap = new HashMap<>(userNotesMap.getValue());
+                                updatedNotesMap.put(contributorUsername, contributorNotes);
+                                userNotesMap.setValue(updatedNotesMap);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                noteStatus.setValue("Failed to load notes for contributor " + contributorUsername + ": " + error.getMessage());
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                noteStatus.setValue("Failed to load contributors: " + error.getMessage());
+            }
+        });
+    }
+    public void fetchContributors(String currentUsername) {
+        databaseReference.child(currentUsername).child("contributors").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                ArrayList<String> loadedContributors = new ArrayList<>();
+                HashMap<String, ArrayList<String>> loadedNotesMap = new HashMap<>();
+
+                for (DataSnapshot contributorSnapshot : snapshot.getChildren()) {
+                    String contributor = contributorSnapshot.getValue(String.class);
+                    if (contributor != null) {
+                        loadedContributors.add(contributor);
+                        databaseReference.child(contributor).child("notes").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot noteSnapshot) {
+                                ArrayList<String> contributorNotes = new ArrayList<>();
+                                for (DataSnapshot note : noteSnapshot.getChildren()) {
+                                    String noteText = note.getValue(String.class);
+                                    if (noteText != null) {
+                                        contributorNotes.add(noteText);
+                                    }
+                                }
+                                loadedNotesMap.put(contributor, contributorNotes);
+                                userNotesMap.setValue(loadedNotesMap); // Update notes map after fetching each contributor's notes
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                inviteStatus.setValue("Failed to load notes for " + contributor + ": " + error.getMessage());
+                            }
+                        });
+                    }
+                }
+                contributors.setValue(loadedContributors);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                inviteStatus.setValue("Failed to load contributors: " + error.getMessage());
+            }
+        });
+    }
+
 
 }

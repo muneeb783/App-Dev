@@ -56,6 +56,12 @@ public class DestinationFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         destinationList = new ArrayList<>();
+        LocalDate now = LocalDate.now();
+        destinationList.add(new Destination("Paris", 0, now, now));
+        destinationList.add(new Destination("London", 0, now, now));
+
+        adapter = new DestinationAdapter(destinationList);
+        recyclerView.setAdapter(adapter);
         adapter = new DestinationAdapter(destinationList);
         recyclerView.setAdapter(adapter);
 
@@ -84,8 +90,14 @@ public class DestinationFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(DestinationViewModel.class);
 
         viewModel.getDestinations().observe(getViewLifecycleOwner(), destinations -> {
-            destinationList.clear();
-            destinationList.addAll(destinations);
+            if (destinations.isEmpty()) {
+                destinationList.clear();
+                destinationList.add(new Destination("Paris", 0, now, now));
+                destinationList.add(new Destination("London", 0, now, now));
+            } else {
+                destinationList.clear();
+                destinationList.addAll(destinations);
+            }
             adapter.notifyDataSetChanged();
         });
 
@@ -138,8 +150,10 @@ public class DestinationFragment extends Fragment {
         }
 
         long daysPlanned = ChronoUnit.DAYS.between(startDate, endDate);
-        Destination newDestination = new Destination(location, daysPlanned);
+        Destination newDestination = new Destination(location, daysPlanned, start, end);
         viewModel.addDestination(newDestination);
+
+
         resetDestinationForm();
     }
 
@@ -328,7 +342,6 @@ public class DestinationFragment extends Fragment {
         return endDate != null && startDate != null && endDate.isAfter(startDate);
     }
 
-    // Method to set an error message for testing purposes
     public void setLastErrorMessage(String message) {
         lastErrorMessage = message;
     }
