@@ -10,10 +10,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.wandersync.Model.Destination;
-import com.google.firebase.Firebase;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -25,17 +23,14 @@ public class DestinationViewModel extends AndroidViewModel {
     private final MutableLiveData<String> errorLiveData;
     private final String username;
 
-
     public DestinationViewModel(@NonNull Application application) {
         super(application);
         databaseManager = DatabaseManager.getInstance();
         destinationsLiveData = new MutableLiveData<>(new ArrayList<>());
         errorLiveData = new MutableLiveData<>();
-        SharedPreferences sharedPreferences = application.getSharedPreferences("WanderSyncPrefs", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = application.getSharedPreferences("WanderSyncPrefs",
+                Context.MODE_PRIVATE);
         username = sharedPreferences.getString("username", null);
-        DatabaseReference usersRef = databaseManager.getUsersReference();
-        DatabaseReference destinationRef = databaseManager.getDestinationsReference();
-
         loadDestinations();
     }
 
@@ -65,7 +60,8 @@ public class DestinationViewModel extends AndroidViewModel {
                 List<Destination> destinationList = new ArrayList<>();
                 for (DataSnapshot destinationSnapshot : snapshot.getChildren()) {
                     Destination destination = destinationSnapshot.getValue(Destination.class);
-                    if (destination != null && destination.getUsername() != null && destination.getUsername().equals(username)) {
+                    if (destination != null && destination.getUsername() != null
+                            && destination.getUsername().equals(username)) {
                         destinationList.add(destination);
                     }
                 }

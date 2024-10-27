@@ -45,7 +45,8 @@ public class LoginActivity extends AppCompatActivity {
             public void onChanged(Boolean isSuccess) {
                 if (isSuccess) {
                     saveUsernameToPreferences(usernameInput.getText().toString());
-                    Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this,
+                            "Login successful", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(LoginActivity.this, NavBarActivity.class);
                     startActivity(intent);
                 }
