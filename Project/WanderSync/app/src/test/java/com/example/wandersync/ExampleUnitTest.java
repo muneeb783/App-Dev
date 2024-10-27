@@ -64,4 +64,28 @@ public class ExampleUnitTest {
         fragment.setLastErrorMessage("End date cannot be before start date");
         assertEquals("End date cannot be before start date", fragment.getLastErrorMessage());
     }
+
+    @Test
+    public void testDatePlusDays() {
+        LocalDate start = LocalDate.of(2024, 1, 1);
+        long period = 27;
+        LocalDate correctEndDate = LocalDate.of(2024, 01, 28);
+        LocalDate incorrectEndDate1 = LocalDate.of(2024, 01, 27);
+        LocalDate incorrectEndDate2 = LocalDate.of(2024, 02, 28);
+        assertEquals(correctEndDate, fragment.datePlusDays(start, period));
+        assertNotEquals(incorrectEndDate1, fragment.datePlusDays(start, period));
+        assertNotEquals(incorrectEndDate2, fragment.datePlusDays(start, period));
+    }
+
+    @Test
+    public void testDateMinusDays() {
+        LocalDate end = LocalDate.of(2024, 1, 1);
+        long period = 58;
+        LocalDate correctStartDate = LocalDate.of(2023, 11, 04);
+        LocalDate incorrectStartDate1 = LocalDate.of(2024, 11, 04);
+        LocalDate incorrectStartDate2 = LocalDate.of(2023, 11, 05);
+        assertEquals(correctStartDate, fragment.dateMinusDays(end, period));
+        assertNotEquals(incorrectStartDate1, fragment.dateMinusDays(end, period));
+        assertNotEquals(incorrectStartDate2, fragment.dateMinusDays(end, period));
+    }
 }

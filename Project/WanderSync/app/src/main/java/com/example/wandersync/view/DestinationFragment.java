@@ -271,7 +271,7 @@ public class DestinationFragment extends Fragment {
                     return;
                 }
                 LocalDate startDate = startDate1;
-                LocalDate endDate = startDate.plusDays(durationLong);
+                LocalDate endDate = datePlusDays(startDate, durationLong);
                 resultAmountTextView.setText(durationLong + " days");
                 resultLayout.setVisibility(View.VISIBLE);
                 viewModel.saveVacationTime(durationLong);
@@ -281,7 +281,7 @@ public class DestinationFragment extends Fragment {
                     durationLong = Long.parseLong(durationStr);
 
                     LocalDate endDate = endDate1;
-                    LocalDate startDate = endDate.minusDays(durationLong);
+                    LocalDate startDate = dateMinusDays(endDate, durationLong);
 
                     if (startDate.isBefore(LocalDate.now())) {
                         Toast.makeText(requireContext(), "Start date cannot be in the past.", Toast.LENGTH_SHORT).show();
@@ -345,6 +345,14 @@ public class DestinationFragment extends Fragment {
 
     public long calculateDaysBetween(LocalDate startDate, LocalDate endDate) {
         return ChronoUnit.DAYS.between(startDate, endDate);
+    }
+
+    public LocalDate datePlusDays(LocalDate firstDay, long timePeriod) {
+        return firstDay.plusDays(timePeriod);
+    }
+
+    public LocalDate dateMinusDays(LocalDate firstDay, long timePeriod) {
+        return firstDay.minusDays(timePeriod);
     }
 
     public boolean isEndDateAfterStartDate(LocalDate startDate, LocalDate endDate) {
