@@ -59,9 +59,10 @@ public class LogisticsFragment extends Fragment {
         notesListLayout = view.findViewById(R.id.notes_list_layout);
         pieChart = view.findViewById(R.id.pie_chart);
 
-        viewModel.fetchCurrentUserNotes();
         currentUsername = getCurrentUsername();
         viewModel.fetchContributors(currentUsername);
+        viewModel.fetchCurrentUserNotes();
+
 
         inviteButton.setOnClickListener(v -> viewModel.inviteUser(inviteUsernameInput.getText().toString(), currentUsername));
         addNoteButton.setOnClickListener(v -> viewModel.addNoteForCurrentUser(noteInput.getText().toString()));
@@ -110,9 +111,14 @@ public class LogisticsFragment extends Fragment {
             pieChart.setVisibility(View.GONE);
         } else {
             ArrayList<PieEntry> entries = new ArrayList<>();
-            entries.add(new PieEntry(plannedDays, "Planned Days"));
-            entries.add(new PieEntry(allottedDays, "Allotted Days"));
 
+            if (allottedDays < plannedDays) {
+                entries.add(new PieEntry(plannedDays, "PlannedDays"));
+                entries.add(new PieEntry(allottedDays, "Allotted Days (Currently less days allotted than planned)"));
+            } else {
+                entries.add(new PieEntry(plannedDays, "PlannedDays"));
+                entries.add(new PieEntry(allottedDays - plannedDays, "Allotted Days (Unused)"));
+            }
             PieDataSet dataSet = new PieDataSet(entries, "Trip Days");
 
             int[] colors = {0xFFFF5733, 0xFF33FF57};
@@ -174,4 +180,5 @@ public class LogisticsFragment extends Fragment {
             noteView.setText(note);
             notesListLayout.addView(noteView);
         }
+
     }

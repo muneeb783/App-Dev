@@ -1,15 +1,28 @@
 package com.example.wandersync.viewmodel;
 
+import android.provider.ContactsContract;
+
+import com.example.wandersync.Model.Destination;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseManager {
     private static DatabaseManager instance;
     private final DatabaseReference usersReference;
+    private final DatabaseReference destinationsReference;
 
     private DatabaseManager() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         usersReference = database.getReference("users");
+        destinationsReference = database.getReference("destinations");
     }
 
     public static synchronized DatabaseManager getInstance() {
@@ -18,9 +31,34 @@ public class DatabaseManager {
         }
         return instance;
     }
+
     public DatabaseReference getUsersReference() {
         return usersReference;
     }
+    public DatabaseReference getDestinationsReference() {
+        return destinationsReference;
+    }
+
+    public void addDestination(String username, Destination destination, OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener) {
+        destination.setUsername(username);
+        String destinationId = destinationsReference.push().getKey();
+        if (destinationId != null) {
+            destinationsReference.child(destinationId).setValue(destination)
+                    .addOnSuccessListener(onSuccessListener)
+                    .addOnFailureListener(onFailureListener);
+        } else {
+            onFailureListener.onFailure(new Exception("Error generating destination ID"));
+        }
+    }
+
+    public void loadDestinations(String username, ValueEventListener valueEventListener) {
+        destinationsReference.addValueEventListener(valueEventListener);
+    }
+
+    public void saveVacationTime(String username, long duration, OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener) {
+        DatabaseReference userVacationRef = usersReference.child(username).child("allotedTime");
+        userVacationRef.setValue(duration)
+                .addOnSuccessListener(onSuccessListener)
+                .addOnFailureListener(onFailureListener);
+    }
 }
-
-
