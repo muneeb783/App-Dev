@@ -59,9 +59,10 @@ public class LogisticsFragment extends Fragment {
         notesListLayout = view.findViewById(R.id.notes_list_layout);
         pieChart = view.findViewById(R.id.pie_chart);
 
-        viewModel.fetchCurrentUserNotes();
         currentUsername = getCurrentUsername();
         viewModel.fetchContributors(currentUsername);
+        viewModel.fetchCurrentUserNotes();
+
 
         inviteButton.setOnClickListener(v -> viewModel.inviteUser(inviteUsernameInput.getText().toString(), currentUsername));
         addNoteButton.setOnClickListener(v -> viewModel.addNoteForCurrentUser(noteInput.getText().toString()));
@@ -174,4 +175,5 @@ public class LogisticsFragment extends Fragment {
             noteView.setText(note);
             notesListLayout.addView(noteView);
         }
+
     }
