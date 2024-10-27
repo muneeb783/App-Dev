@@ -32,7 +32,6 @@ public class LogisticsViewModel extends AndroidViewModel {
         calculatePlannedDays(username);
     }
 
-    // Getter methods for LiveData
     public LiveData<Integer> getPlannedDays() { return plannedDays; }
     public LiveData<Long> getAllottedTime() { return allottedTime; }
     public LiveData<ArrayList<String>> getContributors() { return contributors; }
@@ -141,7 +140,7 @@ public class LogisticsViewModel extends AndroidViewModel {
 
                 HashMap<String, ArrayList<String>> updatedNotesMap = new HashMap<>(userNotesMap.getValue());
                 updatedNotesMap.put(contributorUsername, contributorNotes);
-                userNotesMap.setValue(updatedNotesMap); // Update notes map with contributor's notes
+                userNotesMap.setValue(updatedNotesMap);
             }
 
             @Override
