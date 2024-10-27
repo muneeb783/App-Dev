@@ -1,18 +1,11 @@
 package com.example.wandersync.viewmodel;
 
-import android.provider.ContactsContract;
-
 import com.example.wandersync.Model.Destination;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DatabaseManager {
     private static DatabaseManager instance;
@@ -39,7 +32,9 @@ public class DatabaseManager {
         return destinationsReference;
     }
 
-    public void addDestination(String username, Destination destination, OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener) {
+    public void addDestination(String username, Destination destination,
+                               OnSuccessListener<Void> onSuccessListener,
+                               OnFailureListener onFailureListener) {
         destination.setUsername(username);
         String destinationId = destinationsReference.push().getKey();
         if (destinationId != null) {
@@ -55,7 +50,9 @@ public class DatabaseManager {
         destinationsReference.addValueEventListener(valueEventListener);
     }
 
-    public void saveVacationTime(String username, long duration, OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener) {
+    public void saveVacationTime(String username, long duration,
+                                 OnSuccessListener<Void> onSuccessListener,
+                                 OnFailureListener onFailureListener) {
         DatabaseReference userVacationRef = usersReference.child(username).child("allotedTime");
         userVacationRef.setValue(duration)
                 .addOnSuccessListener(onSuccessListener)

@@ -1,5 +1,6 @@
 package com.example.wandersync;
 import com.example.wandersync.view.DestinationFragment;
+import com.example.wandersync.view.LogisticsFragment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,10 +14,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ExampleUnitTest {
 
     private DestinationFragment fragment;
+    private LogisticsFragment logisticsFragment;
 
     @BeforeEach
     public void setUp() {
         fragment = new DestinationFragment();
+        logisticsFragment = new LogisticsFragment();
     }
 
     @Test
@@ -87,5 +90,39 @@ public class ExampleUnitTest {
         assertEquals(correctStartDate, fragment.dateMinusDays(end, period));
         assertNotEquals(incorrectStartDate1, fragment.dateMinusDays(end, period));
         assertNotEquals(incorrectStartDate2, fragment.dateMinusDays(end, period));
+    }
+
+    @Test
+    public void testCalculatePlannedDays() {
+        logisticsFragment.setAllottedTime(10L); // Set allotted time
+        logisticsFragment.setPlannedDays(5); // Set planned days
+
+        // Example condition: if allotted time is greater than planned days, it should be valid.
+        Long allottedTime = logisticsFragment.getAllottedTime();
+        int plannedDays = logisticsFragment.getPlannedDays();
+
+        assertTrue("Allotted time should be greater than or equal to planned days", allottedTime >= plannedDays);
+    }
+
+    @Test
+    public void testSetAndGetPlannedDays() {
+        logisticsFragment.setPlannedDays(5); // Assuming you have a setter
+        int plannedDays = logisticsFragment.getPlannedDays(); // Assuming you have a getter
+        assertEquals("Planned days should be 5", 5, plannedDays);
+    }
+
+    @Test
+    public void testIsValidUsername() {
+        // Arrange
+        String validUsername = "validUser";
+        String invalidUsernameNull = null;
+        String invalidUsernameEmpty = "";
+        String invalidUsernameSpaces = "   ";
+
+        // Act & Assert
+        assertTrue("Username should be valid", logisticsFragment.isValidUsername(validUsername));
+        assertFalse("Username should be invalid (null)", logisticsFragment.isValidUsername(invalidUsernameNull));
+        assertFalse("Username should be invalid (empty)", logisticsFragment.isValidUsername(invalidUsernameEmpty));
+        assertFalse("Username should be invalid (only spaces)", logisticsFragment.isValidUsername(invalidUsernameSpaces));
     }
 }
