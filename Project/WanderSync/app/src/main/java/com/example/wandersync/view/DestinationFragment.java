@@ -57,8 +57,8 @@ public class DestinationFragment extends Fragment {
 
         destinationList = new ArrayList<>();
         LocalDate now = LocalDate.now();
-        destinationList.add(new Destination("Paris", 0, now, now));
-        destinationList.add(new Destination("London", 0, now, now));
+        destinationList.add(new Destination("Destination", 0, now, now));
+        destinationList.add(new Destination("Destination", 0, now, now));
 
         adapter = new DestinationAdapter(destinationList);
         recyclerView.setAdapter(adapter);
@@ -138,14 +138,23 @@ public class DestinationFragment extends Fragment {
         LocalDate start = startDate;
         LocalDate end = endDate;
 
-        if (end.isBefore(start)) {
-            Toast.makeText(requireContext(), "End date cannot be before start date.", Toast.LENGTH_SHORT).show();
+        if (start == null && end == null && TextUtils.isEmpty(location)) {
+            Toast.makeText(requireContext(), "Please enter all the fields.", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (start == null) {
+            Toast.makeText(requireContext(), "Please enter a start date.", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (end == null) {
+            Toast.makeText(requireContext(), "Please enter an end date.", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (TextUtils.isEmpty(location)) {
+            lastErrorMessage = "Location must be a valid name";
+            Toast.makeText(requireContext(), "Location must be a valid name", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (TextUtils.isEmpty(location)) {
-            lastErrorMessage = "Location must be a valid name";
-            Toast.makeText(requireContext(), "Location must be a valid name", Toast.LENGTH_SHORT).show();
+        if (end.isBefore(start)) {
+            Toast.makeText(requireContext(), "End date cannot be before start date.", Toast.LENGTH_SHORT).show();
             return;
         }
 
