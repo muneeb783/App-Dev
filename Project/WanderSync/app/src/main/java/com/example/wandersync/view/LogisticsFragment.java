@@ -111,9 +111,14 @@ public class LogisticsFragment extends Fragment {
             pieChart.setVisibility(View.GONE);
         } else {
             ArrayList<PieEntry> entries = new ArrayList<>();
-            entries.add(new PieEntry(plannedDays, "Planned Days"));
-            entries.add(new PieEntry(allottedDays, "Allotted Days"));
 
+            if (allottedDays < plannedDays) {
+                entries.add(new PieEntry(plannedDays, "PlannedDays"));
+                entries.add(new PieEntry(allottedDays, "Allotted Days (Currently less days allotted than planned)"));
+            } else {
+                entries.add(new PieEntry(plannedDays, "PlannedDays"));
+                entries.add(new PieEntry(allottedDays - plannedDays, "Allotted Days (Unused)"));
+            }
             PieDataSet dataSet = new PieDataSet(entries, "Trip Days");
 
             int[] colors = {0xFFFF5733, 0xFF33FF57};
