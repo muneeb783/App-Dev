@@ -59,8 +59,9 @@ public class LogisticsFragment extends Fragment {
         notesListLayout = view.findViewById(R.id.notes_list_layout);
         pieChart = view.findViewById(R.id.pie_chart);
 
-
+        viewModel.fetchCurrentUserNotes();
         currentUsername = getCurrentUsername();
+        viewModel.fetchContributors(currentUsername);
 
         inviteButton.setOnClickListener(v -> viewModel.inviteUser(inviteUsernameInput.getText().toString(), currentUsername));
         addNoteButton.setOnClickListener(v -> viewModel.addNoteForCurrentUser(noteInput.getText().toString()));
@@ -81,7 +82,7 @@ public class LogisticsFragment extends Fragment {
         }
 
         private void observeViewModel() {
-        viewModel.getInvitedUsers().observe(getViewLifecycleOwner(), this::displayInvitedUsers);
+        viewModel.getContributors().observe(getViewLifecycleOwner(), this::displayInvitedUsers);
         viewModel.getUserNotesMap().observe(getViewLifecycleOwner(), this::displayUserNotes);
         viewModel.getInviteStatus().observe(getViewLifecycleOwner(), status -> Toast.makeText(getContext(), status, Toast.LENGTH_SHORT).show());
         viewModel.getNoteStatus().observe(getViewLifecycleOwner(), status -> Toast.makeText(getContext(), status, Toast.LENGTH_SHORT).show());
@@ -97,6 +98,7 @@ public class LogisticsFragment extends Fragment {
                     visualizeTripDays(allottedTime, plannedDays);
                 }
             });
+            viewModel.getUserNotesMap().observe(getViewLifecycleOwner(), this::displayUserNotes);
         }
     private void updateTripVisualization(Long allottedTime, int plannedDays) {
         visualizeTripDays(allottedTime, plannedDays);
@@ -123,7 +125,7 @@ public class LogisticsFragment extends Fragment {
         }
     }
         private String getCurrentUsername() {
-            return "current_user";
+            return viewModel.getUsername();
         }
 
         private void displayInvitedUsers(ArrayList<String> users) {
