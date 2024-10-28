@@ -366,6 +366,26 @@ public class DestinationFragment extends Fragment {
         return location != null && !location.trim().isEmpty();
     }
 
+    public boolean isValidDuration(String durationStr) {
+        if (durationStr == null || durationStr.trim().isEmpty()) {
+            return false;
+        }
+        try {
+            int duration = Integer.parseInt(durationStr.trim());
+            return duration > 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public int countWords(String str) {
+        if (str == null || str.trim().isEmpty()) {
+            return 0;
+        }
+        String[] words = str.trim().split("\\s+");
+        return words.length;
+    }
+
     public long calculateDaysBetween(LocalDate startDate, LocalDate endDate) {
         return ChronoUnit.DAYS.between(startDate, endDate);
     }
