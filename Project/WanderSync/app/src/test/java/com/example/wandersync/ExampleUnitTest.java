@@ -125,4 +125,36 @@ public class ExampleUnitTest {
         assertFalse("Username should be invalid (empty)", logisticsFragment.isValidUsername(invalidUsernameEmpty));
         assertFalse("Username should be invalid (only spaces)", logisticsFragment.isValidUsername(invalidUsernameSpaces));
     }
+
+    @Test
+    public void testIsValidDuration() {
+        // Valid durations
+        assertTrue(fragment.isValidDuration("1"));
+        assertTrue(fragment.isValidDuration("100"));
+        assertTrue(fragment.isValidDuration("  5  "));
+
+        // Invalid durations
+        assertFalse(fragment.isValidDuration(null));
+        assertFalse(fragment.isValidDuration(""));
+        assertFalse(fragment.isValidDuration("   "));
+        assertFalse(fragment.isValidDuration("0"));
+        assertFalse(fragment.isValidDuration("-5"));
+        assertFalse(fragment.isValidDuration("abc"));
+        assertFalse(fragment.isValidDuration("5.5"));
+    }
+
+    @Test
+    public void testCountWords() {
+        // Valid cases
+        assertEquals(1, fragment.countWords("Paris"));
+        assertEquals(2, fragment.countWords("New York"));
+        assertEquals(3, fragment.countWords("Los Angeles City"));
+
+        // Edge cases
+        assertEquals(0, fragment.countWords(null));
+        assertEquals(0, fragment.countWords(""));
+        assertEquals(0, fragment.countWords("   "));
+        assertEquals(1, fragment.countWords("   Tokyo   "));
+        assertEquals(4, fragment.countWords("San   Francisco Bay Area"));
+    }
 }
