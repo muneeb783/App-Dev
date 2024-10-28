@@ -94,10 +94,8 @@ public class ExampleUnitTest {
 
     @Test
     public void testCalculatePlannedDays() {
-        logisticsFragment.setAllottedTime(10L); // Set allotted time
-        logisticsFragment.setPlannedDays(5); // Set planned days
-
-        // Example condition: if allotted time is greater than planned days, it should be valid.
+        logisticsFragment.setAllottedTime(10L);
+        logisticsFragment.setPlannedDays(5);
         Long allottedTime = logisticsFragment.getAllottedTime();
         int plannedDays = logisticsFragment.getPlannedDays();
 
@@ -106,20 +104,17 @@ public class ExampleUnitTest {
 
     @Test
     public void testSetAndGetPlannedDays() {
-        logisticsFragment.setPlannedDays(5); // Assuming you have a setter
-        int plannedDays = logisticsFragment.getPlannedDays(); // Assuming you have a getter
+        logisticsFragment.setPlannedDays(5);
+        int plannedDays = logisticsFragment.getPlannedDays();
         assertEquals("Planned days should be 5", 5, plannedDays);
     }
 
     @Test
     public void testIsValidUsername() {
-        // Arrange
         String validUsername = "validUser";
         String invalidUsernameNull = null;
         String invalidUsernameEmpty = "";
         String invalidUsernameSpaces = "   ";
-
-        // Act & Assert
         assertTrue("Username should be valid", logisticsFragment.isValidUsername(validUsername));
         assertFalse("Username should be invalid (null)", logisticsFragment.isValidUsername(invalidUsernameNull));
         assertFalse("Username should be invalid (empty)", logisticsFragment.isValidUsername(invalidUsernameEmpty));
@@ -128,12 +123,9 @@ public class ExampleUnitTest {
 
     @Test
     public void testIsValidDuration() {
-        // Valid durations
         assertTrue(fragment.isValidDuration("1"));
         assertTrue(fragment.isValidDuration("100"));
         assertTrue(fragment.isValidDuration("  5  "));
-
-        // Invalid durations
         assertFalse(fragment.isValidDuration(null));
         assertFalse(fragment.isValidDuration(""));
         assertFalse(fragment.isValidDuration("   "));
@@ -145,12 +137,9 @@ public class ExampleUnitTest {
 
     @Test
     public void testCountWords() {
-        // Valid cases
         assertEquals(1, fragment.countWords("Paris"));
         assertEquals(2, fragment.countWords("New York"));
         assertEquals(3, fragment.countWords("Los Angeles City"));
-
-        // Edge cases
         assertEquals(0, fragment.countWords(null));
         assertEquals(0, fragment.countWords(""));
         assertEquals(0, fragment.countWords("   "));
