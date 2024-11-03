@@ -38,7 +38,7 @@ public class Order {
     }
 
     public boolean hasGiftCard() {
-        return items.stream().anyMatch(item -> item instanceof GiftCardItem);
+        return items.stream().anyMatch(GiftCardItem.class::isInstance);
     }
 
     public void sendConfirmationEmail() {

@@ -19,7 +19,11 @@ public class Main {
 
         Order order = new Order(items, "John Doe", "johndoe@example.com");
 
-        logger.info(String.format("Total Price: $%.2f", order.calculateTotalPrice()));
+        double totalPrice = order.calculateTotalPrice();
+        if (logger.isLoggable(java.util.logging.Level.INFO)) {
+            logger.info(String.format("Total Price: $%.2f", totalPrice));
+        }
+
         order.sendConfirmationEmail();
         order.printOrder();
     }
