@@ -1,7 +1,17 @@
+package com.example.discount;
+
+import java.util.logging.Logger;
+
 public class EmailSender {
+    private static final Logger logger = Logger.getLogger(EmailSender.class.getName());
+
+    private EmailSender() {
+        // Prevent instantiation
+    }
+
     public static void sendEmail(String customerEmail, String subject, String message) {
-        System.out.println("Email to: " + customerEmail);
-        System.out.println("Subject: " + subject);
-        System.out.println("Body: " + message);
+        logger.info("Email to: " + customerEmail);
+        logger.info("Subject: " + subject);
+        logger.info("Body: " + message);
     }
 }

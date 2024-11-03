@@ -1,3 +1,5 @@
+package com.example.discount;
+
 public class TaxableItem extends Item {
     private double taxRate;
 
