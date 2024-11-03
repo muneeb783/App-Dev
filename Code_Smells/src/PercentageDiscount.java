@@ -1,3 +1,5 @@
+package com.example.discount;
+
 public class PercentageDiscount implements Discount {
     private final double percentage;
 

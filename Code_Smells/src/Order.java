@@ -1,6 +1,10 @@
+package com.example.discount;
+
 import java.util.List;
+import java.util.logging.Logger;
 
 public class Order {
+    private static final Logger logger = Logger.getLogger(Order.class.getName());
     private List<Item> items;
     private String customerName;
     private String customerEmail;
@@ -33,7 +37,7 @@ public class Order {
     }
 
     public boolean hasGiftCard() {
-        return items.stream().anyMatch(item -> item instanceof GiftCardItem);
+        return items.stream().anyMatch(GiftCardItem.class::isInstance);
     }
 
     public void sendConfirmationEmail() {
@@ -53,7 +57,7 @@ public class Order {
     }
 
     public void printOrder() {
-        System.out.println("Order Details:");
-        items.forEach(item -> System.out.println(item.getName() + " - $" + item.getPrice()));
+        logger.info("Order Details:");
+        items.forEach(item -> logger.info(item.getName() + " - $" + item.getPrice()));
     }
 }
