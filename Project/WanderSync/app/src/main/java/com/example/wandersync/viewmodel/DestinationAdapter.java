@@ -8,7 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.wandersync.Model.Destination;
+import com.example.wandersync.model.Destination;
 import com.example.wandersync.R;
 
 import java.util.List;

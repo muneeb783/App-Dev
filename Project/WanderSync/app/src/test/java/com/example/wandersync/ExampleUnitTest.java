@@ -23,7 +23,7 @@ public class ExampleUnitTest {
     }
 
     @Test
-    public void addition_isCorrect() {
+    public void additionIsCorrect() {
         assertEquals(4, 2 + 2);
     }
 

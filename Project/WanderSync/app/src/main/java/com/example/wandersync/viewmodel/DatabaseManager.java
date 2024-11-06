@@ -1,6 +1,6 @@
 package com.example.wandersync.viewmodel;
 
-import com.example.wandersync.Model.Destination;
+import com.example.wandersync.model.Destination;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;

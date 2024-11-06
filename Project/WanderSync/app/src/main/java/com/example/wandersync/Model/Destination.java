@@ -1,4 +1,4 @@
-package com.example.wandersync.Model;
+package com.example.wandersync.model;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
