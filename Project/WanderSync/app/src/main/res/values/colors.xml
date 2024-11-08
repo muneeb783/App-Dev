@@ -8,4 +8,6 @@
     <color name="colorAllottedDays">#90EE90</color>
     <color name="buttonBackground">#6200EE</color>
     <color name="buttonTextColor">#FFFFFF</color>
+    <color name="past_reservation">#FFFFFF</color>
+    <color name="future_reservation">#FFFFFF</color>
 </resources>
