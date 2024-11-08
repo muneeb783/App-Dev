@@ -33,9 +33,6 @@ import java.util.List;
 
 public class DestinationFragment extends Fragment {
 
-    private RecyclerView recyclerView;
-    private DestinationAdapter adapter;
-    private List<Destination> destinationList;
     private DestinationViewModel viewModel;
 
     private LinearLayout formLayout;
@@ -48,13 +45,6 @@ public class DestinationFragment extends Fragment {
     private EditText duration;
     private EditText estimatedStartEditText1;
     private EditText estimatedEndEditText1;
-
-    private Button logTravelButton;
-    private Button cancelButton;
-    private Button submitButton;
-    private Button cancelButton1;
-    private Button submitButton1;
-    private Button calculateButton;
 
     private TextView resultAmountTextView;
     private TextView resetResultButton;
@@ -71,6 +61,17 @@ public class DestinationFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_destination, container, false);
+
+        RecyclerView recyclerView;
+        DestinationAdapter adapter;
+        List<Destination> destinationList;
+
+        Button logTravelButton;
+        Button cancelButton;
+        Button submitButton;
+        Button cancelButton1;
+        Button submitButton1;
+        Button calculateButton;
 
         recyclerView = view.findViewById(R.id.recycler_view_destinations);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
