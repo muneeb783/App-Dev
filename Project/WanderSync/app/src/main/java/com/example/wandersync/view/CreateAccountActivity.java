@@ -20,14 +20,15 @@ public class CreateAccountActivity extends AppCompatActivity {
     private EditText createUsernameInput;
     private EditText createEmailInput;
     private EditText createPasswordInput;
-    private Button createAccountButton;
-    private ImageButton backButtonLogin;
     private CreateAccountViewModel createAccountViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
+
+        Button createAccountButton;
+        ImageButton backButtonLogin;
 
         createUsernameInput = findViewById(R.id.create_username_input);
         createEmailInput = findViewById(R.id.create_email_input);
@@ -40,7 +41,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         createAccountViewModel.getCreateAccountSuccess().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isSuccess) {
-                if (isSuccess) {
+                if (isSuccess == true) {
                     Toast.makeText(CreateAccountActivity.this,
                             "Account created successfully", Toast.LENGTH_SHORT).show();
                     finish();
