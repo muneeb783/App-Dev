@@ -68,13 +68,17 @@ public class LogisticsViewModel extends AndroidViewModel {
     }
 
     public void calculatePlannedDays(String currentUsername) {
+        checkCollaboratorStatusAndFetch(currentUsername, this::fetchPlannedDaysForUser);
+    }
+
+    private void fetchPlannedDaysForUser(String userId) {
         databaseManager.getDestinationsReference().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 int totalPlannedDays = 0;
                 for (DataSnapshot destination : snapshot.getChildren()) {
                     String username = destination.child("username").getValue(String.class);
-                    if (currentUsername.equals(username)) {
+                    if (userId.equals(username)) {
                         Integer duration = destination.child("daysPlanned").getValue(Integer.class);
                         if (duration != null) {
                             totalPlannedDays += duration;
@@ -86,13 +90,17 @@ public class LogisticsViewModel extends AndroidViewModel {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Handle any database errors here
+                plannedDays.setValue(0); // Set a default if loading fails
             }
         });
     }
 
     private void loadAllottedTime() {
-        databaseManager.getUsersReference().child(username).child("allotedTime")
+        checkCollaboratorStatusAndFetch(username, this::fetchAllottedTimeForUser);
+    }
+
+    private void fetchAllottedTimeForUser(String userId) {
+        databaseManager.getUsersReference().child(userId).child("allotedTime")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -102,10 +110,47 @@ public class LogisticsViewModel extends AndroidViewModel {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        allottedTime.setValue(0L); // Set a default if loading fails
+                        allottedTime.setValue(0L);
                     }
                 });
     }
+
+    private void checkCollaboratorStatusAndFetch(String currentUsername, java.util.function.Consumer<String> fetchDataCallback) {
+        databaseManager.getUsersReference().child(currentUsername).child("isCollaborator")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        Boolean isCollaborator = snapshot.getValue(Boolean.class);
+                        if (isCollaborator != null && isCollaborator) {
+                            databaseManager.getUsersReference().child(currentUsername).child("mainUserId")
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            String mainUserId = snapshot.getValue(String.class);
+                                            if (mainUserId != null) {
+                                                fetchDataCallback.accept(mainUserId);
+                                            } else {
+                                                fetchDataCallback.accept(currentUsername);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            fetchDataCallback.accept(currentUsername);
+                                        }
+                                    });
+                        } else {
+                            fetchDataCallback.accept(currentUsername);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        fetchDataCallback.accept(currentUsername);
+                    }
+                });
+    }
+
 
     public void inviteUser(String username, String currentUsername) {
         if (username.isEmpty()) {
@@ -118,7 +163,6 @@ public class LogisticsViewModel extends AndroidViewModel {
             return;
         }
 
-        // Check if the user is already a contributor
         if (contributors.getValue() != null && contributors.getValue().contains(username)) {
             inviteStatus.setValue(username + " is already invited.");
             return;
