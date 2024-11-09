@@ -81,7 +81,6 @@ public class DatabaseManager {
                             DatabaseReference userRef = usersReference.child(username);
                             userRef.child("isCollaborator").setValue(true)
                                     .addOnSuccessListener(aVoid1 -> {
-                                        // Store main user ID in the collaborator's data
                                         userRef.child("mainUserId").setValue(mainUserUsername)
                                                 .addOnSuccessListener(onSuccessListener)
                                                 .addOnFailureListener(onFailureListener);
