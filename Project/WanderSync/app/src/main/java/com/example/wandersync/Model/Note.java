@@ -1,18 +1,18 @@
 package com.example.wandersync.Model;
 
 public class Note {
-    private String content;
+    private String messageContent;
 
     public Note(String content) {
-        this.content = content;
+        this.messageContent = content;
     }
 
     public Note() { }
 
     public String getContent() {
-        return content;
+        return messageContent;
     }
     public void setContent(String str) {
-        this.content = str;
+        this.messageContent = str;
     }
 }
