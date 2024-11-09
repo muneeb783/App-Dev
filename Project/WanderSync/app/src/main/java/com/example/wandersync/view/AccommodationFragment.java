@@ -46,7 +46,6 @@ public class AccommodationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_accommodation, container, false);
 
-        // Initialize ViewModel
         accommodationViewModel = new ViewModelProvider(this).get(AccommodationViewModel.class);
 
         accommodationsRecyclerView = view.findViewById(R.id.accommodationsRecyclerView);
@@ -55,19 +54,15 @@ public class AccommodationFragment extends Fragment {
         accommodationAdapter = new AccommodationAdapter(new ArrayList<>());
         accommodationsRecyclerView.setAdapter(accommodationAdapter);
 
-        // Add item decoration for spacing between items
-        // Using custom spacing of 24dp (you can change this value to suit your needs)
+
         accommodationsRecyclerView.addItemDecoration(new VerticalSpaceItemDecoration(24));
 
-        // Observe LiveData from ViewModel
         accommodationViewModel.getAccommodations().observe(getViewLifecycleOwner(), accommodations -> {
             accommodationAdapter.setAccommodations(accommodations);
         });
 
-        // Set up add accommodation button
         FloatingActionButton addAccommodationButton = view.findViewById(R.id.addAccommodationButton);
         addAccommodationButton.setOnClickListener(v -> {
-            // Clear the input fields
             hotelNameEditText.setText("");
             locationEditText.setText("");
             checkInDateEditText.setText("");
@@ -79,7 +74,6 @@ public class AccommodationFragment extends Fragment {
             dialogLayout.setVisibility(View.VISIBLE);
         });
 
-        // Set up dialog layout
         dialogLayout = view.findViewById(R.id.dialog_add_accommodation);
         hotelNameEditText = view.findViewById(R.id.hotelNameEditText);
         locationEditText = view.findViewById(R.id.locationEditText);
@@ -99,7 +93,6 @@ public class AccommodationFragment extends Fragment {
 
             if (TextUtils.isEmpty(hotelName) || TextUtils.isEmpty(location) || TextUtils.isEmpty(checkInDate)
                     || TextUtils.isEmpty(checkOutDate) || TextUtils.isEmpty(numRooms) || TextUtils.isEmpty(roomType)) {
-                // Show an error for empty fields
                 return;
             }
 
@@ -109,17 +102,14 @@ public class AccommodationFragment extends Fragment {
             }
 
             if (!isValidDateFormat(checkInDate) || !isValidDateFormat(checkOutDate)) {
-                // Show error for invalid date format
                 return;
             }
 
             if (isBeforeCheckInDate(checkInDate, checkOutDate)) {
-                // Show error: Check-out date cannot be before check-in date
                 checkOutDateEditText.setError("Check-out date cannot be before check-in date.");
                 return;
             }
 
-            // Add new accommodation via ViewModel
             Accommodation newAccommodation = new Accommodation(hotelName, location, checkInDate, checkOutDate, numRooms, roomType);
             accommodationViewModel.addAccommodation(newAccommodation);
             dialogLayout.setVisibility(View.GONE);
@@ -128,7 +118,6 @@ public class AccommodationFragment extends Fragment {
         cancelAccommodationButton = view.findViewById(R.id.cancelAccommodationButton);
         cancelAccommodationButton.setOnClickListener(v -> dialogLayout.setVisibility(View.GONE));
 
-        // Set up date pickers
         checkInDateEditText.setOnClickListener(v -> openDatePicker(checkInDateEditText));
         checkOutDateEditText.setOnClickListener(v -> openDatePicker(checkOutDateEditText));
 
@@ -168,3 +157,5 @@ public class AccommodationFragment extends Fragment {
         datePickerDialog.show();
     }
 }
+
+//cleaned up as necessary

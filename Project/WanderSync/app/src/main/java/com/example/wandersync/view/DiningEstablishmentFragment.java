@@ -111,7 +111,6 @@ public class DiningEstablishmentFragment extends Fragment {
                 public void onSuccess(Void aVoid) {
                     Toast.makeText(getContext(), "Reservation added successfully", Toast.LENGTH_SHORT).show();
 
-                    // Reset input fields and hide dialog after successful addition
                     locationEditText.setText("");
                     websiteEditText.setText("");
                     dateEditText.setText("");
@@ -181,7 +180,9 @@ public class DiningEstablishmentFragment extends Fragment {
         }
     }
 }
-//
+
+//cleaned up some of the code
+
 //import android.app.DatePickerDialog;
 //import android.app.TimePickerDialog;
 //import android.os.Bundle;
