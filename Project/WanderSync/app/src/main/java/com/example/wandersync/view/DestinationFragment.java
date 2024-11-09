@@ -102,6 +102,11 @@ public class DestinationFragment extends Fragment {
         resultAmountTextView = view.findViewById(R.id.result_amount);
         resetResultButton = view.findViewById(R.id.reset_result_button);
 
+        estimatedStartEditText.setFocusable(false);
+        estimatedStartEditText.setClickable(true);
+        estimatedEndEditText.setFocusable(false);
+        estimatedEndEditText.setClickable(true);
+
         formLayout.setVisibility(View.GONE);
         formLayout1.setVisibility(View.GONE);
         resultLayout.setVisibility(View.GONE);
