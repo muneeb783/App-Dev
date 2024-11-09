@@ -1,11 +1,21 @@
 package com.example.wandersync.viewmodel;
 
+import androidx.annotation.NonNull;
+
 import com.example.wandersync.model.Destination;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.GenericTypeIndicator;
+
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseManager {
     private static DatabaseManager instance;
@@ -57,5 +67,31 @@ public class DatabaseManager {
         userVacationRef.setValue(duration)
                 .addOnSuccessListener(onSuccessListener)
                 .addOnFailureListener(onFailureListener);
+    }
+    public void addCollaborator(String username, String mainUserUsername, OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener) {
+        DatabaseReference collaboratorRef = usersReference.child(mainUserUsername).child("contributors");
+
+        collaboratorRef.get().addOnSuccessListener(snapshot -> {
+            List<String> contributors = snapshot.exists() ? snapshot.getValue(new GenericTypeIndicator<List<String>>() {}) : new ArrayList<>();
+
+            if (!contributors.contains(username)) {
+                contributors.add(username);
+                collaboratorRef.setValue(contributors)
+                        .addOnSuccessListener(aVoid -> {
+                            DatabaseReference userRef = usersReference.child(username);
+                            userRef.child("isCollaborator").setValue(true)
+                                    .addOnSuccessListener(aVoid1 -> {
+                                        // Store main user ID in the collaborator's data
+                                        userRef.child("mainUserId").setValue(mainUserUsername)
+                                                .addOnSuccessListener(onSuccessListener)
+                                                .addOnFailureListener(onFailureListener);
+                                    })
+                                    .addOnFailureListener(onFailureListener);
+                        })
+                        .addOnFailureListener(onFailureListener);
+            } else {
+                onSuccessListener.onSuccess(null); // Collaborator already exists
+            }
+        }).addOnFailureListener(onFailureListener);
     }
 }
