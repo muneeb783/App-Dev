@@ -162,6 +162,30 @@ public class LogisticsViewModel extends AndroidViewModel {
                 });
     }
 
+    public void fetchContributors(String currentUsername) {
+        fetchCurrentUserNotes();
+        databaseReference.child(currentUsername).child("contributors")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        ArrayList<String> loadedContributors = new ArrayList<>();
+                        for (DataSnapshot contributorSnapshot : snapshot.getChildren()) {
+                            String contributor = contributorSnapshot.getValue(String.class);
+                            if (contributor != null) {
+                                loadedContributors.add(contributor);
+                                fetchContributorNotes(contributor); // Fetch each contributor's notes
+                            }
+                        }
+                        contributors.setValue(loadedContributors);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        inviteStatus.setValue("Failed to load contributors: " + error.getMessage());
+                    }
+                });
+    }
+
     private void fetchContributorNotes(String contributorUsername) {
         databaseReference.child(contributorUsername).child("notes")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -175,9 +199,9 @@ public class LogisticsViewModel extends AndroidViewModel {
                             }
                         }
 
+                        // Add each contributor's notes to the map
                         HashMap<String, ArrayList<String>> updatedNotesMap =
                                 new HashMap<>(userNotesMap.getValue());
-
                         updatedNotesMap.put(contributorUsername, contributorNotes);
                         userNotesMap.setValue(updatedNotesMap);
                     }
@@ -187,29 +211,6 @@ public class LogisticsViewModel extends AndroidViewModel {
                         noteStatus.setValue("Failed to load notes for contributor "
                                 + contributorUsername
                                 + ": " + error.getMessage());
-                    }
-                });
-    }
-
-    public void fetchContributors(String currentUsername) {
-        databaseReference.child(currentUsername).child("contributors")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        ArrayList<String> loadedContributors = new ArrayList<>();
-                        for (DataSnapshot contributorSnapshot : snapshot.getChildren()) {
-                            String contributor = contributorSnapshot.getValue(String.class);
-                            if (contributor != null) {
-                                loadedContributors.add(contributor);
-                                fetchContributorNotes(contributor);
-                            }
-                        }
-                        contributors.setValue(loadedContributors);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        inviteStatus.setValue("Failed to load contributors: " + error.getMessage());
                     }
                 });
     }
