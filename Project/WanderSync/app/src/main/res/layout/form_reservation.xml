@@ -3,92 +3,41 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="8dp"
+    android:background="@drawable/rounded_background"
+    android:layout_marginBottom="8dp">
 
     <TextView
-        android:id="@+id/text_view_date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Date"
-        android:textStyle="bold"
-        android:textSize="16sp" />
-
-    <EditText
-        android:id="@+id/edit_text_date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter Date"
-        android:inputType="date" />
-
-    <TextView
-        android:id="@+id/text_view_time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Time"
-        android:textStyle="bold"
-        android:textSize="16sp" />
-
-    <EditText
-        android:id="@+id/edit_text_time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter Time"
-        android:inputType="time" />
-
-    <TextView
-        android:id="@+id/text_view_location"
-        android:layout_width="match_parent"
+        android:id="@+id/locationText"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Location"
         android:textStyle="bold"
+        android:textColor="@color/white"
         android:textSize="16sp" />
 
-    <EditText
-        android:id="@+id/edit_text_location"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter Location" />
-
     <TextView
-        android:id="@+id/text_view_website"
-        android:layout_width="match_parent"
+        android:id="@+id/websiteText"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Website"
-        android:textStyle="bold"
-        android:textSize="16sp" />
-
-    <EditText
-        android:id="@+id/edit_text_website"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter Website" />
+        android:textColor="@color/white"
+        android:textSize="14sp" />
 
     <TextView
-        android:id="@+id/text_view_review"
-        android:layout_width="match_parent"
+        android:id="@+id/dateText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date and Time"
+        android:textColor="@color/white"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/reviewText"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Review"
-        android:textStyle="bold"
-        android:textSize="16sp" />
-
-    <EditText
-        android:id="@+id/edit_text_review"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter Review"
-        android:maxLines="3" />
-
-    <Button
-        android:id="@+id/button_submit_reservation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Submit Reservation"
-        android:layout_marginTop="16dp" />
-
-    <ListView
-        android:id="@+id/list_view_reservations"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp" />
+        android:textColor="@color/white"
+        android:textSize="14sp" />
 
 </LinearLayout>

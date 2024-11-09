@@ -1,77 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:scrollbars="vertical">
+    android:padding="16dp">
 
-    <EditText
-        android:id="@+id/edit_text_location"
+    <!-- Dialog layout to add a new dining reservation, initially hidden -->
+    <LinearLayout
+        android:id="@+id/dialog_add_dining"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Location"
-        android:inputType="text"
-        android:padding="10dp"
-        android:layout_marginBottom="12dp" />
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@drawable/dialogue_background"
+        android:visibility="gone"
+        android:elevation="5dp">
 
-    <EditText
-        android:id="@+id/edit_text_website"
+        <!-- Location input field -->
+        <EditText
+            android:id="@+id/edit_text_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text_background"
+            android:hint="Location"
+            android:inputType="text" />
+
+        <!-- Website input field -->
+        <EditText
+            android:id="@+id/edit_text_website"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text_background"
+            android:hint="Website"
+            android:inputType="textUri" />
+
+        <!-- Date input field -->
+        <EditText
+            android:id="@+id/edit_text_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text_background"
+            android:hint="Date (dd/mm/yyyy)"
+            android:focusable="false"
+            android:inputType="date" />
+
+        <!-- Time input field -->
+        <EditText
+            android:id="@+id/edit_text_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text_background"
+            android:hint="Time (HH:mm)"
+            android:focusable="false"
+            android:inputType="time" />
+
+        <!-- Review input field -->
+        <EditText
+            android:id="@+id/edit_text_review"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text_background"
+            android:hint="Review"
+            android:inputType="textMultiLine" />
+
+        <!-- Add Reservation button in dialog -->
+        <Button
+            android:id="@+id/button_add_reservation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add Reservation"
+            android:backgroundTint="@color/colorPrimary" />
+    </LinearLayout>
+
+    <!-- RecyclerView for displaying dining reservations -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/reservationsRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Website"
-        android:inputType="text"
-        android:padding="10dp"
-        android:layout_marginBottom="12dp" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp" />
 
-    <EditText
-        android:id="@+id/edit_text_date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Select Date"
-        android:focusable="false"
-        android:clickable="true"
-        android:inputType="none"
-        android:padding="10dp"
-        android:layout_marginBottom="12dp" />
-
-    <EditText
-        android:id="@+id/edit_text_time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Select Time"
-        android:focusable="false"
-        android:clickable="true"
-        android:inputType="none"
-        android:padding="10dp"
-        android:layout_marginBottom="12dp" />
-
-    <EditText
-        android:id="@+id/edit_text_review"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Write your review"
-        android:inputType="text"
-        android:padding="10dp"
-        android:layout_marginBottom="12dp" />
-
-    <Button
-        android:id="@+id/button_add_reservation"
+    <!-- Floating Action Button to open the reservation dialog -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addDiningButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Reservation"
-        android:layout_gravity="center"
-        android:padding="10dp"
-        android:textSize="16sp"
-        android:background="@color/colorPrimary"
-        android:textColor="#FFFFFF"
-        android:layout_marginBottom="12dp"/>
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="Add dining"
+        android:src="@drawable/ic_add"
+        android:tint="@android:color/white" />
 
-    <ListView
-        android:id="@+id/recycler_view_reservations"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="1dp"
-        android:layout_marginTop="16dp"/>
 </LinearLayout>
+
