@@ -8,7 +8,9 @@ public class User {
     private String password;
     private long allotedTime;
     private ArrayList<String> notes;
-    private ArrayList<String> contributors; // List of contributor usernames
+    private ArrayList<String> contributors;
+    private boolean isCollaborator;
+    private String mainUserId;
 
     public User() {
         notes = new ArrayList<>();
@@ -22,6 +24,8 @@ public class User {
         this.notes = new ArrayList<>();
         this.contributors = new ArrayList<>();
         this.allotedTime = 0;
+        this.isCollaborator = false;
+        this.mainUserId = "";
     }
 
     public String getUsername() {
@@ -74,5 +78,10 @@ public class User {
             contributors.add(contributor);
         }
     }
-
+    public void setCollaborator(boolean collab) {
+        this.isCollaborator = collab;
+    }
+    public boolean getIsCollaborator() {
+        return isCollaborator;
+    }
 }

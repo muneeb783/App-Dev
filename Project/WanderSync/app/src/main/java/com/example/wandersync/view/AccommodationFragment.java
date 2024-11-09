@@ -29,15 +29,19 @@ public class AccommodationFragment extends Fragment {
     private AccommodationAdapter accommodationAdapter;
     private List<Accommodation> accommodationList;
     private LinearLayout dialogLayout;
-    private EditText locationEditText, checkInDateEditText, checkOutDateEditText, numRoomsEditText, roomTypeEditText;
-    private Button addReservationButton;
+    private EditText locationEditText;
+    private EditText checkInDateEditText;
+    private EditText checkOutDateEditText;
+    private EditText numRoomsEditText;
+    private EditText roomTypeEditText;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_accommodation, container, false);
 
-        // Initialize views
+        Button addReservationButton;
+
         accommodationsRecyclerView = view.findViewById(R.id.accommodationsRecyclerView);
         addAccommodationButton = view.findViewById(R.id.addAccommodationButton);
         dialogLayout = view.findViewById(R.id.dialog_add_accommodation);
@@ -48,13 +52,11 @@ public class AccommodationFragment extends Fragment {
         roomTypeEditText = view.findViewById(R.id.roomTypeEditText);
         addReservationButton = view.findViewById(R.id.addReservationButton);
 
-        // Set up RecyclerView
         accommodationList = new ArrayList<>();
         accommodationAdapter = new AccommodationAdapter(accommodationList);
         accommodationsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         accommodationsRecyclerView.setAdapter(accommodationAdapter);
 
-        // Show dialog for adding a new accommodation
         addAccommodationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,7 +64,6 @@ public class AccommodationFragment extends Fragment {
             }
         });
 
-        // Add new accommodation to the list
         addReservationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,12 +78,10 @@ public class AccommodationFragment extends Fragment {
                     return;
                 }
 
-                // Add new accommodation to the list
                 Accommodation newAccommodation = new Accommodation(location, "Hotel", checkInDate, checkOutDate, numRooms, roomType);
                 accommodationList.add(newAccommodation);
                 accommodationAdapter.notifyDataSetChanged();
 
-                // Hide dialog and clear fields
                 dialogLayout.setVisibility(View.GONE);
                 locationEditText.setText("");
                 checkInDateEditText.setText("");
@@ -95,7 +94,6 @@ public class AccommodationFragment extends Fragment {
         return view;
     }
 
-    // Accommodation class representing a single accommodation entry
     public static class Accommodation {
         String location;
         String hotelName;
@@ -112,7 +110,6 @@ public class AccommodationFragment extends Fragment {
         }
     }
 
-    // Adapter for the RecyclerView
     private class AccommodationAdapter extends RecyclerView.Adapter<AccommodationAdapter.AccommodationViewHolder> {
 
         private List<Accommodation> accommodations;
@@ -145,7 +142,11 @@ public class AccommodationFragment extends Fragment {
 
         // ViewHolder for RecyclerView items
         public class AccommodationViewHolder extends RecyclerView.ViewHolder {
-            TextView locationText, hotelNameText, checkInOutText, numRoomsText, roomTypeText;
+            TextView locationText;
+            TextView hotelNameText;
+            TextView checkInOutText;
+            TextView numRoomsText;
+            TextView roomTypeText;
 
             public AccommodationViewHolder(View itemView) {
                 super(itemView);

@@ -11,12 +11,9 @@ public class DiningReservation {
     private long reservationTime;
     private String review;
 
-    // No-argument constructor required by Firebase
     public DiningReservation() {
-        // Default constructor required for calls to DataSnapshot.getValue(DiningReservation.class)
     }
 
-    // Constructor with parameters
     public DiningReservation(String location, String website, long reservationTime, String review) {
         this.location = location;
         this.website = website;
@@ -24,7 +21,6 @@ public class DiningReservation {
         this.review = review;
     }
 
-    // Getters and setters for each field
     public String getLocation() {
         return location;
     }
@@ -62,13 +58,11 @@ public class DiningReservation {
     }
 
     public String getFormattedReservationDate() {
-        // Use SimpleDateFormat to return formatted date
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         return sdf.format(new Date(reservationTime));
     }
 
     public String getFormattedReservationTime() {
-        // Format the time as "HH:mm"
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
         return sdf.format(new Date(reservationTime));
     }
