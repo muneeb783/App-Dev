@@ -53,6 +53,13 @@
             android:textStyle="bold"
             android:paddingBottom="8dp" />
 
+        <!-- New Hotel Name Field -->
+        <EditText
+            android:id="@+id/hotelNameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Hotel Name" />
+
         <EditText
             android:id="@+id/locationEditText"
             android:layout_width="match_parent"
