@@ -9,70 +9,67 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import com.example.wandersync.R;
-import com.example.wandersync.Model.Accommodation;
-import com.example.wandersync.viewmodel.AccommodationAdapter;
-import com.example.wandersync.viewmodel.AccommodationViewModel;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.wandersync.R;
+import com.example.wandersync.model.Accommodation;
+import com.example.wandersync.viewmodel.AccommodationAdapter;
+import com.example.wandersync.viewmodel.AccommodationViewModel;
+
+
+import com.example.wandersync.viewmodel.sorting.SortByCheckInDate;
+import com.example.wandersync.viewmodel.sorting.SortByCheckOutDate;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
+import java.util.Date;
 import java.util.Locale;
 
 public class AccommodationFragment extends Fragment {
 
+    private AccommodationViewModel accommodationViewModel;
     private RecyclerView accommodationsRecyclerView;
     private AccommodationAdapter accommodationAdapter;
     private LinearLayout dialogLayout;
     private EditText locationEditText, checkInDateEditText, checkOutDateEditText, numRoomsEditText, roomTypeEditText, hotelNameEditText;
-    private Button addReservationButton, cancelAccommodationButton;
+    private Button addReservationButton, cancelAccommodationButton, sortByCheckInButton, sortByCheckOutButton;
 
-    private AccommodationViewModel accommodationViewModel;
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_accommodation, container, false);
 
+        // Initialize ViewModel and RecyclerView
         accommodationViewModel = new ViewModelProvider(this).get(AccommodationViewModel.class);
-
         accommodationsRecyclerView = view.findViewById(R.id.accommodationsRecyclerView);
         accommodationsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         accommodationAdapter = new AccommodationAdapter(new ArrayList<>());
         accommodationsRecyclerView.setAdapter(accommodationAdapter);
 
-
-        accommodationsRecyclerView.addItemDecoration(new VerticalSpaceItemDecoration(24));
-
+        // Observe LiveData for accommodations and errors
         accommodationViewModel.getAccommodations().observe(getViewLifecycleOwner(), accommodations -> {
             accommodationAdapter.setAccommodations(accommodations);
         });
 
-        FloatingActionButton addAccommodationButton = view.findViewById(R.id.addAccommodationButton);
-        addAccommodationButton.setOnClickListener(v -> {
-            hotelNameEditText.setText("");
-            locationEditText.setText("");
-            checkInDateEditText.setText("");
-            checkOutDateEditText.setText("");
-            numRoomsEditText.setText("");
-            roomTypeEditText.setText("");
-
-            // Show the dialog layout
-            dialogLayout.setVisibility(View.VISIBLE);
+        accommodationViewModel.getError().observe(getViewLifecycleOwner(), errorMessage -> {
+            if (errorMessage != null) {
+                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show();
+            }
         });
+
+        // Initialize FloatingActionButton and dialog layout
+        FloatingActionButton addAccommodationButton = view.findViewById(R.id.addAccommodationButton);
+        addAccommodationButton.setOnClickListener(v -> showAddAccommodationDialog());
 
         dialogLayout = view.findViewById(R.id.dialog_add_accommodation);
         hotelNameEditText = view.findViewById(R.id.hotelNameEditText);
@@ -83,37 +80,7 @@ public class AccommodationFragment extends Fragment {
         roomTypeEditText = view.findViewById(R.id.roomTypeEditText);
 
         addReservationButton = view.findViewById(R.id.addReservationButton);
-        addReservationButton.setOnClickListener(v -> {
-            String hotelName = hotelNameEditText.getText().toString().trim();
-            String location = locationEditText.getText().toString().trim();
-            String checkInDate = checkInDateEditText.getText().toString().trim();
-            String checkOutDate = checkOutDateEditText.getText().toString().trim();
-            String numRooms = numRoomsEditText.getText().toString().trim();
-            String roomType = roomTypeEditText.getText().toString().trim();
-
-            if (TextUtils.isEmpty(hotelName) || TextUtils.isEmpty(location) || TextUtils.isEmpty(checkInDate)
-                    || TextUtils.isEmpty(checkOutDate) || TextUtils.isEmpty(numRooms) || TextUtils.isEmpty(roomType)) {
-                return;
-            }
-
-            if (!TextUtils.isDigitsOnly(numRooms)) {
-                numRoomsEditText.setError("Please enter a valid number for rooms.");
-                return;
-            }
-
-            if (!isValidDateFormat(checkInDate) || !isValidDateFormat(checkOutDate)) {
-                return;
-            }
-
-            if (isBeforeCheckInDate(checkInDate, checkOutDate)) {
-                checkOutDateEditText.setError("Check-out date cannot be before check-in date.");
-                return;
-            }
-
-            Accommodation newAccommodation = new Accommodation(hotelName, location, checkInDate, checkOutDate, numRooms, roomType);
-            accommodationViewModel.addAccommodation(newAccommodation);
-            dialogLayout.setVisibility(View.GONE);
-        });
+        addReservationButton.setOnClickListener(v -> addAccommodation());
 
         cancelAccommodationButton = view.findViewById(R.id.cancelAccommodationButton);
         cancelAccommodationButton.setOnClickListener(v -> dialogLayout.setVisibility(View.GONE));
@@ -121,41 +88,55 @@ public class AccommodationFragment extends Fragment {
         checkInDateEditText.setOnClickListener(v -> openDatePicker(checkInDateEditText));
         checkOutDateEditText.setOnClickListener(v -> openDatePicker(checkOutDateEditText));
 
+        // Initialize sort buttons and set up click listeners
+        sortByCheckInButton = view.findViewById(R.id.sortByCheckInButton);
+        sortByCheckOutButton = view.findViewById(R.id.sortByCheckOutButton);
+
+        sortByCheckInButton.setOnClickListener(v -> {
+            accommodationViewModel.setSortStrategy(new SortByCheckInDate());
+        });
+
+        sortByCheckOutButton.setOnClickListener(v -> {
+            accommodationViewModel.setSortStrategy(new SortByCheckOutDate());
+        });
+
         return view;
     }
 
-
-
-    private boolean isValidDateFormat(String date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
-        dateFormat.setLenient(false);
-        try {
-            dateFormat.parse(date);
-            return true;
-        } catch (ParseException e) {
-            return false;
-        }
+    private void showAddAccommodationDialog() {
+        hotelNameEditText.setText("");
+        locationEditText.setText("");
+        checkInDateEditText.setText("");
+        checkOutDateEditText.setText("");
+        numRoomsEditText.setText("");
+        roomTypeEditText.setText("");
+        dialogLayout.setVisibility(View.VISIBLE);
     }
 
-    private boolean isBeforeCheckInDate(String checkInDate, String checkOutDate) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
-        try {
-            return dateFormat.parse(checkOutDate).before(dateFormat.parse(checkInDate));
-        } catch (ParseException e) {
-            return false;
+    private void addAccommodation() {
+        String hotelName = hotelNameEditText.getText().toString().trim();
+        String location = locationEditText.getText().toString().trim();
+        String checkInDateStr = checkInDateEditText.getText().toString().trim();
+        String checkOutDateStr = checkOutDateEditText.getText().toString().trim();
+        String numRooms = numRoomsEditText.getText().toString().trim();
+        String roomType = roomTypeEditText.getText().toString().trim();
+
+        if (TextUtils.isEmpty(hotelName) || TextUtils.isEmpty(location) || TextUtils.isEmpty(checkInDateStr)
+                || TextUtils.isEmpty(checkOutDateStr) || TextUtils.isEmpty(numRooms) || TextUtils.isEmpty(roomType)) {
+            Toast.makeText(getContext(), "Please fill in all fields.", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        accommodationViewModel.addAccommodation(hotelName, location, checkInDateStr, checkOutDateStr, numRooms, roomType);
+        dialogLayout.setVisibility(View.GONE);
     }
 
     private void openDatePicker(final EditText editText) {
         final Calendar calendar = Calendar.getInstance();
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view, year, monthOfYear, dayOfMonth) -> {
-            calendar.set(year, monthOfYear, dayOfMonth);
-            String selectedDate = new SimpleDateFormat("MM/dd/yyyy", Locale.US).format(calendar.getTime());
-            editText.setText(selectedDate);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view, year, month, day) -> {
+            calendar.set(year, month, day);
+            editText.setText(dateFormat.format(calendar.getTime()));
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-
         datePickerDialog.show();
     }
 }
-
-//cleaned up as necessary
