@@ -8,11 +8,14 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.wandersync.model.DiningReservation;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -20,6 +23,8 @@ public class DiningViewModel extends ViewModel {
 
     private final MutableLiveData<List<DiningReservation>> reservationsLiveData = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Boolean> reservationAddedStatus = new MutableLiveData<>();
+    private final DatabaseReference reservationsDatabase = FirebaseDatabase.getInstance().getReference("reservations");
+    private final FirebaseAuth auth = FirebaseAuth.getInstance();
 
     public LiveData<List<DiningReservation>> getReservationsLiveData() {
         return reservationsLiveData;
@@ -44,19 +49,38 @@ public class DiningViewModel extends ViewModel {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
             long reservationTime = dateFormat.parse(date + " " + time).getTime();
 
-            DiningReservation reservation = new DiningReservation(location, website, reservationTime, review);
-            List<DiningReservation> currentList = reservationsLiveData.getValue();
-            currentList.add(reservation);
-            reservationsLiveData.setValue(currentList);
-            reservationAddedStatus.setValue(true);
+            String userId = auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : "anonymous";  // Get userId
+
+            DiningReservation reservation = new DiningReservation(location, website, reservationTime, review, userId);
+
+            // Add reservation to Firebase Database
+            reservationsDatabase.push().setValue(reservation)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            // Update the LiveData with new reservations
+                            fetchReservations();
+                            reservationAddedStatus.setValue(true);
+                        } else {
+                            reservationAddedStatus.setValue(false);
+                        }
+                    });
 
         } catch (Exception e) {
             reservationAddedStatus.setValue(false);
         }
     }
 
-    public boolean isExpired(@NonNull DiningReservation reservation) {
-        long currentTime = System.currentTimeMillis();
-        return reservation.getReservationTime() < currentTime;
+    // Fetch reservations from the Firebase database
+    private void fetchReservations() {
+        reservationsDatabase.get().addOnSuccessListener(snapshot -> {
+            List<DiningReservation> reservations = new ArrayList<>();
+            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                DiningReservation reservation = dataSnapshot.getValue(DiningReservation.class);
+                if (reservation != null) {
+                    reservations.add(reservation);
+                }
+            }
+            reservationsLiveData.setValue(reservations);
+        });
     }
 }

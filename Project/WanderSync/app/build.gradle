@@ -47,6 +47,7 @@ dependencies {
     implementation libs.activity
     implementation libs.constraintlayout
     implementation libs.firebase.database
+    implementation libs.firebase.auth
     testImplementation libs.junit
     testImplementation libs.junit.jupiter
     testImplementation libs.junit.jupiter
