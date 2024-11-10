@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="?android:attr/selectableItemBackground">
+    android:background="@drawable/rounded_background">
 
     <TextView
         android:id="@+id/text_view_date"
@@ -15,7 +15,7 @@
         android:textSize="16sp"
         android:visibility="gone"
         android:paddingBottom="8dp"
-        android:textColor="#333"/>
+        android:textColor="#FFFFFF"/>
 
     <TextView
         android:id="@+id/text_view_location"
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:text="Location"
         android:textSize="18sp"
-        android:textColor="#000"
+        android:textColor="#FFFFFF"
         android:paddingBottom="4dp"/>
 
     <TextView
@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:text="Website"
         android:textSize="16sp"
-        android:textColor="#555"
+        android:textColor="#FFFFFF"
         android:paddingBottom="4dp"/>
 
     <TextView
@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:text="Reservation Time"
         android:textSize="16sp"
-        android:textColor="#555"
+        android:textColor="#FFFFFF"
         android:paddingBottom="4dp"/>
 
     <TextView
@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:text="Review"
         android:textSize="14sp"
-        android:textColor="#888"
+        android:textColor="#FFFFFF"
         android:paddingBottom="8dp"
         android:maxLines="3"
         android:ellipsize="end"/>
