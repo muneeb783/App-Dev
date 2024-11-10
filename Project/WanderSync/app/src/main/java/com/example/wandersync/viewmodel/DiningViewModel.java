@@ -26,6 +26,11 @@ public class DiningViewModel extends ViewModel {
     private final DatabaseReference reservationsDatabase = FirebaseDatabase.getInstance().getReference("reservations");
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
 
+    public DiningViewModel() {
+        // Fetch reservations immediately when the ViewModel is created
+        fetchReservations();
+    }
+
     public LiveData<List<DiningReservation>> getReservationsLiveData() {
         return reservationsLiveData;
     }
@@ -49,26 +54,52 @@ public class DiningViewModel extends ViewModel {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
             long reservationTime = dateFormat.parse(date + " " + time).getTime();
 
-            String userId = auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : "anonymous";  // Get userId
+            // Fetch existing reservations from Firebase
+            reservationsDatabase.get().addOnSuccessListener(snapshot -> {
+                boolean isDuplicate = false;
 
-            DiningReservation reservation = new DiningReservation(location, website, reservationTime, review, userId);
+                // Check if the new reservation time matches any existing reservation time
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    DiningReservation existingReservation = dataSnapshot.getValue(DiningReservation.class);
+                    if (existingReservation != null && existingReservation.getReservationTime() == reservationTime) {
+                        isDuplicate = true;
+                        break;
+                    }
+                }
 
-            // Add reservation to Firebase Database
-            reservationsDatabase.push().setValue(reservation)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            // Update the LiveData with new reservations
-                            fetchReservations();
-                            reservationAddedStatus.setValue(true);
-                        } else {
-                            reservationAddedStatus.setValue(false);
-                        }
-                    });
+                if (isDuplicate) {
+                    // If a duplicate is found, show the failure message and return
+                    reservationAddedStatus.setValue(false);
+                } else {
+                    // No duplicates found, proceed to add the new reservation
+                    String userId = auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : "anonymous";  // Get userId
+                    DiningReservation reservation = new DiningReservation(location, website, reservationTime, review, userId);
 
-        } catch (Exception e) {
+                    // Add reservation to Firebase Database
+                    reservationsDatabase.push().setValue(reservation)
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    // Update the LiveData with new reservations by adding it directly to the list
+                                    List<DiningReservation> currentReservations = reservationsLiveData.getValue();
+                                    if (currentReservations != null) {
+                                        currentReservations.add(reservation); // Add the new reservation
+                                        // Sort the list based on reservation time (or any other criteria)
+                                        currentReservations.sort((r1, r2) -> Long.compare(r1.getReservationTime(), r2.getReservationTime()));
+                                        reservationsLiveData.setValue(currentReservations); // Update the LiveData
+                                    }
+                                    reservationAddedStatus.setValue(true);
+                                } else {
+                                    reservationAddedStatus.setValue(false);
+                                }
+                            });
+                }
+            });
+
+        } catch (ParseException e) {
             reservationAddedStatus.setValue(false);
         }
     }
+
 
     // Fetch reservations from the Firebase database
     private void fetchReservations() {
