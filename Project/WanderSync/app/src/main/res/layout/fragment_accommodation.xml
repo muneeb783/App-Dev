@@ -107,11 +107,14 @@
             android:layout_height="wrap_content"
             android:hint="Number of Rooms" />
 
-        <EditText
-            android:id="@+id/roomTypeEditText"
+        <Spinner
+            android:id="@+id/roomTypeSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Room Type" />
+            android:spinnerMode="dropdown"
+            android:entries="@array/room_types"
+            android:layout_marginTop="8dp"/>
+
 
         <LinearLayout
             android:layout_width="match_parent"

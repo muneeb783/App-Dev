@@ -1,10 +1,10 @@
-
 package com.example.wandersync.viewmodel;
 
 import androidx.annotation.NonNull;
 
 import com.example.wandersync.model.Accommodation;
 import com.example.wandersync.model.Destination;
+import com.example.wandersync.model.DiningReservation;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -22,12 +22,14 @@ public class DatabaseManager {
     private final DatabaseReference usersReference;
     private final DatabaseReference destinationsReference;
     private final DatabaseReference accommodationsReference;
+    private final DatabaseReference diningReservationsReference;
 
     private DatabaseManager() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         usersReference = database.getReference("users");
         destinationsReference = database.getReference("destinations");
         accommodationsReference = database.getReference("accommodations");
+        diningReservationsReference = database.getReference("diningReservations");
     }
 
     public static synchronized DatabaseManager getInstance() {
@@ -49,6 +51,10 @@ public class DatabaseManager {
         return accommodationsReference;
     }
 
+    public DatabaseReference getDiningReservationsReference() {
+        return diningReservationsReference;
+    }
+
     // Method to add a new accommodation
     public void addAccommodation(Accommodation accommodation,
                                  OnSuccessListener<Void> onSuccessListener,
@@ -67,6 +73,26 @@ public class DatabaseManager {
     public void loadAccommodations(String userID, ValueEventListener valueEventListener) {
         Query userAccommodationsQuery = accommodationsReference.orderByChild("userID").equalTo(userID);
         userAccommodationsQuery.addListenerForSingleValueEvent(valueEventListener);
+    }
+
+    // Method to add a new dining reservation
+    public void addDiningReservation(DiningReservation reservation,
+                                     OnSuccessListener<Void> onSuccessListener,
+                                     OnFailureListener onFailureListener) {
+        String reservationId = diningReservationsReference.push().getKey();
+        if (reservationId != null) {
+            diningReservationsReference.child(reservationId).setValue(reservation)
+                    .addOnSuccessListener(onSuccessListener)
+                    .addOnFailureListener(onFailureListener);
+        } else {
+            onFailureListener.onFailure(new Exception("Error generating reservation ID"));
+        }
+    }
+
+    // Method to load dining reservations for a specific userID
+    public void loadDiningReservations(String userID, ValueEventListener valueEventListener) {
+        Query userReservationsQuery = diningReservationsReference.orderByChild("userId").equalTo(userID);
+        userReservationsQuery.addListenerForSingleValueEvent(valueEventListener);
     }
 
     // Method to add a new destination
@@ -90,7 +116,6 @@ public class DatabaseManager {
         userDestinationsQuery.addListenerForSingleValueEvent(valueEventListener);
     }
 
-    // Method to save vacation time for a specific user
     public void saveVacationTime(String username, long duration,
                                  OnSuccessListener<Void> onSuccessListener,
                                  OnFailureListener onFailureListener) {
@@ -100,7 +125,6 @@ public class DatabaseManager {
                 .addOnFailureListener(onFailureListener);
     }
 
-    // Method to add a collaborator to a user's account
     public void addCollaborator(String username, String mainUserUsername, OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener) {
         DatabaseReference collaboratorRef = usersReference.child(mainUserUsername).child("contributors");
 

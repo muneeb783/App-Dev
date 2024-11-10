@@ -1,5 +1,10 @@
 package com.example.wandersync.model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class Accommodation {
     private String location;
     private String hotelName;
@@ -33,11 +38,23 @@ public class Accommodation {
     public String getCheckOutDate() { return checkOutDate; }
     public String getNumRooms() { return numRooms; }
     public String getRoomType() { return roomType; }
-    public boolean isExpired() { return isExpired; }
+    public boolean getIsExpired() { return isExpired; }
     public String getUserID() { return userID; }
     public String getCheckInOut() {return checkInOut; }
 
     public void setExpired(boolean expired) {
         isExpired = expired;
     }
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+
+    public boolean isExpired() {
+        try {
+            Date checkIn = dateFormat.parse(checkInDate);
+            return checkIn != null && checkIn.before(new Date());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

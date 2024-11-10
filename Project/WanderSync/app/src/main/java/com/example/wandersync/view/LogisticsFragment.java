@@ -70,7 +70,6 @@ public class LogisticsFragment extends Fragment {
             }
         });
 
-        // Add note functionality
         addNoteButton.setOnClickListener(v -> {
             String noteText = noteInput.getText().toString().trim();
             if (!noteText.isEmpty()) {

@@ -1,5 +1,7 @@
 package com.example.wandersync.viewmodel;
 
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +43,13 @@ public class AccommodationAdapter extends RecyclerView.Adapter<AccommodationAdap
         holder.checkInOutText.setText(accommodation.getCheckInOut());
         holder.numRoomsText.setText("Number of Rooms: " + accommodation.getNumRooms());
         holder.roomTypeText.setText(accommodation.getRoomType());
+
+        if (accommodation.isExpired()) {
+            GradientDrawable backgroundDrawable = new GradientDrawable();
+            backgroundDrawable.setColor(Color.RED);// Light gray for expired reservations
+            backgroundDrawable.setCornerRadius(40);
+            holder.itemView.setBackground(backgroundDrawable);
+        }
     }
 
     @Override
