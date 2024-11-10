@@ -81,7 +81,6 @@
         android:clipToPadding="false"
         android:paddingBottom="8dp" />
 
-    <!-- Floating Action Button to open the reservation dialog -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addDiningButton"
         android:layout_width="wrap_content"
