@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -40,7 +41,8 @@ public class AccommodationFragment extends Fragment {
     private RecyclerView accommodationsRecyclerView;
     private AccommodationAdapter accommodationAdapter;
     private LinearLayout dialogLayout;
-    private EditText locationEditText, checkInDateEditText, checkOutDateEditText, numRoomsEditText, roomTypeEditText, hotelNameEditText;
+    private EditText locationEditText, checkInDateEditText, checkOutDateEditText, numRoomsEditText, hotelNameEditText;
+    private Spinner roomTypeSpinner;
     private Button addReservationButton, cancelAccommodationButton, sortByCheckInButton, sortByCheckOutButton;
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
@@ -49,7 +51,6 @@ public class AccommodationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_accommodation, container, false);
 
-        // Initialize ViewModel and RecyclerView
         accommodationViewModel = new ViewModelProvider(this).get(AccommodationViewModel.class);
         accommodationsRecyclerView = view.findViewById(R.id.accommodationsRecyclerView);
         accommodationsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -57,7 +58,6 @@ public class AccommodationFragment extends Fragment {
         accommodationAdapter = new AccommodationAdapter(new ArrayList<>());
         accommodationsRecyclerView.setAdapter(accommodationAdapter);
 
-        // Observe LiveData for accommodations and errors
         accommodationViewModel.getAccommodations().observe(getViewLifecycleOwner(), accommodations -> {
             accommodationAdapter.setAccommodations(accommodations);
         });
@@ -68,7 +68,6 @@ public class AccommodationFragment extends Fragment {
             }
         });
 
-        // Initialize FloatingActionButton and dialog layout
         FloatingActionButton addAccommodationButton = view.findViewById(R.id.addAccommodationButton);
         addAccommodationButton.setOnClickListener(v -> showAddAccommodationDialog());
 
@@ -78,7 +77,7 @@ public class AccommodationFragment extends Fragment {
         checkInDateEditText = view.findViewById(R.id.checkInDateEditText);
         checkOutDateEditText = view.findViewById(R.id.checkOutDateEditText);
         numRoomsEditText = view.findViewById(R.id.numRoomsEditText);
-        roomTypeEditText = view.findViewById(R.id.roomTypeEditText);
+        roomTypeSpinner = view.findViewById(R.id.roomTypeSpinner);  // Bind Spinner
 
         addReservationButton = view.findViewById(R.id.addReservationButton);
         addReservationButton.setOnClickListener(v -> addAccommodation());
@@ -89,7 +88,6 @@ public class AccommodationFragment extends Fragment {
         checkInDateEditText.setOnClickListener(v -> openDatePicker(checkInDateEditText));
         checkOutDateEditText.setOnClickListener(v -> openDatePicker(checkOutDateEditText));
 
-        // Initialize sort buttons and set up click listeners
         sortByCheckInButton = view.findViewById(R.id.sortByCheckInButton);
         sortByCheckOutButton = view.findViewById(R.id.sortByCheckOutButton);
 
@@ -110,7 +108,7 @@ public class AccommodationFragment extends Fragment {
         checkInDateEditText.setText("");
         checkOutDateEditText.setText("");
         numRoomsEditText.setText("");
-        roomTypeEditText.setText("");
+        roomTypeSpinner.setSelection(0);
         dialogLayout.setVisibility(View.VISIBLE);
     }
 
@@ -120,11 +118,15 @@ public class AccommodationFragment extends Fragment {
         String checkInDateStr = checkInDateEditText.getText().toString().trim();
         String checkOutDateStr = checkOutDateEditText.getText().toString().trim();
         String numRooms = numRoomsEditText.getText().toString().trim();
-        String roomType = roomTypeEditText.getText().toString().trim();
+        String roomType = roomTypeSpinner.getSelectedItem().toString();  // Get selected room type
 
         if (TextUtils.isEmpty(hotelName) || TextUtils.isEmpty(location) || TextUtils.isEmpty(checkInDateStr)
-                || TextUtils.isEmpty(checkOutDateStr) || TextUtils.isEmpty(numRooms) || TextUtils.isEmpty(roomType)) {
+                || TextUtils.isEmpty(checkOutDateStr) || TextUtils.isEmpty(numRooms)) {
             Toast.makeText(getContext(), "Please fill in all fields.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (roomType.equals("Room Type")) {
+            Toast.makeText(getContext(), "Please enter the room type!", Toast.LENGTH_SHORT).show();
             return;
         }
         try {
@@ -138,7 +140,6 @@ public class AccommodationFragment extends Fragment {
             return;
         }
 
-        // Check that check-out date is after check-in date
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
         try {
             Date checkInDate = dateFormat.parse(checkInDateStr);
@@ -166,3 +167,4 @@ public class AccommodationFragment extends Fragment {
         datePickerDialog.show();
     }
 }
+
