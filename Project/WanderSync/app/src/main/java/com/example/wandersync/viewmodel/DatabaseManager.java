@@ -2,17 +2,17 @@ package com.example.wandersync.viewmodel;
 
 import androidx.annotation.NonNull;
 
+import com.example.wandersync.model.Accommodation;
 import com.example.wandersync.model.Destination;
+import com.example.wandersync.model.DiningReservation;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.GenericTypeIndicator;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +21,15 @@ public class DatabaseManager {
     private static DatabaseManager instance;
     private final DatabaseReference usersReference;
     private final DatabaseReference destinationsReference;
+    private final DatabaseReference accommodationsReference;
+    private final DatabaseReference diningReservationsReference;
 
     private DatabaseManager() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         usersReference = database.getReference("users");
         destinationsReference = database.getReference("destinations");
+        accommodationsReference = database.getReference("accommodations");
+        diningReservationsReference = database.getReference("diningReservations");
     }
 
     public static synchronized DatabaseManager getInstance() {
@@ -38,10 +42,60 @@ public class DatabaseManager {
     public DatabaseReference getUsersReference() {
         return usersReference;
     }
+
     public DatabaseReference getDestinationsReference() {
         return destinationsReference;
     }
 
+    public DatabaseReference getAccommodationsReference() {
+        return accommodationsReference;
+    }
+
+    public DatabaseReference getDiningReservationsReference() {
+        return diningReservationsReference;
+    }
+
+    // Method to add a new accommodation
+    public void addAccommodation(Accommodation accommodation,
+                                 OnSuccessListener<Void> onSuccessListener,
+                                 OnFailureListener onFailureListener) {
+        String accommodationId = accommodationsReference.push().getKey();
+        if (accommodationId != null) {
+            accommodationsReference.child(accommodationId).setValue(accommodation)
+                    .addOnSuccessListener(onSuccessListener)
+                    .addOnFailureListener(onFailureListener);
+        } else {
+            onFailureListener.onFailure(new Exception("Error generating accommodation ID"));
+        }
+    }
+
+    // Method to load accommodations for a specific userID
+    public void loadAccommodations(String userID, ValueEventListener valueEventListener) {
+        Query userAccommodationsQuery = accommodationsReference.orderByChild("userID").equalTo(userID);
+        userAccommodationsQuery.addListenerForSingleValueEvent(valueEventListener);
+    }
+
+    // Method to add a new dining reservation
+    public void addDiningReservation(DiningReservation reservation,
+                                     OnSuccessListener<Void> onSuccessListener,
+                                     OnFailureListener onFailureListener) {
+        String reservationId = diningReservationsReference.push().getKey();
+        if (reservationId != null) {
+            diningReservationsReference.child(reservationId).setValue(reservation)
+                    .addOnSuccessListener(onSuccessListener)
+                    .addOnFailureListener(onFailureListener);
+        } else {
+            onFailureListener.onFailure(new Exception("Error generating reservation ID"));
+        }
+    }
+
+    // Method to load dining reservations for a specific userID
+    public void loadDiningReservations(String userID, ValueEventListener valueEventListener) {
+        Query userReservationsQuery = diningReservationsReference.orderByChild("userId").equalTo(userID);
+        userReservationsQuery.addListenerForSingleValueEvent(valueEventListener);
+    }
+
+    // Method to add a new destination
     public void addDestination(String username, Destination destination,
                                OnSuccessListener<Void> onSuccessListener,
                                OnFailureListener onFailureListener) {
@@ -56,8 +110,10 @@ public class DatabaseManager {
         }
     }
 
-    public void loadDestinations(String username, ValueEventListener valueEventListener) {
-        destinationsReference.addValueEventListener(valueEventListener);
+    // Method to load destinations for a specific user
+    public void loadDestinations(String userID, ValueEventListener valueEventListener) {
+        Query userDestinationsQuery = destinationsReference.orderByChild("username").equalTo(userID);
+        userDestinationsQuery.addListenerForSingleValueEvent(valueEventListener);
     }
 
     public void saveVacationTime(String username, long duration,
@@ -68,6 +124,7 @@ public class DatabaseManager {
                 .addOnSuccessListener(onSuccessListener)
                 .addOnFailureListener(onFailureListener);
     }
+
     public void addCollaborator(String username, String mainUserUsername, OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener) {
         DatabaseReference collaboratorRef = usersReference.child(mainUserUsername).child("contributors");
 
@@ -89,7 +146,7 @@ public class DatabaseManager {
                         })
                         .addOnFailureListener(onFailureListener);
             } else {
-                onSuccessListener.onSuccess(null); // Collaborator already exists
+                onSuccessListener.onSuccess(null);
             }
         }).addOnFailureListener(onFailureListener);
     }

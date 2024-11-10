@@ -6,4 +6,12 @@
     <string name="transportation">Transportation</string>
     <string name="travel_community">Travel Community</string>
     <string name="dining">Dining</string>
+        <string-array name="room_types">
+            <item>Room Type</item>
+            <item>Single Room</item>
+            <item>Double Room</item>
+            <item>Suite</item>
+            <item>Quad</item>
+            <item>Hostel/Shared Style</item>
+        </string-array>
 </resources>

@@ -167,26 +167,33 @@ public class LogisticsViewModel extends AndroidViewModel {
             inviteStatus.setValue(username + " is already invited.");
             return;
         }
+
         databaseManager.getUsersReference().child(username)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
-                            databaseManager.addCollaborator(username, currentUsername,
-                                    aVoid -> {
-                                        ArrayList<String> updatedContributors = new ArrayList<>(contributors.getValue());
-                                        updatedContributors.add(username);
-                                        contributors.setValue(updatedContributors);
+                            Boolean isCollaborator = snapshot.child("isCollaborator").getValue(Boolean.class);
+                            if (Boolean.TRUE.equals(isCollaborator)) {
+                                inviteStatus.setValue("User " + username + " is already a collaborator and cannot be added again.");
+                            } else {
+                                databaseManager.addCollaborator(username, currentUsername,
+                                        aVoid -> {
+                                            ArrayList<String> updatedContributors = new ArrayList<>(contributors.getValue());
+                                            updatedContributors.add(username);
+                                            contributors.setValue(updatedContributors);
 
-                                        inviteStatus.setValue(username + " added as a collaborator.");
-                                        fetchContributorNotes(username);
-                                    },
-                                    e -> inviteStatus.setValue("Failed to add collaborator: " + e.getMessage())
-                            );
+                                            inviteStatus.setValue(username + " added as a collaborator.");
+                                            fetchContributorNotes(username);
+                                        },
+                                        e -> inviteStatus.setValue("Failed to add collaborator: " + e.getMessage())
+                                );
+                            }
                         } else {
                             inviteStatus.setValue("User " + username + " does not exist.");
                         }
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
                         inviteStatus.setValue("Error checking user: " + error.getMessage());
@@ -194,21 +201,69 @@ public class LogisticsViewModel extends AndroidViewModel {
                 });
     }
 
+
     public void fetchContributors(String currentUsername) {
-        fetchCurrentUserNotes();
-        databaseManager.getUsersReference().child(currentUsername).child("contributors")
+        checkCollaboratorStatusAndFetchContributors(currentUsername);
+    }
+
+    private void checkCollaboratorStatusAndFetchContributors(String currentUsername) {
+        databaseManager.getUsersReference().child(currentUsername).child("isCollaborator")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        ArrayList<String> loadedContributors = new ArrayList<>();
+                        Boolean isCollaborator = snapshot.getValue(Boolean.class);
+                        if (Boolean.TRUE.equals(isCollaborator)) {
+                            // User is a collaborator, so we fetch contributors and notes using mainUserId
+                            databaseManager.getUsersReference().child(currentUsername).child("mainUserId")
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot mainUserSnapshot) {
+                                            String mainUserId = mainUserSnapshot.getValue(String.class);
+                                            if (mainUserId != null) {
+                                                // Treat mainUserId as a contributor by adding them first
+                                                ArrayList<String> loadedContributors = new ArrayList<>();
+                                                loadedContributors.add(mainUserId); // Add mainUserId to the contributors list
+                                                contributors.setValue(loadedContributors); // Update with mainUserId as the first "contributor"
+
+                                                // Fetch notes for mainUserId
+                                                fetchContributorNotes(mainUserId);
+
+                                                // Fetch other contributors
+                                                fetchAdditionalContributors(mainUserId, currentUsername, loadedContributors);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            inviteStatus.setValue("Failed to fetch main user ID: " + error.getMessage());
+                                        }
+                                    });
+                        } else {
+                            // If not a collaborator, fetch contributors normally without mainUserId
+                            fetchAdditionalContributors(currentUsername, null, new ArrayList<>());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        inviteStatus.setValue("Failed to check collaborator status: " + error.getMessage());
+                    }
+                });
+    }
+
+    private void fetchAdditionalContributors(String userId, String currentUsername, ArrayList<String> loadedContributors) {
+        databaseManager.getUsersReference().child(userId).child("contributors")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot contributorSnapshot : snapshot.getChildren()) {
                             String contributor = contributorSnapshot.getValue(String.class);
-                            if (contributor != null) {
+                            if (contributor != null && !contributor.equals(currentUsername) && !loadedContributors.contains(contributor)) {
                                 loadedContributors.add(contributor);
                                 fetchContributorNotes(contributor);
                             }
                         }
-                        contributors.setValue(loadedContributors);
+                        contributors.setValue(loadedContributors); // Update contributors with all contributors, including mainUserId
                     }
 
                     @Override
@@ -218,10 +273,9 @@ public class LogisticsViewModel extends AndroidViewModel {
                 });
     }
 
-
     private void fetchContributorNotes(String contributorUsername) {
         databaseManager.getUsersReference().child(contributorUsername).child("notes")
-                .addValueEventListener(new ValueEventListener() {
+                .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot notesSnapshot) {
                         ArrayList<String> contributorNotes = new ArrayList<>();
@@ -234,13 +288,12 @@ public class LogisticsViewModel extends AndroidViewModel {
 
                         HashMap<String, ArrayList<String>> updatedNotesMap = new HashMap<>(userNotesMap.getValue());
                         updatedNotesMap.put(contributorUsername, contributorNotes);
-                        userNotesMap.setValue(updatedNotesMap); // Update LiveData
+                        userNotesMap.setValue(updatedNotesMap); // Update LiveData with contributor notes
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        noteStatus.setValue("Failed to load notes for contributor "
-                                + contributorUsername + ": " + error.getMessage());
+                        noteStatus.setValue("Failed to load notes for contributor " + contributorUsername + ": " + error.getMessage());
                     }
                 });
     }
@@ -288,6 +341,7 @@ public class LogisticsViewModel extends AndroidViewModel {
 
         databaseManager.getUsersReference().child(username).child("notes").setValue(notes)
                 .addOnSuccessListener(aVoid -> {
+
                     HashMap<String, ArrayList<String>> updatedNotesMap =
                             new HashMap<>(userNotesMap.getValue());
 
