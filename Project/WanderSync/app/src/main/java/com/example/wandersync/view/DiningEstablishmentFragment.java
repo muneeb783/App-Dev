@@ -25,6 +25,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class DiningEstablishmentFragment extends Fragment {
@@ -71,12 +72,19 @@ public class DiningEstablishmentFragment extends Fragment {
     }
 
     private void setupObservers() {
+        // Observing reservation data changes
         diningViewModel.getReservationsLiveData().observe(getViewLifecycleOwner(), reservations -> {
-            if (reservations != null) {
+            if (reservations != null && !reservations.isEmpty()) {
                 reservationsAdapter.setReservations(reservations);
+                reservationsRecyclerView.setVisibility(View.VISIBLE);
+                Toast.makeText(getContext(), "Reservations loaded", Toast.LENGTH_SHORT).show();
+            } else {
+                reservationsRecyclerView.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "No reservations available", Toast.LENGTH_SHORT).show();
             }
         });
 
+        // Observing the status of the reservation being added
         diningViewModel.getReservationAddedStatus().observe(getViewLifecycleOwner(), success -> {
             if (success) {
                 Toast.makeText(getContext(), "Reservation added successfully", Toast.LENGTH_SHORT).show();
@@ -88,8 +96,11 @@ public class DiningEstablishmentFragment extends Fragment {
         });
     }
 
+
     private void setupClickListeners(View view) {
-        addDiningButton.setOnClickListener(v -> dialogLayout.setVisibility(View.VISIBLE));
+        addDiningButton.setOnClickListener(v -> {
+            dialogLayout.setVisibility(View.VISIBLE);
+        });
 
         dateEditText.setOnClickListener(v -> showDatePickerDialog());
         timeEditText.setOnClickListener(v -> showTimePickerDialog());
@@ -131,6 +142,7 @@ public class DiningEstablishmentFragment extends Fragment {
         String time = timeEditText.getText().toString();
         String review = reviewEditText.getText().toString();
 
+        // Call the ViewModel method to add the reservation
         diningViewModel.addReservation(location, website, date, time, review);
     }
 
