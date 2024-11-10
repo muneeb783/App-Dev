@@ -10,15 +10,17 @@ public class DiningReservation {
     private String website;
     private long reservationTime;
     private String review;
+    private String userId; // Add userId to track the user who created the reservation
 
     public DiningReservation() {
     }
 
-    public DiningReservation(String location, String website, long reservationTime, String review) {
+    public DiningReservation(String location, String website, long reservationTime, String review, String userId) {
         this.location = location;
         this.website = website;
         this.reservationTime = reservationTime;
         this.review = review;
+        this.userId = userId;  // Store user ID
     }
 
     public String getLocation() {
@@ -53,8 +55,16 @@ public class DiningReservation {
         this.review = review;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     public Date getReservationDate() {
-        return new Date(reservationTime);  // Converts timestamp to Date object
+        return new Date(reservationTime);
     }
 
     public String getFormattedReservationDate() {
@@ -66,4 +76,10 @@ public class DiningReservation {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
         return sdf.format(new Date(reservationTime));
     }
+
+    public boolean isExpired() {
+        long currentTime = System.currentTimeMillis();
+        return this.reservationTime < currentTime;
+    }
+
 }

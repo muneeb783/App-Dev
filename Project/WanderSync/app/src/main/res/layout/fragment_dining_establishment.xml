@@ -70,6 +70,14 @@
             android:layout_height="wrap_content"
             android:text="Add Reservation"
             android:backgroundTint="@color/colorPrimary" />
+
+        <!-- Cancel button -->
+        <Button
+            android:id="@+id/button_cancel_reservation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:backgroundTint="@color/colorAccent" />
     </LinearLayout>
 
     <!-- RecyclerView for displaying dining reservations -->
@@ -93,4 +101,3 @@
         android:tint="@android:color/white" />
 
 </LinearLayout>
-
