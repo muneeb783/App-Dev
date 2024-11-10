@@ -1,161 +1,142 @@
 package com.example.wandersync.view;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wandersync.R;
+import com.example.wandersync.model.Accommodation;
+import com.example.wandersync.viewmodel.AccommodationAdapter;
+import com.example.wandersync.viewmodel.AccommodationViewModel;
+
+
+import com.example.wandersync.viewmodel.sorting.SortByCheckInDate;
+import com.example.wandersync.viewmodel.sorting.SortByCheckOutDate;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class AccommodationFragment extends Fragment {
 
+    private AccommodationViewModel accommodationViewModel;
     private RecyclerView accommodationsRecyclerView;
-    private FloatingActionButton addAccommodationButton;
     private AccommodationAdapter accommodationAdapter;
-    private List<Accommodation> accommodationList;
     private LinearLayout dialogLayout;
-    private EditText locationEditText;
-    private EditText checkInDateEditText;
-    private EditText checkOutDateEditText;
-    private EditText numRoomsEditText;
-    private EditText roomTypeEditText;
+    private EditText locationEditText, checkInDateEditText, checkOutDateEditText, numRoomsEditText, roomTypeEditText, hotelNameEditText;
+    private Button addReservationButton, cancelAccommodationButton, sortByCheckInButton, sortByCheckOutButton;
 
-    @Nullable
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_accommodation, container, false);
 
-        Button addReservationButton;
-
+        // Initialize ViewModel and RecyclerView
+        accommodationViewModel = new ViewModelProvider(this).get(AccommodationViewModel.class);
         accommodationsRecyclerView = view.findViewById(R.id.accommodationsRecyclerView);
-        addAccommodationButton = view.findViewById(R.id.addAccommodationButton);
+        accommodationsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        accommodationAdapter = new AccommodationAdapter(new ArrayList<>());
+        accommodationsRecyclerView.setAdapter(accommodationAdapter);
+
+        // Observe LiveData for accommodations and errors
+        accommodationViewModel.getAccommodations().observe(getViewLifecycleOwner(), accommodations -> {
+            accommodationAdapter.setAccommodations(accommodations);
+        });
+
+        accommodationViewModel.getError().observe(getViewLifecycleOwner(), errorMessage -> {
+            if (errorMessage != null) {
+                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Initialize FloatingActionButton and dialog layout
+        FloatingActionButton addAccommodationButton = view.findViewById(R.id.addAccommodationButton);
+        addAccommodationButton.setOnClickListener(v -> showAddAccommodationDialog());
+
         dialogLayout = view.findViewById(R.id.dialog_add_accommodation);
+        hotelNameEditText = view.findViewById(R.id.hotelNameEditText);
         locationEditText = view.findViewById(R.id.locationEditText);
         checkInDateEditText = view.findViewById(R.id.checkInDateEditText);
         checkOutDateEditText = view.findViewById(R.id.checkOutDateEditText);
         numRoomsEditText = view.findViewById(R.id.numRoomsEditText);
         roomTypeEditText = view.findViewById(R.id.roomTypeEditText);
+
         addReservationButton = view.findViewById(R.id.addReservationButton);
+        addReservationButton.setOnClickListener(v -> addAccommodation());
 
-        accommodationList = new ArrayList<>();
-        accommodationAdapter = new AccommodationAdapter(accommodationList);
-        accommodationsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        accommodationsRecyclerView.setAdapter(accommodationAdapter);
+        cancelAccommodationButton = view.findViewById(R.id.cancelAccommodationButton);
+        cancelAccommodationButton.setOnClickListener(v -> dialogLayout.setVisibility(View.GONE));
 
-        addAccommodationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogLayout.setVisibility(View.VISIBLE);
-            }
+        checkInDateEditText.setOnClickListener(v -> openDatePicker(checkInDateEditText));
+        checkOutDateEditText.setOnClickListener(v -> openDatePicker(checkOutDateEditText));
+
+        // Initialize sort buttons and set up click listeners
+        sortByCheckInButton = view.findViewById(R.id.sortByCheckInButton);
+        sortByCheckOutButton = view.findViewById(R.id.sortByCheckOutButton);
+
+        sortByCheckInButton.setOnClickListener(v -> {
+            accommodationViewModel.setSortStrategy(new SortByCheckInDate());
         });
 
-        addReservationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String location = locationEditText.getText().toString();
-                String checkInDate = checkInDateEditText.getText().toString();
-                String checkOutDate = checkOutDateEditText.getText().toString();
-                String numRooms = numRoomsEditText.getText().toString();
-                String roomType = roomTypeEditText.getText().toString();
-
-                if (location.isEmpty() || checkInDate.isEmpty() || checkOutDate.isEmpty() || numRooms.isEmpty() || roomType.isEmpty()) {
-                    Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                Accommodation newAccommodation = new Accommodation(location, "Hotel", checkInDate, checkOutDate, numRooms, roomType);
-                accommodationList.add(newAccommodation);
-                accommodationAdapter.notifyDataSetChanged();
-
-                dialogLayout.setVisibility(View.GONE);
-                locationEditText.setText("");
-                checkInDateEditText.setText("");
-                checkOutDateEditText.setText("");
-                numRoomsEditText.setText("");
-                roomTypeEditText.setText("");
-            }
+        sortByCheckOutButton.setOnClickListener(v -> {
+            accommodationViewModel.setSortStrategy(new SortByCheckOutDate());
         });
 
         return view;
     }
 
-    public static class Accommodation {
-        String location;
-        String hotelName;
-        String checkInOut;
-        String numRooms;
-        String roomType;
-
-        public Accommodation(String location, String hotelName, String checkInOut, String checkOutDate, String numRooms, String roomType) {
-            this.location = location;
-            this.hotelName = hotelName;
-            this.checkInOut = "Check-in: " + checkInOut + " Check-out: " + checkOutDate;
-            this.numRooms = numRooms;
-            this.roomType = roomType;
-        }
+    private void showAddAccommodationDialog() {
+        hotelNameEditText.setText("");
+        locationEditText.setText("");
+        checkInDateEditText.setText("");
+        checkOutDateEditText.setText("");
+        numRoomsEditText.setText("");
+        roomTypeEditText.setText("");
+        dialogLayout.setVisibility(View.VISIBLE);
     }
 
-    private class AccommodationAdapter extends RecyclerView.Adapter<AccommodationAdapter.AccommodationViewHolder> {
+    private void addAccommodation() {
+        String hotelName = hotelNameEditText.getText().toString().trim();
+        String location = locationEditText.getText().toString().trim();
+        String checkInDateStr = checkInDateEditText.getText().toString().trim();
+        String checkOutDateStr = checkOutDateEditText.getText().toString().trim();
+        String numRooms = numRoomsEditText.getText().toString().trim();
+        String roomType = roomTypeEditText.getText().toString().trim();
 
-        private List<Accommodation> accommodations;
-
-        public AccommodationAdapter(List<Accommodation> accommodations) {
-            this.accommodations = accommodations;
+        if (TextUtils.isEmpty(hotelName) || TextUtils.isEmpty(location) || TextUtils.isEmpty(checkInDateStr)
+                || TextUtils.isEmpty(checkOutDateStr) || TextUtils.isEmpty(numRooms) || TextUtils.isEmpty(roomType)) {
+            Toast.makeText(getContext(), "Please fill in all fields.", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        @NonNull
-        @Override
-        public AccommodationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.accommodation_item, parent, false);
-            return new AccommodationViewHolder(itemView);
-        }
+        accommodationViewModel.addAccommodation(hotelName, location, checkInDateStr, checkOutDateStr, numRooms, roomType);
+        dialogLayout.setVisibility(View.GONE);
+    }
 
-        @Override
-        public void onBindViewHolder(@NonNull AccommodationViewHolder holder, int position) {
-            Accommodation accommodation = accommodations.get(position);
-            holder.locationText.setText(accommodation.location);
-            holder.hotelNameText.setText(accommodation.hotelName);
-            holder.checkInOutText.setText(accommodation.checkInOut);
-            holder.numRoomsText.setText("Number of Rooms: " + accommodation.numRooms);
-            holder.roomTypeText.setText(accommodation.roomType);
-        }
-
-        @Override
-        public int getItemCount() {
-            return accommodations.size();
-        }
-
-        // ViewHolder for RecyclerView items
-        public class AccommodationViewHolder extends RecyclerView.ViewHolder {
-            TextView locationText;
-            TextView hotelNameText;
-            TextView checkInOutText;
-            TextView numRoomsText;
-            TextView roomTypeText;
-
-            public AccommodationViewHolder(View itemView) {
-                super(itemView);
-                locationText = itemView.findViewById(R.id.locationText);
-                hotelNameText = itemView.findViewById(R.id.hotelNameText);
-                checkInOutText = itemView.findViewById(R.id.checkInOutText);
-                numRoomsText = itemView.findViewById(R.id.numRoomsText);
-                roomTypeText = itemView.findViewById(R.id.roomTypeText);
-            }
-        }
+    private void openDatePicker(final EditText editText) {
+        final Calendar calendar = Calendar.getInstance();
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view, year, month, day) -> {
+            calendar.set(year, month, day);
+            editText.setText(dateFormat.format(calendar.getTime()));
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.show();
     }
 }

@@ -1,5 +1,4 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_gradient"
@@ -14,44 +13,75 @@
         android:textSize="24sp"
         android:textStyle="bold" />
 
+    <!-- Sort Buttons Container -->
+    <LinearLayout
+        android:id="@+id/sortButtonsContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/sortByCheckInButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="@android:color/holo_blue_light"
+            android:text="Sort by Check-In" />
+
+        <Button
+            android:id="@+id/sortByCheckOutButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/holo_blue_light"
+            android:text="Sort by Check-Out" />
+    </LinearLayout>
+
     <!-- RecyclerView for accommodations list -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/accommodationsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_below="@id/title"
+        android:layout_below="@id/sortButtonsContainer"
         android:layout_above="@id/addAccommodationButton"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="16dp" />
 
     <!-- Floating Action Button for adding new accommodations -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addAccommodationButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_add"
-        android:contentDescription="Add Accommodation" />
+        android:contentDescription="Add Accommodation"
+        android:src="@drawable/ic_add" />
 
     <!-- Dialog layout for adding accommodations -->
     <LinearLayout
         android:id="@+id/dialog_add_accommodation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:elevation="5dp"
         android:orientation="vertical"
         android:padding="16dp"
-        android:background="@android:color/white"
-        android:visibility="gone"
-        android:elevation="5dp">
+        android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
             android:text="New Reservation"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:paddingBottom="8dp" />
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/hotelNameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Hotel Name" />
 
         <EditText
             android:id="@+id/locationEditText"
@@ -86,8 +116,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp">
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/addReservationButton"
@@ -100,9 +130,9 @@
                 android:id="@+id/cancelAccommodationButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:text="Cancel"
-                android:layout_marginStart="8dp" />
+                android:text="Cancel" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
