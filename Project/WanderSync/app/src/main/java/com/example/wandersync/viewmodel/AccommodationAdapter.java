@@ -7,19 +7,18 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.wandersync.Model.Accommodation;
+import com.example.wandersync.model.Accommodation;
 import com.example.wandersync.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-// Create this as a separate class (not an inner class of the Fragment)
 public class AccommodationAdapter extends RecyclerView.Adapter<AccommodationAdapter.AccommodationViewHolder> {
 
-    private List<Accommodation> accommodations = new ArrayList<>();
+    private List<Accommodation> accommodations;
 
-    public AccommodationAdapter(List<Accommodation> es) {
-        accommodations = es;
+    public AccommodationAdapter(List<Accommodation> accommodations) {
+        this.accommodations = accommodations != null ? accommodations : new ArrayList<>();
     }
 
     public void setAccommodations(List<Accommodation> accommodations) {
@@ -36,7 +35,7 @@ public class AccommodationAdapter extends RecyclerView.Adapter<AccommodationAdap
 
     @Override
     public void onBindViewHolder(@NonNull AccommodationViewHolder holder, int position) {
-        Accommodation accommodation = (Accommodation) accommodations.get(position);
+        Accommodation accommodation = accommodations.get(position);
         holder.hotelNameText.setText(accommodation.getHotelName());
         holder.locationText.setText(accommodation.getLocation());
         holder.checkInOutText.setText(accommodation.getCheckInOut());
@@ -49,7 +48,6 @@ public class AccommodationAdapter extends RecyclerView.Adapter<AccommodationAdap
         return accommodations.size();
     }
 
-    // ViewHolder for RecyclerView items
     public static class AccommodationViewHolder extends RecyclerView.ViewHolder {
         TextView hotelNameText;
         TextView locationText;
