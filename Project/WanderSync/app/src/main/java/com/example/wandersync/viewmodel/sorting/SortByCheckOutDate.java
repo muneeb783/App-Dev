@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class SortByCheckOutDate implements SortStrategy {
+public class SortByCheckOutDate implements SortStrategy<Accommodation> {
     @Override
     public List<Accommodation> sort(List<Accommodation> accommodations) {
         Collections.sort(accommodations, Comparator.comparing(Accommodation::getCheckOutDate));

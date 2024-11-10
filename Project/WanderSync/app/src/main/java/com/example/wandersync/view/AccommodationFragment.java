@@ -27,6 +27,7 @@ import com.example.wandersync.viewmodel.sorting.SortByCheckInDate;
 import com.example.wandersync.viewmodel.sorting.SortByCheckOutDate;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -124,6 +125,31 @@ public class AccommodationFragment extends Fragment {
         if (TextUtils.isEmpty(hotelName) || TextUtils.isEmpty(location) || TextUtils.isEmpty(checkInDateStr)
                 || TextUtils.isEmpty(checkOutDateStr) || TextUtils.isEmpty(numRooms) || TextUtils.isEmpty(roomType)) {
             Toast.makeText(getContext(), "Please fill in all fields.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        try {
+            int numRoomsInt = Integer.parseInt(numRooms);
+            if (numRoomsInt <= 0) {
+                Toast.makeText(getContext(), "Number of rooms must be a positive number.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } catch (NumberFormatException e) {
+            Toast.makeText(getContext(), "Please enter a valid number for rooms.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Check that check-out date is after check-in date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+        try {
+            Date checkInDate = dateFormat.parse(checkInDateStr);
+            Date checkOutDate = dateFormat.parse(checkOutDateStr);
+
+            if (checkInDate != null && checkOutDate != null && !checkOutDate.after(checkInDate)) {
+                Toast.makeText(getContext(), "Check-out date must be after check-in date.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } catch (ParseException e) {
+            Toast.makeText(getContext(), "Invalid date format. Please use MM/dd/yyyy.", Toast.LENGTH_SHORT).show();
             return;
         }
 

@@ -3,6 +3,7 @@ package com.example.wandersync.view;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
 public class DiningEstablishmentFragment extends Fragment {
@@ -72,35 +72,27 @@ public class DiningEstablishmentFragment extends Fragment {
     }
 
     private void setupObservers() {
-        // Observing reservation data changes
-        diningViewModel.getReservationsLiveData().observe(getViewLifecycleOwner(), reservations -> {
+        // Observe reservation data changes
+        diningViewModel.getReservations().observe(getViewLifecycleOwner(), reservations -> {
             if (reservations != null && !reservations.isEmpty()) {
                 reservationsAdapter.setReservations(reservations);
                 reservationsRecyclerView.setVisibility(View.VISIBLE);
-                Toast.makeText(getContext(), "Reservations loaded", Toast.LENGTH_SHORT).show();
             } else {
                 reservationsRecyclerView.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "No reservations available", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Observing the status of the reservation being added
-        diningViewModel.getReservationAddedStatus().observe(getViewLifecycleOwner(), success -> {
-            if (success) {
-                Toast.makeText(getContext(), "Reservation added successfully", Toast.LENGTH_SHORT).show();
-                clearDialogFields();
-                dialogLayout.setVisibility(View.GONE);
-            } else {
-                Toast.makeText(getContext(), "Failed to add reservation", Toast.LENGTH_SHORT).show();
+        // Observe the status of the reservation being added
+        diningViewModel.getError().observe(getViewLifecycleOwner(), errorMessage -> {
+            if (errorMessage != null) {
+                Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-
     private void setupClickListeners(View view) {
-        addDiningButton.setOnClickListener(v -> {
-            dialogLayout.setVisibility(View.VISIBLE);
-        });
+        addDiningButton.setOnClickListener(v -> dialogLayout.setVisibility(View.VISIBLE));
 
         dateEditText.setOnClickListener(v -> showDatePickerDialog());
         timeEditText.setOnClickListener(v -> showTimePickerDialog());
@@ -136,14 +128,24 @@ public class DiningEstablishmentFragment extends Fragment {
     }
 
     private void saveReservation() {
-        String location = locationEditText.getText().toString();
-        String website = websiteEditText.getText().toString();
-        String date = dateEditText.getText().toString();
-        String time = timeEditText.getText().toString();
-        String review = reviewEditText.getText().toString();
+        String location = locationEditText.getText().toString().trim();
+        String website = websiteEditText.getText().toString().trim();
+        String date = dateEditText.getText().toString().trim();
+        String time = timeEditText.getText().toString().trim();
+        String review = reviewEditText.getText().toString().trim();
 
-        // Call the ViewModel method to add the reservation
+        if (TextUtils.isEmpty(location) || TextUtils.isEmpty(website) || TextUtils.isEmpty(date) || TextUtils.isEmpty(time) || TextUtils.isEmpty(review)) {
+            Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!(website.endsWith(".com") || website.endsWith(".org") || website.endsWith(".gov"))) {
+            Toast.makeText(getContext(), "Website must end with .com, .org, or .gov", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         diningViewModel.addReservation(location, website, date, time, review);
+        clearDialogFields();
+        dialogLayout.setVisibility(View.GONE);
     }
 
     private void clearDialogFields() {

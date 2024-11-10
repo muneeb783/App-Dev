@@ -1,17 +1,21 @@
 package com.example.wandersync.viewmodel;
 
+import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Patterns;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.example.wandersync.model.DiningReservation;
-import com.google.firebase.auth.FirebaseAuth;
+import com.example.wandersync.viewmodel.sorting.SortStrategy;
+import com.example.wandersync.viewmodel.sorting.SortByReservationTime;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,99 +23,130 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class DiningViewModel extends ViewModel {
+public class DiningViewModel extends AndroidViewModel {
 
+    private final DatabaseManager databaseManager;
     private final MutableLiveData<List<DiningReservation>> reservationsLiveData = new MutableLiveData<>(new ArrayList<>());
-    private final MutableLiveData<Boolean> reservationAddedStatus = new MutableLiveData<>();
-    private final DatabaseReference reservationsDatabase = FirebaseDatabase.getInstance().getReference("reservations");
-    private final FirebaseAuth auth = FirebaseAuth.getInstance();
+    private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
+    private String userId;
+    private SortStrategy sortStrategy;
 
-    public DiningViewModel() {
-        // Fetch reservations immediately when the ViewModel is created
-        fetchReservations();
+    public DiningViewModel(@NonNull Application application) {
+        super(application);
+        databaseManager = DatabaseManager.getInstance();
+
+        SharedPreferences sharedPreferences = application.getSharedPreferences("WanderSyncPrefs", Context.MODE_PRIVATE);
+        userId = sharedPreferences.getString("username", null);
+
+        sortStrategy = new SortByReservationTime();
+
+        checkCollaboratorStatusAndLoadReservations();
     }
 
-    public LiveData<List<DiningReservation>> getReservationsLiveData() {
+    public LiveData<List<DiningReservation>> getReservations() {
         return reservationsLiveData;
     }
 
-    public LiveData<Boolean> getReservationAddedStatus() {
-        return reservationAddedStatus;
+    public LiveData<String> getError() {
+        return errorLiveData;
     }
 
     public void addReservation(String location, String website, String date, String time, String review) {
-        if (location.isEmpty() || website.isEmpty() || date.isEmpty() || time.isEmpty() || review.isEmpty()) {
-            reservationAddedStatus.setValue(false);
+        if (userId == null) {
+            errorLiveData.setValue("User ID is not available.");
             return;
         }
 
-        if (!Patterns.WEB_URL.matcher(website).matches()) {
-            reservationAddedStatus.setValue(false);
+        if (location.isEmpty() || website.isEmpty() || date.isEmpty() || time.isEmpty() || review.isEmpty() ||
+                !Patterns.WEB_URL.matcher(website).matches()) {
+            errorLiveData.setValue("Invalid data provided for reservation.");
             return;
         }
 
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
             long reservationTime = dateFormat.parse(date + " " + time).getTime();
+            DiningReservation newReservation = new DiningReservation(location, website, reservationTime, review, userId);
 
-            // Fetch existing reservations from Firebase
-            reservationsDatabase.get().addOnSuccessListener(snapshot -> {
-                boolean isDuplicate = false;
-
-                // Check if the new reservation time matches any existing reservation time
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    DiningReservation existingReservation = dataSnapshot.getValue(DiningReservation.class);
-                    if (existingReservation != null && existingReservation.getReservationTime() == reservationTime) {
-                        isDuplicate = true;
-                        break;
-                    }
-                }
-
-                if (isDuplicate) {
-                    // If a duplicate is found, show the failure message and return
-                    reservationAddedStatus.setValue(false);
-                } else {
-                    // No duplicates found, proceed to add the new reservation
-                    String userId = auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : "anonymous";  // Get userId
-                    DiningReservation reservation = new DiningReservation(location, website, reservationTime, review, userId);
-
-                    // Add reservation to Firebase Database
-                    reservationsDatabase.push().setValue(reservation)
-                            .addOnCompleteListener(task -> {
-                                if (task.isSuccessful()) {
-                                    // Update the LiveData with new reservations by adding it directly to the list
-                                    List<DiningReservation> currentReservations = reservationsLiveData.getValue();
-                                    if (currentReservations != null) {
-                                        currentReservations.add(reservation); // Add the new reservation
-                                        // Sort the list based on reservation time (or any other criteria)
-                                        currentReservations.sort((r1, r2) -> Long.compare(r1.getReservationTime(), r2.getReservationTime()));
-                                        reservationsLiveData.setValue(currentReservations); // Update the LiveData
-                                    }
-                                    reservationAddedStatus.setValue(true);
-                                } else {
-                                    reservationAddedStatus.setValue(false);
-                                }
-                            });
-                }
-            });
+            databaseManager.addDiningReservation(newReservation,
+                    aVoid -> loadReservations(),
+                    e -> errorLiveData.setValue("Failed to add reservation: " + e.getMessage()));
 
         } catch (ParseException e) {
-            reservationAddedStatus.setValue(false);
+            errorLiveData.setValue("Invalid date/time format.");
         }
     }
 
+    public void setSortStrategy(SortStrategy strategy) {
+        this.sortStrategy = strategy;
+        sortAndSetReservations(); // Apply sorting immediately when the strategy changes
+    }
 
-    // Fetch reservations from the Firebase database
-    private void fetchReservations() {
-        reservationsDatabase.get().addOnSuccessListener(snapshot -> {
-            List<DiningReservation> reservations = new ArrayList<>();
-            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                DiningReservation reservation = dataSnapshot.getValue(DiningReservation.class);
-                if (reservation != null) {
-                    reservations.add(reservation);
+    private void checkCollaboratorStatusAndLoadReservations() {
+        if (userId == null) {
+            errorLiveData.setValue("User ID is not available.");
+            return;
+        }
+
+        databaseManager.getUsersReference().child(userId).child("isCollaborator")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        Boolean isCollaborator = snapshot.getValue(Boolean.class);
+                        if (Boolean.TRUE.equals(isCollaborator)) {
+                            databaseManager.getUsersReference().child(userId).child("mainUserId")
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            String mainUserId = snapshot.getValue(String.class);
+                                            if (mainUserId != null) {
+                                                userId = mainUserId;
+                                            }
+                                            loadReservations();
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            errorLiveData.setValue("Failed to load main user ID: " + error.getMessage());
+                                        }
+                                    });
+                        } else {
+                            loadReservations();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        errorLiveData.setValue("Failed to check collaborator status: " + error.getMessage());
+                    }
+                });
+    }
+
+    private void loadReservations() {
+        databaseManager.loadDiningReservations(userId, new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<DiningReservation> reservationList = new ArrayList<>();
+                for (DataSnapshot reservationSnapshot : snapshot.getChildren()) {
+                    DiningReservation reservation = reservationSnapshot.getValue(DiningReservation.class);
+                    if (reservation != null) {
+                        reservationList.add(reservation);
+                    }
                 }
+                reservationsLiveData.setValue(sortStrategy.sort(reservationList));
             }
-            reservationsLiveData.setValue(reservations);
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                errorLiveData.setValue("Failed to load reservations: " + error.getMessage());
+            }
         });
+    }
+
+    private void sortAndSetReservations() {
+        List<DiningReservation> reservations = reservationsLiveData.getValue();
+        if (reservations != null) {
+            reservationsLiveData.setValue(sortStrategy.sort(new ArrayList<>(reservations)));
+        }
     }
 }
