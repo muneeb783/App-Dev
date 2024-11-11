@@ -248,6 +248,7 @@ public class AccommodationFragment extends Fragment {
             throws IllegalArgumentException {
         try {
             Date checkInDate = dateFormat.parse(checkInDateStr);
+
             Date checkOutDate = dateFormat.parse(checkOutDateStr);
 
             if (checkInDate == null || checkOutDate == null) {
