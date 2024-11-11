@@ -180,4 +180,84 @@ public class AccommodationFragment extends Fragment {
                 Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
+
+    public boolean isValidHotelName(String hotelName) {
+        return hotelName != null && !hotelName.trim().isEmpty();
+    }
+
+    public boolean isValidRoomCount(String roomCount) {
+        if (roomCount == null || roomCount.trim().isEmpty()) {
+            return false;
+        }
+        try {
+            int count = Integer.parseInt(roomCount.trim());
+            return count > 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public boolean isValidLocation(String location) {
+        return location != null && !location.trim().isEmpty();
+    }
+
+    public boolean isValidCheckInDate(String checkInDateStr) {
+        if (checkInDateStr == null || checkInDateStr.trim().isEmpty()) {
+            return false;
+        }
+        try {
+            Date checkInDate = dateFormat.parse(checkInDateStr);
+            Date currentDate = new Date();
+            // Reset time portion for date comparison
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(currentDate);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+            currentDate = cal.getTime();
+
+            return checkInDate != null && !checkInDate.before(currentDate);
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
+    public boolean isValidCheckOutDate(String checkInDateStr, String checkOutDateStr) {
+        if (checkInDateStr == null || checkOutDateStr == null ||
+                checkInDateStr.trim().isEmpty() || checkOutDateStr.trim().isEmpty()) {
+            return false;
+        }
+        try {
+            Date checkInDate = dateFormat.parse(checkInDateStr);
+            Date checkOutDate = dateFormat.parse(checkOutDateStr);
+            return checkInDate != null && checkOutDate != null && checkOutDate.after(checkInDate);
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
+    public boolean isValidRoomType(String roomType) {
+        if (roomType == null || roomType.trim().isEmpty()) {
+            return false;
+        }
+        return !roomType.equals("Room Type"); // Checking it's not the default spinner value
+    }
+
+    public int calculateStayDuration(String checkInDateStr, String checkOutDateStr)
+            throws IllegalArgumentException {
+        try {
+            Date checkInDate = dateFormat.parse(checkInDateStr);
+            Date checkOutDate = dateFormat.parse(checkOutDateStr);
+
+            if (checkInDate == null || checkOutDate == null) {
+                throw new IllegalArgumentException("Invalid date format");
+            }
+
+            long differenceInMillis = checkOutDate.getTime() - checkInDate.getTime();
+            return (int) (differenceInMillis / (1000 * 60 * 60 * 24));
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Invalid date format");
+        }
+    }
 }
