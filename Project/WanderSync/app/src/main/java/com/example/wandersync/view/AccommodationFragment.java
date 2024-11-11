@@ -224,8 +224,8 @@ public class AccommodationFragment extends Fragment {
     }
 
     public boolean isValidCheckOutDate(String checkInDateStr, String checkOutDateStr) {
-        if (checkInDateStr == null || checkOutDateStr == null ||
-                checkInDateStr.trim().isEmpty() || checkOutDateStr.trim().isEmpty()) {
+        if (checkInDateStr == null || checkOutDateStr == null
+                || checkInDateStr.trim().isEmpty() || checkOutDateStr.trim().isEmpty()) {
             return false;
         }
         try {

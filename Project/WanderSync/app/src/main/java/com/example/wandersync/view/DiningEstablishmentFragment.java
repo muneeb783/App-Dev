@@ -173,7 +173,8 @@ public class DiningEstablishmentFragment extends Fragment {
     }
 
     public boolean isValidWebsite(String website) {
-        return website != null && (website.endsWith(".com") || website.endsWith(".org") || website.endsWith(".gov"));
+        return website != null && (website.endsWith(".com")
+                || website.endsWith(".org") || website.endsWith(".gov"));
     }
 
     public boolean isValidDate(String date) {
