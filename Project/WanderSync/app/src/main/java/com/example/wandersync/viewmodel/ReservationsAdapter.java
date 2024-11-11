@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,12 +21,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-public class ReservationsAdapter extends RecyclerView.Adapter<ReservationsAdapter.ReservationViewHolder> {
+public class ReservationsAdapter extends
+        RecyclerView.Adapter<ReservationsAdapter.ReservationViewHolder> {
 
     private List<DiningReservation> reservations;
     private final Context context;
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-    private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+    private final SimpleDateFormat dateFormat =
+            new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+    private final SimpleDateFormat timeFormat =
+            new SimpleDateFormat("HH:mm", Locale.getDefault());
 
     public ReservationsAdapter(Context context, List<DiningReservation> reservations) {
         this.context = context;
@@ -42,13 +44,15 @@ public class ReservationsAdapter extends RecyclerView.Adapter<ReservationsAdapte
     }
 
     private void sortReservationsByDate() {
-        Collections.sort(reservations, (r1, r2) -> Long.compare(r1.getReservationTime(), r2.getReservationTime()));
+        Collections.sort(reservations,
+                (r1, r2) -> Long.compare(r1.getReservationTime(), r2.getReservationTime()));
     }
 
     @NonNull
     @Override
     public ReservationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.form_reservation, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).
+                inflate(R.layout.form_reservation, parent, false);
         return new ReservationViewHolder(itemView);
     }
 
@@ -91,7 +95,8 @@ public class ReservationsAdapter extends RecyclerView.Adapter<ReservationsAdapte
             dateTextView.setVisibility(View.GONE);
 
             // Show date header if it's the first item or date differs from the previous item
-            if (position == 0 || !formattedDate.equals(dateFormat.format(reservations.get(position - 1).getReservationTime()))) {
+            if (position == 0 || !formattedDate.equals(dateFormat.
+                    format(reservations.get(position - 1).getReservationTime()))) {
                 dateTextView.setText(formattedDate);
                 dateTextView.setVisibility(View.VISIBLE);
             }
@@ -126,7 +131,7 @@ public class ReservationsAdapter extends RecyclerView.Adapter<ReservationsAdapte
         // Method to reset the background to the original one
         private void resetBackground() {
             if (defaultBackgroundDrawable != null) {
-                itemView.setBackground(defaultBackgroundDrawable); // Reset the background to the original state
+                itemView.setBackground(defaultBackgroundDrawable);
             }
         }
 

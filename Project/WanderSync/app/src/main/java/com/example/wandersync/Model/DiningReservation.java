@@ -15,7 +15,8 @@ public class DiningReservation {
     public DiningReservation() {
     }
 
-    public DiningReservation(String location, String website, long reservationTime, String review, String userId) {
+    public DiningReservation(String location, String website,
+                             long reservationTime, String review, String userId) {
         this.location = location;
         this.website = website;
         this.reservationTime = reservationTime;
