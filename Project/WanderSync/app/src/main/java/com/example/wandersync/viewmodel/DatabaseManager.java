@@ -1,11 +1,8 @@
 package com.example.wandersync.viewmodel;
 
-import androidx.annotation.NonNull;
-
 import com.example.wandersync.model.Accommodation;
 import com.example.wandersync.model.Destination;
 import com.example.wandersync.model.DiningReservation;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
@@ -71,7 +68,8 @@ public class DatabaseManager {
 
     // Method to load accommodations for a specific userID
     public void loadAccommodations(String userID, ValueEventListener valueEventListener) {
-        Query userAccommodationsQuery = accommodationsReference.orderByChild("userID").equalTo(userID);
+        Query userAccommodationsQuery = accommodationsReference.
+                orderByChild("userID").equalTo(userID);
         userAccommodationsQuery.addListenerForSingleValueEvent(valueEventListener);
     }
 
@@ -91,7 +89,8 @@ public class DatabaseManager {
 
     // Method to load dining reservations for a specific userID
     public void loadDiningReservations(String userID, ValueEventListener valueEventListener) {
-        Query userReservationsQuery = diningReservationsReference.orderByChild("userId").equalTo(userID);
+        Query userReservationsQuery = diningReservationsReference.
+                orderByChild("userId").equalTo(userID);
         userReservationsQuery.addListenerForSingleValueEvent(valueEventListener);
     }
 
@@ -112,7 +111,8 @@ public class DatabaseManager {
 
     // Method to load destinations for a specific user
     public void loadDestinations(String userID, ValueEventListener valueEventListener) {
-        Query userDestinationsQuery = destinationsReference.orderByChild("username").equalTo(userID);
+        Query userDestinationsQuery = destinationsReference.
+                orderByChild("username").equalTo(userID);
         userDestinationsQuery.addListenerForSingleValueEvent(valueEventListener);
     }
 
@@ -125,11 +125,15 @@ public class DatabaseManager {
                 .addOnFailureListener(onFailureListener);
     }
 
-    public void addCollaborator(String username, String mainUserUsername, OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener) {
-        DatabaseReference collaboratorRef = usersReference.child(mainUserUsername).child("contributors");
+    public void addCollaborator(String username, String mainUserUsername,
+                                OnSuccessListener<Void> onSuccessListener,
+                                OnFailureListener onFailureListener) {
+        DatabaseReference collaboratorRef = usersReference.
+                child(mainUserUsername).child("contributors");
 
         collaboratorRef.get().addOnSuccessListener(snapshot -> {
-            List<String> contributors = snapshot.exists() ? snapshot.getValue(new GenericTypeIndicator<List<String>>() {}) : new ArrayList<>();
+            List<String> contributors = snapshot.exists() ? snapshot.
+                    getValue(new GenericTypeIndicator<List<String>>() { }) : new ArrayList<>();
 
             if (!contributors.contains(username)) {
                 contributors.add(username);

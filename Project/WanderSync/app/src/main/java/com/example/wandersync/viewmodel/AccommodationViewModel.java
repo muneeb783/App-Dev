@@ -22,7 +22,8 @@ import java.util.List;
 public class AccommodationViewModel extends AndroidViewModel {
 
     private final DatabaseManager databaseManager;
-    private final MutableLiveData<List<Accommodation>> accommodationsLiveData = new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<List<Accommodation>> accommodationsLiveData =
+            new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
     private String userId;
     private SortStrategy sortStrategy;
@@ -31,7 +32,8 @@ public class AccommodationViewModel extends AndroidViewModel {
         super(application);
         databaseManager = DatabaseManager.getInstance();
 
-        SharedPreferences sharedPreferences = application.getSharedPreferences("WanderSyncPrefs", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences =
+                application.getSharedPreferences("WanderSyncPrefs", Context.MODE_PRIVATE);
         userId = sharedPreferences.getString("username", null);
 
         // Set default sorting strategy (e.g., sort by check-in date)
@@ -48,13 +50,15 @@ public class AccommodationViewModel extends AndroidViewModel {
         return errorLiveData;
     }
 
-    public void addAccommodation(String hotelName, String location, String checkInDate, String checkOutDate, String numRooms, String roomType) {
+    public void addAccommodation(String hotelName, String location, String checkInDate,
+                                 String checkOutDate, String numRooms, String roomType) {
         if (userId == null) {
             errorLiveData.setValue("User ID is not available.");
             return;
         }
 
-        Accommodation newAccommodation = new Accommodation(userId, location, hotelName, checkInDate, checkOutDate, numRooms, roomType);
+        Accommodation newAccommodation = new Accommodation(userId, location,
+                hotelName, checkInDate, checkOutDate, numRooms, roomType);
         databaseManager.addAccommodation(newAccommodation,
                 aVoid -> loadAccommodations(),
                 e -> errorLiveData.setValue("Failed to add accommodation: " + e.getMessage()));
@@ -90,7 +94,8 @@ public class AccommodationViewModel extends AndroidViewModel {
 
                                         @Override
                                         public void onCancelled(@NonNull DatabaseError error) {
-                                            errorLiveData.setValue("Failed to load main user ID: " + error.getMessage());
+                                            errorLiveData.setValue("Failed to load main user ID: "
+                                                    + error.getMessage());
                                         }
                                     });
                         } else {
@@ -100,7 +105,8 @@ public class AccommodationViewModel extends AndroidViewModel {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        errorLiveData.setValue("Failed to check collaborator status: " + error.getMessage());
+                        errorLiveData.setValue("Failed to check collaborator status: "
+                                + error.getMessage());
                     }
                 });
     }
@@ -111,7 +117,8 @@ public class AccommodationViewModel extends AndroidViewModel {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<Accommodation> accommodationList = new ArrayList<>();
                 for (DataSnapshot accommodationSnapshot : snapshot.getChildren()) {
-                    Accommodation accommodation = accommodationSnapshot.getValue(Accommodation.class);
+                    Accommodation accommodation =
+                            accommodationSnapshot.getValue(Accommodation.class);
                     if (accommodation != null) {
                         accommodationList.add(accommodation);
                     }

@@ -35,12 +35,17 @@ public class DiningEstablishmentFragment extends Fragment {
     private ReservationsAdapter reservationsAdapter;
     private FloatingActionButton addDiningButton;
     private LinearLayout dialogLayout;
-    private EditText locationEditText, websiteEditText, dateEditText, timeEditText, reviewEditText;
+    private EditText locationEditText;
+    private EditText websiteEditText;
+    private EditText dateEditText;
+    private EditText timeEditText;
+    private EditText reviewEditText;
     private Calendar calendar;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dining_establishment, container, false);
 
         diningViewModel = new ViewModelProvider(this).get(DiningViewModel.class);
@@ -79,7 +84,8 @@ public class DiningEstablishmentFragment extends Fragment {
                 reservationsRecyclerView.setVisibility(View.VISIBLE);
             } else {
                 reservationsRecyclerView.setVisibility(View.GONE);
-                Toast.makeText(getContext(), "No reservations available", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(),
+                        "No reservations available", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -97,7 +103,8 @@ public class DiningEstablishmentFragment extends Fragment {
         dateEditText.setOnClickListener(v -> showDatePickerDialog());
         timeEditText.setOnClickListener(v -> showTimePickerDialog());
         view.findViewById(R.id.button_add_reservation).setOnClickListener(v -> saveReservation());
-        view.findViewById(R.id.button_cancel_reservation).setOnClickListener(v -> dialogLayout.setVisibility(View.GONE));
+        view.findViewById(R.id.button_cancel_reservation).
+                setOnClickListener(v -> dialogLayout.setVisibility(View.GONE));
     }
 
     private void showDatePickerDialog() {
@@ -107,7 +114,8 @@ public class DiningEstablishmentFragment extends Fragment {
                     calendar.set(Calendar.YEAR, year);
                     calendar.set(Calendar.MONTH, month);
                     calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                    dateEditText.setText(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(calendar.getTime()));
+                    dateEditText.setText(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                            .format(calendar.getTime()));
                 },
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
@@ -119,7 +127,9 @@ public class DiningEstablishmentFragment extends Fragment {
     private void showTimePickerDialog() {
         TimePickerDialog timePickerDialog = new TimePickerDialog(
                 getContext(),
-                (view, hourOfDay, minute) -> timeEditText.setText(String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute)),
+                (view, hourOfDay, minute) -> timeEditText.
+                        setText(String.format(Locale.getDefault(), "%02d:%02d",
+                        hourOfDay, minute)),
                 calendar.get(Calendar.HOUR_OF_DAY),
                 calendar.get(Calendar.MINUTE),
                 true
@@ -134,12 +144,14 @@ public class DiningEstablishmentFragment extends Fragment {
         String time = timeEditText.getText().toString().trim();
         String review = reviewEditText.getText().toString().trim();
 
-        if (TextUtils.isEmpty(location) || TextUtils.isEmpty(website) || TextUtils.isEmpty(date) || TextUtils.isEmpty(time) || TextUtils.isEmpty(review)) {
+        if (TextUtils.isEmpty(location) || TextUtils.isEmpty(website) || TextUtils.isEmpty(date)
+                || TextUtils.isEmpty(time) || TextUtils.isEmpty(review)) {
             Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
             return;
         }
         if (!(website.endsWith(".com") || website.endsWith(".org") || website.endsWith(".gov"))) {
-            Toast.makeText(getContext(), "Website must end with .com, .org, or .gov", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(),
+                    "Website must end with .com, .org, or .gov", Toast.LENGTH_SHORT).show();
             return;
         }
 
