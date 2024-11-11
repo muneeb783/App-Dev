@@ -139,4 +139,8 @@ public class AccommodationViewModel extends AndroidViewModel {
             accommodationsLiveData.setValue(sortStrategy.sort(new ArrayList<>(accommodations)));
         }
     }
+
+    public SortStrategy getSortStrategy() {
+        return sortStrategy;
+    }
 }

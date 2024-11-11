@@ -167,4 +167,37 @@ public class DiningEstablishmentFragment extends Fragment {
         timeEditText.setText("");
         reviewEditText.setText("");
     }
+
+    public boolean isValidLocation(String location) {
+        return location != null && !location.trim().isEmpty();
+    }
+
+    public boolean isValidWebsite(String website) {
+        return website != null && (website.endsWith(".com") || website.endsWith(".org") || website.endsWith(".gov"));
+    }
+
+    public boolean isValidDate(String date) {
+        // Simplified date validation, assumes format "dd/MM/yyyy"
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            sdf.setLenient(false);
+            sdf.parse(date);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean isValidTime(String time) {
+        // Simplified time validation, assumes format "HH:mm"
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            sdf.setLenient(false);
+            sdf.parse(time);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }
