@@ -9,7 +9,7 @@ public class Accommodation {
     private String location;
     private String hotelName;
     private String checkInDate;    // Store check-in as String
-    private String checkOutDate;// Store check-out as String
+    private String checkOutDate; // Store check-out as String
     private String checkInOut;
     private String numRooms;
     private String roomType;
@@ -17,9 +17,10 @@ public class Accommodation {
     private String userID;         // User ID to link to the user
 
     // No-argument constructor required for Firebase
-    public Accommodation() {}
+    public Accommodation() { }
 
-    public Accommodation(String userID, String location, String hotelName, String checkInDate, String checkOutDate, String numRooms, String roomType) {
+    public Accommodation(String userID, String location, String hotelName, String checkInDate,
+                         String checkOutDate, String numRooms, String roomType) {
         this.userID = userID;
         this.location = location;
         this.hotelName = hotelName;
@@ -32,24 +33,44 @@ public class Accommodation {
     }
 
     // Getters and setters for all fields
-    public String getLocation() { return location; }
-    public String getHotelName() { return hotelName; }
-    public String getCheckInDate() { return checkInDate; }
-    public String getCheckOutDate() { return checkOutDate; }
-    public String getNumRooms() { return numRooms; }
-    public String getRoomType() { return roomType; }
-    public boolean getIsExpired() { return isExpired; }
-    public String getUserID() { return userID; }
-    public String getCheckInOut() {return checkInOut; }
+    public String getLocation() {
+        return location;
+    }
+    public String getHotelName() {
+        return hotelName;
+    }
+    public String getCheckInDate() {
+        return checkInDate;
+    }
+    public String getCheckOutDate() {
+        return checkOutDate;
+    }
+    public String getNumRooms() {
+        return numRooms;
+    }
+    public String getRoomType() {
+        return roomType;
+    }
+    public boolean getIsExpired() {
+        return isExpired;
+    }
+    public String getUserID() {
+        return userID;
+    }
+    public String getCheckInOut() {
+        return checkInOut;
+    }
 
     public void setExpired(boolean expired) {
+
         isExpired = expired;
     }
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+    private static final SimpleDateFormat DATE_FORMAT
+            = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
 
     public boolean isExpired() {
         try {
-            Date checkIn = dateFormat.parse(checkInDate);
+            Date checkIn = DATE_FORMAT.parse(checkInDate);
             return checkIn != null && checkIn.before(new Date());
         } catch (ParseException e) {
             e.printStackTrace();

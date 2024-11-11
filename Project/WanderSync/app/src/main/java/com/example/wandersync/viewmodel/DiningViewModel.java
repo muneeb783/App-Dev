@@ -26,7 +26,8 @@ import java.util.Locale;
 public class DiningViewModel extends AndroidViewModel {
 
     private final DatabaseManager databaseManager;
-    private final MutableLiveData<List<DiningReservation>> reservationsLiveData = new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<List<DiningReservation>> reservationsLiveData =
+            new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
     private String userId;
     private SortStrategy sortStrategy;
@@ -35,7 +36,8 @@ public class DiningViewModel extends AndroidViewModel {
         super(application);
         databaseManager = DatabaseManager.getInstance();
 
-        SharedPreferences sharedPreferences = application.getSharedPreferences("WanderSyncPrefs", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = application.getSharedPreferences(
+                "WanderSyncPrefs", Context.MODE_PRIVATE);
         userId = sharedPreferences.getString("username", null);
 
         sortStrategy = new SortByReservationTime();
@@ -51,22 +53,26 @@ public class DiningViewModel extends AndroidViewModel {
         return errorLiveData;
     }
 
-    public void addReservation(String location, String website, String date, String time, String review) {
+    public void addReservation(String location,
+                               String website, String date, String time, String review) {
         if (userId == null) {
             errorLiveData.setValue("User ID is not available.");
             return;
         }
 
-        if (location.isEmpty() || website.isEmpty() || date.isEmpty() || time.isEmpty() || review.isEmpty() ||
-                !Patterns.WEB_URL.matcher(website).matches()) {
+        if (location.isEmpty() || website.isEmpty()
+                || date.isEmpty() || time.isEmpty() || review.isEmpty()
+                || !Patterns.WEB_URL.matcher(website).matches()) {
             errorLiveData.setValue("Invalid data provided for reservation.");
             return;
         }
 
         try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+            SimpleDateFormat dateFormat = new SimpleDateFormat(
+                    "dd/MM/yyyy HH:mm", Locale.getDefault());
             long reservationTime = dateFormat.parse(date + " " + time).getTime();
-            DiningReservation newReservation = new DiningReservation(location, website, reservationTime, review, userId);
+            DiningReservation newReservation =
+                    new DiningReservation(location, website, reservationTime, review, userId);
 
             databaseManager.addDiningReservation(newReservation,
                     aVoid -> loadReservations(),
@@ -107,7 +113,8 @@ public class DiningViewModel extends AndroidViewModel {
 
                                         @Override
                                         public void onCancelled(@NonNull DatabaseError error) {
-                                            errorLiveData.setValue("Failed to load main user ID: " + error.getMessage());
+                                            errorLiveData.setValue("Failed to load main user ID: "
+                                                    + error.getMessage());
                                         }
                                     });
                         } else {
@@ -117,7 +124,8 @@ public class DiningViewModel extends AndroidViewModel {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        errorLiveData.setValue("Failed to check collaborator status: " + error.getMessage());
+                        errorLiveData.setValue("Failed to check collaborator status: "
+                                + error.getMessage());
                     }
                 });
     }
@@ -128,7 +136,8 @@ public class DiningViewModel extends AndroidViewModel {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<DiningReservation> reservationList = new ArrayList<>();
                 for (DataSnapshot reservationSnapshot : snapshot.getChildren()) {
-                    DiningReservation reservation = reservationSnapshot.getValue(DiningReservation.class);
+                    DiningReservation reservation =
+                            reservationSnapshot.getValue(DiningReservation.class);
                     if (reservation != null) {
                         reservationList.add(reservation);
                     }

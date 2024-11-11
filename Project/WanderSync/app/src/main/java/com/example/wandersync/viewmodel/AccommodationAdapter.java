@@ -15,7 +15,8 @@ import com.example.wandersync.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AccommodationAdapter extends RecyclerView.Adapter<AccommodationAdapter.AccommodationViewHolder> {
+public class AccommodationAdapter extends
+        RecyclerView.Adapter<AccommodationAdapter.AccommodationViewHolder> {
 
     private List<Accommodation> accommodations;
 
@@ -31,22 +32,23 @@ public class AccommodationAdapter extends RecyclerView.Adapter<AccommodationAdap
     @NonNull
     @Override
     public AccommodationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.accommodation_item, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(
+                R.layout.accommodation_item, parent, false);
         return new AccommodationViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull AccommodationViewHolder holder, int position) {
         Accommodation accommodation = accommodations.get(position);
-        holder.hotelNameText.setText(accommodation.getHotelName());
-        holder.locationText.setText(accommodation.getLocation());
-        holder.checkInOutText.setText(accommodation.getCheckInOut());
-        holder.numRoomsText.setText("Number of Rooms: " + accommodation.getNumRooms());
-        holder.roomTypeText.setText(accommodation.getRoomType());
+        holder.getHotelNameText().setText(accommodation.getHotelName());
+        holder.getLocationText().setText(accommodation.getLocation());
+        holder.getCheckInOutText().setText(accommodation.getCheckInOut());
+        holder.getNumRoomsText().setText("Number of Rooms: " + accommodation.getNumRooms());
+        holder.getRoomTypeText().setText(accommodation.getRoomType());
 
         if (accommodation.isExpired()) {
             GradientDrawable backgroundDrawable = new GradientDrawable();
-            backgroundDrawable.setColor(Color.RED);// Light gray for expired reservations
+            backgroundDrawable.setColor(Color.RED); // Light gray for expired reservations
             backgroundDrawable.setCornerRadius(40);
             holder.itemView.setBackground(backgroundDrawable);
         }
@@ -58,11 +60,11 @@ public class AccommodationAdapter extends RecyclerView.Adapter<AccommodationAdap
     }
 
     public static class AccommodationViewHolder extends RecyclerView.ViewHolder {
-        TextView hotelNameText;
-        TextView locationText;
-        TextView checkInOutText;
-        TextView numRoomsText;
-        TextView roomTypeText;
+        private TextView hotelNameText;
+        private TextView locationText;
+        private TextView checkInOutText;
+        private TextView numRoomsText;
+        private TextView roomTypeText;
 
         public AccommodationViewHolder(View itemView) {
             super(itemView);
@@ -71,6 +73,51 @@ public class AccommodationAdapter extends RecyclerView.Adapter<AccommodationAdap
             checkInOutText = itemView.findViewById(R.id.checkInOutText);
             numRoomsText = itemView.findViewById(R.id.numRoomsText);
             roomTypeText = itemView.findViewById(R.id.roomTypeText);
+        }
+
+        // Getter and Setter for hotelNameText
+        public TextView getHotelNameText() {
+            return hotelNameText;
+        }
+
+        public void setHotelNameText(TextView hotelNameText) {
+            this.hotelNameText = hotelNameText;
+        }
+
+        // Getter and Setter for locationText
+        public TextView getLocationText() {
+            return locationText;
+        }
+
+        public void setLocationText(TextView locationText) {
+            this.locationText = locationText;
+        }
+
+        // Getter and Setter for checkInOutText
+        public TextView getCheckInOutText() {
+            return checkInOutText;
+        }
+
+        public void setCheckInOutText(TextView checkInOutText) {
+            this.checkInOutText = checkInOutText;
+        }
+
+        // Getter and Setter for numRoomsText
+        public TextView getNumRoomsText() {
+            return numRoomsText;
+        }
+
+        public void setNumRoomsText(TextView numRoomsText) {
+            this.numRoomsText = numRoomsText;
+        }
+
+        // Getter and Setter for roomTypeText
+        public TextView getRoomTypeText() {
+            return roomTypeText;
+        }
+
+        public void setRoomTypeText(TextView roomTypeText) {
+            this.roomTypeText = roomTypeText;
         }
     }
 }
