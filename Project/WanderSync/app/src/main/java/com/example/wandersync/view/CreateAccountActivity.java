@@ -41,7 +41,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         createAccountViewModel.getCreateAccountSuccess().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isSuccess) {
-                if (isSuccess == true) {
+                if (isSuccess) {
                     Toast.makeText(CreateAccountActivity.this,
                             "Account created successfully", Toast.LENGTH_SHORT).show();
                     finish();

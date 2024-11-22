@@ -30,7 +30,8 @@ public class DestinationViewModel extends AndroidViewModel {
         errorLiveData = new MutableLiveData<>();
         isCollaboratorLiveData = new MutableLiveData<>();
 
-        SharedPreferences sharedPreferences = application.getSharedPreferences("WanderSyncPrefs", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = application.
+                getSharedPreferences("WanderSyncPrefs", Context.MODE_PRIVATE);
         username = sharedPreferences.getString("username", null);
 
         checkCollaboratorStatusAndLoadDestinations();
@@ -56,7 +57,8 @@ public class DestinationViewModel extends AndroidViewModel {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             Boolean isCollaborator = snapshot.getValue(Boolean.class);
-                            isCollaboratorLiveData.setValue(isCollaborator != null && isCollaborator);
+                            isCollaboratorLiveData.
+                                    setValue(isCollaborator != null && isCollaborator);
 
                             // Fetch destinations based on collaborator status
                             if (Boolean.TRUE.equals(isCollaboratorLiveData.getValue())) {
@@ -68,7 +70,8 @@ public class DestinationViewModel extends AndroidViewModel {
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-                            errorLiveData.setValue("Failed to load collaborator status: " + error.getMessage());
+                            errorLiveData.setValue(
+                                    "Failed to load collaborator status: " + error.getMessage());
                         }
                     });
         } else {
@@ -91,7 +94,8 @@ public class DestinationViewModel extends AndroidViewModel {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        errorLiveData.setValue("Failed to load main user ID: " + error.getMessage());
+                        errorLiveData.setValue(
+                                "Failed to load main user ID: " + error.getMessage());
                     }
                 });
     }
@@ -119,7 +123,8 @@ public class DestinationViewModel extends AndroidViewModel {
 
     public void addDestination(Destination destination) {
         if (Boolean.TRUE.equals(isCollaboratorLiveData.getValue())) {
-            errorLiveData.setValue("Collaborators cannot add destinations to the main user's trip.");
+            errorLiveData.setValue(
+                    "Collaborators cannot add destinations to the main user's trip.");
             return;
         }
 
