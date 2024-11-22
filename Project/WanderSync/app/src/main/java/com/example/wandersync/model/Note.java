@@ -1,4 +1,4 @@
-package com.example.wandersync.Model;
+package com.example.wandersync.model;
 
 public class Note {
     private String messageContent;
