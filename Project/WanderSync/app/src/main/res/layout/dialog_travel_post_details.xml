@@ -1,65 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/travel_plan_dates"
+        android:id="@+id/start_date_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:text="Start Date"
         android:textStyle="bold"
-        android:layout_marginBottom="8dp"
-        android:text="Dates: " />
+        android:paddingBottom="8dp" />
 
     <TextView
-        android:id="@+id/travel_plan_notes"
+        android:id="@+id/end_date_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="Notes: " />
+        android:text="End Date"
+        android:textStyle="bold"
+        android:paddingBottom="8dp" />
 
     <TextView
-        android:id="@+id/travel_plan_destinations_title"
+        android:id="@+id/notes_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Notes"
+        android:paddingBottom="8dp" />
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Destinations:"
-        android:textSize="16sp"
         android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_destinations"
+        android:id="@+id/destinations_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp" />
+        android:layout_height="191dp"
+        android:paddingBottom="8dp" />
 
     <TextView
-        android:id="@+id/travel_plan_accommodations_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Accommodations:"
-        android:textSize="16sp"
         android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_accommodations"
+        android:id="@+id/accommodations_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp" />
+        android:layout_height="150dp"
+        android:paddingBottom="8dp" />
 
     <TextView
-        android:id="@+id/travel_plan_dining_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Dining Reservations:"
-        android:textSize="16sp"
         android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_dining"
+        android:id="@+id/dining_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="164dp" />
+
 </LinearLayout>

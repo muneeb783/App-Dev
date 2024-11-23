@@ -1,9 +1,11 @@
 package com.example.wandersync.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.io.Serializable;
 
-public class TravelPost {
+public class TravelPost implements Serializable {
 
     private String travelPlanId; // Unique identifier for the travel plan
     private String userId; // User who created the travel plan
@@ -138,6 +140,38 @@ public class TravelPost {
 
     public void setDiningReservations(List<com.example.wandersync.model.DiningReservation> diningReservations) {
         this.diningReservations = diningReservations;
+    }
+    // Method to get a list of destination names
+    public List<String> getDestinationNames() {
+        List<String> destinationNames = new ArrayList<>();
+        if (destinations != null) {
+            for (com.example.wandersync.model.Destination destination : destinations) {
+                destinationNames.add(destination.getName()); // Assuming Destination has a `getName` method
+            }
+        }
+        return destinationNames;
+    }
+
+    // Method to get a list of accommodation names
+    public List<String> getAccommodationNames() {
+        List<String> accommodationNames = new ArrayList<>();
+        if (accommodations != null) {
+            for (com.example.wandersync.model.Accommodation accommodation : accommodations) {
+                accommodationNames.add(accommodation.getHotelName()); // Assuming Accommodation has a `getHotelName` method
+            }
+        }
+        return accommodationNames;
+    }
+
+    // Method to get a list of dining reservation names or websites
+    public List<String> getDiningReservationNames() {
+        List<String> diningNames = new ArrayList<>();
+        if (diningReservations != null) {
+            for (com.example.wandersync.model.DiningReservation reservation : diningReservations) {
+                diningNames.add(reservation.getWebsite()); // Assuming DiningReservation has a `getWebsite` method
+            }
+        }
+        return diningNames;
     }
 
     @Override
