@@ -1,5 +1,6 @@
 package com.example.wandersync.viewmodel;
 
+import com.example.wandersync.Model.TravelPost;
 import com.example.wandersync.model.Accommodation;
 import com.example.wandersync.model.Destination;
 import com.example.wandersync.model.DiningReservation;
@@ -154,4 +155,27 @@ public class DatabaseManager {
             }
         }).addOnFailureListener(onFailureListener);
     }
+
+    public void addTravelPost(TravelPost travelPost,
+                              OnSuccessListener<Void> onSuccessListener,
+                              OnFailureListener onFailureListener) {
+        String postId = destinationsReference.push().getKey(); // Use your appropriate reference
+        if (postId != null) {
+            destinationsReference.child(postId).setValue(travelPost) // Or your own reference for travel posts
+                    .addOnSuccessListener(onSuccessListener)
+                    .addOnFailureListener(onFailureListener);
+        } else {
+            onFailureListener.onFailure(new Exception("Error generating travel post ID"));
+        }
+    }
+
+    // Method to load travel posts from Firebase
+    public void loadTravelPosts(ValueEventListener valueEventListener) {
+        Query travelPostsQuery = destinationsReference; // Replace with actual reference for travel posts
+        travelPostsQuery.addListenerForSingleValueEvent(valueEventListener);
+    }
+
+
+
+
 }
