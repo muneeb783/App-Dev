@@ -1,16 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/text_view_destination"
+    <!-- RecyclerView for displaying travel plans -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_travel_plans"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="72dp"
+        />
+
+    <!-- FloatingActionButton for adding a new travel plan -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_travel_plan_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Travel Communities"
-        android:textSize="24sp"
-        android:layout_gravity="center" />
-</LinearLayout>
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:contentDescription="Add Travel Plan"
+        android:src="@android:drawable/ic_input_add"
+        android:backgroundTint="@android:color/holo_blue_bright" />
+</RelativeLayout>
+

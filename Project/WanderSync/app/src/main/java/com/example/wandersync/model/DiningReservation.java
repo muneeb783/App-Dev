@@ -82,5 +82,7 @@ public class DiningReservation {
         long currentTime = System.currentTimeMillis();
         return this.reservationTime < currentTime;
     }
-
+    public String toString() {
+        return website;
+    }
 }

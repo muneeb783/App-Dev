@@ -1,6 +1,6 @@
 package com.example.wandersync.viewmodel;
 
-import com.example.wandersync.Model.TravelPost;
+import com.example.wandersync.model.TravelPost;
 import com.example.wandersync.model.Accommodation;
 import com.example.wandersync.model.Destination;
 import com.example.wandersync.model.DiningReservation;
@@ -21,6 +21,7 @@ public class DatabaseManager {
     private final DatabaseReference destinationsReference;
     private final DatabaseReference accommodationsReference;
     private final DatabaseReference diningReservationsReference;
+    private final DatabaseReference travelPostsReference;
 
     private DatabaseManager() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -28,6 +29,7 @@ public class DatabaseManager {
         destinationsReference = database.getReference("destinations");
         accommodationsReference = database.getReference("accommodations");
         diningReservationsReference = database.getReference("diningReservations");
+        travelPostsReference = database.getReference("travelPost");
     }
 
     public static synchronized DatabaseManager getInstance() {
@@ -159,23 +161,24 @@ public class DatabaseManager {
     public void addTravelPost(TravelPost travelPost,
                               OnSuccessListener<Void> onSuccessListener,
                               OnFailureListener onFailureListener) {
-        String postId = destinationsReference.push().getKey(); // Use your appropriate reference
-        if (postId != null) {
-            destinationsReference.child(postId).setValue(travelPost) // Or your own reference for travel posts
-                    .addOnSuccessListener(onSuccessListener)
-                    .addOnFailureListener(onFailureListener);
+        String travelPostId = travelPostsReference.push().getKey();
+        if (travelPostId != null) {
+            travelPost.setTravelPlanId(travelPostId);
+            travelPostsReference.child(travelPostId).setValue(travelPost)
+                    .addOnSuccessListener(onSuccessListener)  // Invoke success callback
+                    .addOnFailureListener(onFailureListener); // Invoke failure callback
         } else {
             onFailureListener.onFailure(new Exception("Error generating travel post ID"));
         }
     }
 
-    // Method to load travel posts from Firebase
-    public void loadTravelPosts(ValueEventListener valueEventListener) {
-        Query travelPostsQuery = destinationsReference; // Replace with actual reference for travel posts
+
+    public void loadTravelPosts(String userID, ValueEventListener valueEventListener) {
+        Query travelPostsQuery = travelPostsReference.orderByChild("userId").equalTo(userID);; // Replace with actual reference for travel posts
         travelPostsQuery.addListenerForSingleValueEvent(valueEventListener);
     }
-
-
-
+    public DatabaseReference getTravelPostsReference(String userId) {
+        return usersReference.child(userId).child("travelPost");
+    }
 
 }

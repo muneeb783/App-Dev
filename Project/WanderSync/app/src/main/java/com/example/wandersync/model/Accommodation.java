@@ -77,5 +77,7 @@ public class Accommodation {
         }
         return false;
     }
-
+    public String toString() {
+        return hotelName;
+    }
 }
