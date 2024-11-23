@@ -1,77 +1,3 @@
-//package com.example.wandersync.viewmodel;
-//
-//import android.view.LayoutInflater;
-//import android.view.View;
-//import android.view.ViewGroup;
-//import android.widget.TextView;
-//
-//import androidx.annotation.NonNull;
-//import androidx.recyclerview.widget.ListAdapter;
-//import androidx.recyclerview.widget.DiffUtil;
-//import androidx.recyclerview.widget.RecyclerView;
-//
-//import com.example.wandersync.R;
-//import com.example.wandersync.Model.TravelPost;
-//
-//public class TravelPostAdapter extends ListAdapter<TravelPost, TravelPostAdapter.TravelPostViewHolder> {
-//
-//    public TravelPostAdapter() {
-//        super(DIFF_CALLBACK);
-//    }
-//
-//    private static final DiffUtil.ItemCallback<TravelPost> DIFF_CALLBACK = new DiffUtil.ItemCallback<TravelPost>() {
-//        @Override
-//        public boolean areItemsTheSame(@NonNull TravelPost oldItem, @NonNull TravelPost newItem) {
-//            return oldItem.getId() == newItem.getId();
-//        }
-//
-//        @Override
-//        public boolean areContentsTheSame(@NonNull TravelPost oldItem, @NonNull TravelPost newItem) {
-//            return oldItem.equals(newItem);
-//        }
-//    };
-//
-//    @NonNull
-//    @Override
-//    public TravelPostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//        View itemView = LayoutInflater.from(parent.getContext())
-//                .inflate(R.layout.item_travel_post, parent, false);
-//        return new TravelPostViewHolder(itemView);
-//    }
-//
-//    @Override
-//    public void onBindViewHolder(@NonNull TravelPostViewHolder holder, int position) {
-//        TravelPost currentPost = getItem(position);
-//        holder.bind(currentPost);
-//    }
-//
-//    // ViewHolder class
-//    static class TravelPostViewHolder extends RecyclerView.ViewHolder {
-//
-//        private final TextView destinationTextView;
-//        private final TextView datesTextView;
-//        private final TextView accommodationsTextView;
-//        private final TextView bookingTextView;
-//        private final TextView notesTextView;
-//
-//        public TravelPostViewHolder(@NonNull View itemView) {
-//            super(itemView);
-//            destinationTextView = itemView.findViewById(R.id.destination_text);
-//            datesTextView = itemView.findViewById(R.id.dates_text);
-//            accommodationsTextView = itemView.findViewById(R.id.accommodations_text);
-//            bookingTextView = itemView.findViewById(R.id.booking_text);
-//            notesTextView = itemView.findViewById(R.id.notes_text);
-//        }
-//
-//        public void bind(TravelPost travelPost) {
-//            destinationTextView.setText(travelPost.getDestination());
-//            datesTextView.setText(travelPost.getStartDate() + " - " + travelPost.getEndDate());
-//            accommodationsTextView.setText(travelPost.getAccommodations());
-//            bookingTextView.setText(travelPost.getBookingReservation());
-//            notesTextView.setText(travelPost.getNotes());
-//        }
-//    }
-//}
 package com.example.wandersync.viewmodel;
 
 import android.view.LayoutInflater;
@@ -80,68 +6,67 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.ListAdapter;
-import androidx.recyclerview.widget.DiffUtil;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wandersync.R;
-import com.example.wandersync.Model.TravelPost;
+import com.example.wandersync.model.TravelPost;
+import com.example.wandersync.view.TravelPostDetailsDialog;
 
-public class TravelPostAdapter extends ListAdapter<TravelPost, TravelPostAdapter.TravelPostViewHolder> {
+import java.util.List;
 
-    public TravelPostAdapter() {
-        super(DIFF_CALLBACK);
+public class TravelPostAdapter extends RecyclerView.Adapter<TravelPostAdapter.TravelPostViewHolder> {
+
+    private final List<TravelPost> travelPosts;
+
+    public TravelPostAdapter(List<TravelPost> travelPosts) {
+        this.travelPosts = travelPosts;
     }
-
-    private static final DiffUtil.ItemCallback<TravelPost> DIFF_CALLBACK = new DiffUtil.ItemCallback<TravelPost>() {
-        @Override
-        public boolean areItemsTheSame(@NonNull TravelPost oldItem, @NonNull TravelPost newItem) {
-            return oldItem.getId() == newItem.getId();
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull TravelPost oldItem, @NonNull TravelPost newItem) {
-            return oldItem.equals(newItem);
-        }
-    };
 
     @NonNull
     @Override
     public TravelPostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_travel_post, parent, false);
-        return new TravelPostViewHolder(itemView);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_travel_post, parent, false); // Ensure this layout has required TextViews
+        return new TravelPostViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TravelPostViewHolder holder, int position) {
-        TravelPost currentPost = getItem(position);
-        holder.bind(currentPost);
+        TravelPost travelPost = travelPosts.get(position);
+
+        // Bind summary data
+        holder.userIdTextView.setText("User ID: " + travelPost.getUserId());
+        holder.startDateTextView.setText("Start Date: " + travelPost.getStartDate());
+        holder.endDateTextView.setText("End Date: " + travelPost.getEndDate());
+
+        // Bind entered data
+        holder.enteredDestinationTextView.setText("Destination: " + travelPost.getEnteredDestination());
+        holder.enteredAccommodationTextView.setText("Accommodation: " + travelPost.getEnteredAccommodation());
+        holder.enteredDiningTextView.setText("Dining: " + travelPost.getEnteredDining());
+        holder.itemView.setOnClickListener(v -> {
+            TravelPostDetailsDialog dialog = TravelPostDetailsDialog.newInstance(travelPost);
+            dialog.show(((FragmentActivity) v.getContext()).getSupportFragmentManager(), "travel_post_details");
+        });
     }
 
-    static class TravelPostViewHolder extends RecyclerView.ViewHolder {
-
-        private final TextView destinationTextView;
-        private final TextView datesTextView;
-        private final TextView accommodationsTextView;
-        private final TextView bookingTextView;
-        private final TextView notesTextView;
-
-        public TravelPostViewHolder(@NonNull View itemView) {
-            super(itemView);
-            destinationTextView = itemView.findViewById(R.id.destination_text);
-            datesTextView = itemView.findViewById(R.id.dates_text);
-            accommodationsTextView = itemView.findViewById(R.id.accommodations_text);
-            bookingTextView = itemView.findViewById(R.id.booking_text);
-            notesTextView = itemView.findViewById(R.id.notes_text);
-        }
-
-        public void bind(TravelPost travelPost) {
-            destinationTextView.setText(travelPost.getDestination());
-            datesTextView.setText(travelPost.getStartDate() + " - " + travelPost.getEndDate());
-            accommodationsTextView.setText(travelPost.getAccommodations());
-            bookingTextView.setText(travelPost.getBookingReservation());
-            notesTextView.setText(travelPost.getNotes());
-        }
+    @Override
+    public int getItemCount() {
+        return travelPosts.size();
     }
+
+    public static class TravelPostViewHolder extends RecyclerView.ViewHolder {
+    TextView startDateTextView, endDateTextView, userIdTextView;
+    TextView enteredDestinationTextView, enteredAccommodationTextView, enteredDiningTextView;
+
+    public TravelPostViewHolder(@NonNull View itemView) {
+        super(itemView);
+        startDateTextView = itemView.findViewById(R.id.start_date_text);
+        endDateTextView = itemView.findViewById(R.id.end_date_text);
+        userIdTextView = itemView.findViewById(R.id.user_id_text);
+        enteredDestinationTextView = itemView.findViewById(R.id.entered_destination_text);
+        enteredAccommodationTextView = itemView.findViewById(R.id.entered_accommodation_text);
+        enteredDiningTextView = itemView.findViewById(R.id.entered_dining_text);
+    }
+}
 }
