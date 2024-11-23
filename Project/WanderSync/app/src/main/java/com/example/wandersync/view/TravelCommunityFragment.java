@@ -1,5 +1,6 @@
 package com.example.wandersync.view;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,10 +25,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class TravelCommunityFragment extends Fragment {
-
 
     private TextView travelTitle;
     private FloatingActionButton addTravelButton;
@@ -35,10 +41,12 @@ public class TravelCommunityFragment extends Fragment {
     private RecyclerView recyclerViewDestinations;
     private View dialogLayout; // For the popup dialog
     private EditText dialogStartDate, dialogEndDate, dialogDestination, dialogAccommodations, dialogBookingReservation, dialogNotes;
-    private Button dialogSubmitButton, resetResultButton;
+    private Button dialogSubmitButton, dialogCancelButton;
 
     // ViewModel reference
     private TravelCommunityViewModel viewModel;
+
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
 
     @Nullable
     @Override
@@ -47,7 +55,6 @@ public class TravelCommunityFragment extends Fragment {
 
         travelTitle = rootView.findViewById(R.id.travel_title);
         addTravelButton = rootView.findViewById(R.id.addTravelButton);
-        //travelLocationInputLayout = rootView.findViewById(R.id.travel_location);
         travelLocationEditText = rootView.findViewById(R.id.travel_location);
         recyclerViewDestinations = rootView.findViewById(R.id.recycler_view_destinations);
 
@@ -59,57 +66,31 @@ public class TravelCommunityFragment extends Fragment {
         dialogBookingReservation = rootView.findViewById(R.id.booking_reservation);
         dialogNotes = rootView.findViewById(R.id.notes);
         dialogSubmitButton = rootView.findViewById(R.id.submit_button);
-        //resetResultButton = rootView.findViewById(R.id.reset_result_button);
+        dialogCancelButton = rootView.findViewById(R.id.cancel_button);
 
-        viewModel = new ViewModelProvider(this).get(TravelCommunityViewModel.class);
+        dialogStartDate.setOnClickListener(v -> openDatePicker(dialogStartDate));
+        dialogEndDate.setOnClickListener(v -> openDatePicker(dialogEndDate));
 
-        TravelPostAdapter adapter = new TravelPostAdapter();
-        recyclerViewDestinations.setAdapter(adapter);
+        addTravelButton.setOnClickListener(v -> showAddTravelDialog());
 
-        viewModel.getTravelPosts().observe(getViewLifecycleOwner(), new Observer<List<TravelPost>>() {
-            @Override
-            public void onChanged(List<TravelPost> travelPosts) {
-                adapter.submitList(travelPosts);
-            }
-        });
-
-        addTravelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogLayout.setVisibility(View.VISIBLE);
-            }
-        });
-
-        dialogSubmitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String startDate = dialogStartDate.getText().toString();
-                String endDate = dialogEndDate.getText().toString();
-                String destination = dialogDestination.getText().toString();
-                String accommodations = dialogAccommodations.getText().toString();
-                String bookingReservation = dialogBookingReservation.getText().toString();
-                String notes = dialogNotes.getText().toString();
-                //change logic for this
-                int id = 5;
-
-                viewModel.addTravelPost(id, startDate, endDate, destination, accommodations, bookingReservation, notes);
-
-                dialogLayout.setVisibility(View.GONE);
-                clearDialogInputs();
-            }
-        });
-
-//        resetResultButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                viewModel.clearTravelPosts();
-//            }
-//        });
+        dialogSubmitButton.setOnClickListener(v -> submitForm());
+        dialogCancelButton.setOnClickListener(v -> cancelForm());
 
         return rootView;
     }
 
-    private void clearDialogInputs() {
+    // Open DatePickerDialog for Start and End Dates
+    private void openDatePicker(final EditText editText) {
+        final Calendar calendar = Calendar.getInstance();
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view, year, month, day) -> {
+            calendar.set(year, month, day);
+            editText.setText(dateFormat.format(calendar.getTime()));
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.show();
+    }
+
+    private void showAddTravelDialog() {
+        dialogLayout.setVisibility(View.VISIBLE);
         dialogStartDate.setText("");
         dialogEndDate.setText("");
         dialogDestination.setText("");
@@ -117,5 +98,49 @@ public class TravelCommunityFragment extends Fragment {
         dialogBookingReservation.setText("");
         dialogNotes.setText("");
     }
-}
 
+    // Check if all fields are filled
+    private boolean areFieldsValid() {
+        return !dialogStartDate.getText().toString().isEmpty() &&
+                !dialogEndDate.getText().toString().isEmpty() &&
+                !dialogDestination.getText().toString().isEmpty() &&
+                !dialogAccommodations.getText().toString().isEmpty() &&
+                !dialogBookingReservation.getText().toString().isEmpty() &&
+                !dialogNotes.getText().toString().isEmpty();
+    }
+
+    private void submitForm() {
+        String startDate = dialogStartDate.getText().toString();
+        String endDate = dialogEndDate.getText().toString();
+
+        // Validate that all fields are filled
+        if (!areFieldsValid()) {
+            Toast.makeText(getContext(), "Please fill all the fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Validate start and end dates
+        if (!isValidTravelDates(startDate, endDate)) {
+            Toast.makeText(getContext(), "End Date cannot be before Start Date", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Close the form after submission
+        dialogLayout.setVisibility(View.GONE);
+        // Add any additional logic here to process the form (e.g., saving data to ViewModel)
+    }
+
+    private void cancelForm() {
+        dialogLayout.setVisibility(View.GONE);
+    }
+
+    private boolean isValidTravelDates(String startDateStr, String endDateStr) {
+        try {
+            Date startDate = dateFormat.parse(startDateStr);
+            Date endDate = dateFormat.parse(endDateStr);
+            return endDate != null && startDate != null && endDate.after(startDate);
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+}

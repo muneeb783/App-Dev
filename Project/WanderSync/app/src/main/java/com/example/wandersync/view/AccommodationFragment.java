@@ -99,6 +99,7 @@ public class AccommodationFragment extends Fragment {
 
         sortByCheckInButton.setOnClickListener(v -> {
             accommodationViewModel.setSortStrategy(new SortByCheckInDate());
+            // Set sorting strategy to sort accommodations by check-in date
         });
 
         sortByCheckOutButton.setOnClickListener(v -> {
