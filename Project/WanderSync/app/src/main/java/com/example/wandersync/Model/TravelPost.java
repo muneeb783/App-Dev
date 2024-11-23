@@ -4,15 +4,14 @@ import java.util.Objects;
 
 public class TravelPost {
 
-    private final int id; // Unique identifier for the travel post
-    private final String startDate;
-    private final String endDate;
-    private final String destination;
-    private final String accommodations;
-    private final String bookingReservation;
-    private final String notes;
+    private int id; // Unique identifier
+    private String startDate;
+    private String endDate;
+    private String destination;
+    private String accommodations;
+    private String bookingReservation;
+    private String notes;
 
-    // Constructor
     public TravelPost(int id, String startDate, String endDate, String destination,
                       String accommodations, String bookingReservation, String notes) {
         this.id = id;
@@ -24,7 +23,7 @@ public class TravelPost {
         this.notes = notes;
     }
 
-    // Getters
+    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -53,7 +52,7 @@ public class TravelPost {
         return notes;
     }
 
-    // equals() and hashCode() for DiffUtil
+    // Equals and hashCode for DiffUtil in RecyclerView
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
