@@ -13,6 +13,8 @@ import com.example.wandersync.model.TravelPost;
 import com.example.wandersync.model.Accommodation;
 import com.example.wandersync.model.Destination;
 import com.example.wandersync.model.DiningReservation;
+import com.example.wandersync.viewmodel.sorting.SortByStartDateStrategy;
+import com.example.wandersync.viewmodel.sorting.SortStrategy;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -29,7 +31,9 @@ public class TravelCommunityViewModel extends AndroidViewModel {
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private String userId;
+    private String userId2;
     private final MutableLiveData<List<TravelPost>> travelPostsLiveData = new MutableLiveData<>(new ArrayList<>());
+    private SortStrategy sortStrategy = new SortByStartDateStrategy();
 
 
     public TravelCommunityViewModel(@NonNull Application application) {
@@ -38,7 +42,7 @@ public class TravelCommunityViewModel extends AndroidViewModel {
 
         SharedPreferences sharedPreferences = application.getSharedPreferences("WanderSyncPrefs", Context.MODE_PRIVATE);
         userId = sharedPreferences.getString("username", null);
-
+        userId2 = userId;
         checkCollaboratorStatusAndLoadData();
     }
 
@@ -83,7 +87,7 @@ public class TravelCommunityViewModel extends AndroidViewModel {
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             String mainUserId = snapshot.getValue(String.class);
                                             if (mainUserId != null) {
-                                                userId = mainUserId;
+                                                userId2 = mainUserId;
                                             }
                                             loadDropdownData();
                                         }
@@ -107,7 +111,7 @@ public class TravelCommunityViewModel extends AndroidViewModel {
 
     private void loadDropdownData() {
         // Load Destinations
-        databaseManager.loadDestinations(userId, new ValueEventListener() {
+        databaseManager.loadDestinations(userId2, new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<Destination> destinations = new ArrayList<>();
@@ -127,7 +131,7 @@ public class TravelCommunityViewModel extends AndroidViewModel {
         });
 
         // Load Accommodations
-        databaseManager.loadAccommodations(userId, new ValueEventListener() {
+        databaseManager.loadAccommodations(userId2, new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<Accommodation> accommodations = new ArrayList<>();
@@ -147,7 +151,7 @@ public class TravelCommunityViewModel extends AndroidViewModel {
         });
 
         // Load Dining Reservations
-        databaseManager.loadDiningReservations(userId, new ValueEventListener() {
+        databaseManager.loadDiningReservations(userId2, new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<DiningReservation> diningReservations = new ArrayList<>();
@@ -166,17 +170,56 @@ public class TravelCommunityViewModel extends AndroidViewModel {
             }
         });
     }
-
-    public void addTravelPlan(String startDate, String endDate, String notes, String destination, String accomodation, String dining) {
+    public void addTravelPlan(String startDate, String endDate, String notes, String destination, String accommodation, String dining) {
         if (userId == null) {
             errorLiveData.setValue("User ID is not available.");
             return;
         }
-
         isLoading.setValue(true);
 
-        // Fetch all destinations, accommodations, and dining reservations for the user
-        databaseManager.loadDestinations(userId, new ValueEventListener() {
+        // Check if the user is a collaborator
+        databaseManager.getUsersReference().child(userId).child("isCollaborator")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        Boolean isCollaborator = snapshot.getValue(Boolean.class);
+                        if (Boolean.TRUE.equals(isCollaborator)) {
+                            // If the user is a collaborator, use mainUserId for data loading
+                            databaseManager.getUsersReference().child(userId).child("mainUserId")
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot mainUserSnapshot) {
+                                            String mainUserId = mainUserSnapshot.getValue(String.class);
+                                            if (mainUserId != null) {
+                                                loadAndSaveTravelPlan(mainUserId, startDate, endDate, notes, destination, accommodation, dining);
+                                            } else {
+                                                errorLiveData.setValue("Main user ID not found for collaborator.");
+                                                isLoading.setValue(false);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            errorLiveData.setValue("Failed to load main user ID: " + error.getMessage());
+                                            isLoading.setValue(false);
+                                        }
+                                    });
+                        } else {
+                            // If the user is not a collaborator, use their own userId
+                            loadAndSaveTravelPlan(userId, startDate, endDate, notes, destination, accommodation, dining);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        errorLiveData.setValue("Failed to check collaborator status: " + error.getMessage());
+                        isLoading.setValue(false);
+                    }
+                });
+    }
+
+    private void loadAndSaveTravelPlan(String dataUserId, String startDate, String endDate, String notes, String destination, String accommodation, String dining) {
+        databaseManager.loadDestinations(dataUserId, new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<Destination> destinations = new ArrayList<>();
@@ -187,7 +230,7 @@ public class TravelCommunityViewModel extends AndroidViewModel {
                     }
                 }
 
-                databaseManager.loadAccommodations(userId, new ValueEventListener() {
+                databaseManager.loadAccommodations(dataUserId, new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         List<Accommodation> accommodations = new ArrayList<>();
@@ -198,7 +241,7 @@ public class TravelCommunityViewModel extends AndroidViewModel {
                             }
                         }
 
-                        databaseManager.loadDiningReservations(userId, new ValueEventListener() {
+                        databaseManager.loadDiningReservations(dataUserId, new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 List<DiningReservation> diningReservations = new ArrayList<>();
@@ -212,12 +255,12 @@ public class TravelCommunityViewModel extends AndroidViewModel {
                                 // Create the TravelPost and save to the backend
                                 TravelPost travelPost = new TravelPost(
                                         databaseManager.getTravelPostsReference(userId).push().getKey(),
-                                        userId,
+                                        userId, // Preserve the original userId
                                         startDate,
                                         endDate,
                                         notes,
                                         destination,
-                                        accomodation,
+                                        accommodation,
                                         dining,
                                         destinations,
                                         accommodations,
@@ -257,6 +300,7 @@ public class TravelCommunityViewModel extends AndroidViewModel {
             }
         });
     }
+
     public void loadTravelPosts() {
         if (userId == null) {
             errorLiveData.setValue("User ID is not available.");
@@ -265,7 +309,7 @@ public class TravelCommunityViewModel extends AndroidViewModel {
 
         isLoading.setValue(true);
 
-        databaseManager.loadTravelPosts(userId, new ValueEventListener() {
+        databaseManager.loadTravelPosts(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<TravelPost> travelPosts = new ArrayList<>();
@@ -286,4 +330,8 @@ public class TravelCommunityViewModel extends AndroidViewModel {
             }
         });
     }
+    public void setSortStrategy(SortStrategy strategy) {
+        this.sortStrategy = strategy;
+    }
+
 }

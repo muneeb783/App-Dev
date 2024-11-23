@@ -173,10 +173,10 @@ public class DatabaseManager {
     }
 
 
-    public void loadTravelPosts(String userID, ValueEventListener valueEventListener) {
-        Query travelPostsQuery = travelPostsReference.orderByChild("userId").equalTo(userID);; // Replace with actual reference for travel posts
-        travelPostsQuery.addListenerForSingleValueEvent(valueEventListener);
+    public void loadTravelPosts(ValueEventListener valueEventListener) {
+        travelPostsReference.addListenerForSingleValueEvent(valueEventListener);
     }
+
     public DatabaseReference getTravelPostsReference(String userId) {
         return usersReference.child(userId).child("travelPost");
     }
