@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wandersync.R;
-import com.example.wandersync.model.TravelPost;
+import com.example.wandersync.Model.TravelPost;
 import com.example.wandersync.viewmodel.SimpleTextAdapter;
 
 import java.util.ArrayList;
@@ -40,7 +40,6 @@ public class TravelPostDetailsDialog extends DialogFragment {
             travelPost = (TravelPost) getArguments().getSerializable(ARG_TRAVEL_POST);
         }
 
-        // Initialize views
         TextView startDateTextView = rootView.findViewById(R.id.start_date_text);
         TextView endDateTextView = rootView.findViewById(R.id.end_date_text);
         TextView notesTextView = rootView.findViewById(R.id.notes_text);
@@ -48,7 +47,6 @@ public class TravelPostDetailsDialog extends DialogFragment {
         RecyclerView accommodationsRecyclerView = rootView.findViewById(R.id.accommodations_recycler_view);
         RecyclerView diningRecyclerView = rootView.findViewById(R.id.dining_recycler_view);
 
-        // Set data
         if (travelPost != null) {
             startDateTextView.setText("Start Date: " + travelPost.getStartDate());
             endDateTextView.setText("End Date: " + travelPost.getEndDate());
@@ -61,6 +59,11 @@ public class TravelPostDetailsDialog extends DialogFragment {
             destinationsRecyclerView.setAdapter(new SimpleTextAdapter(travelPost.getDestinationNames()));
             accommodationsRecyclerView.setAdapter(new SimpleTextAdapter(travelPost.getAccommodationNames()));
             diningRecyclerView.setAdapter(new SimpleTextAdapter(travelPost.getDiningReservationNames()));
+        }
+
+        if (getDialog() != null && getDialog().getWindow() != null) {
+            int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.9);
+            getDialog().getWindow().setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
 
         return rootView;
