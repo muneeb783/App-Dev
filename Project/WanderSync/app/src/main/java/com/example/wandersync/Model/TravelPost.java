@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.io.Serializable;
 
 public class TravelPost implements Serializable {
-
+    //added descriptions to this class..amm
     private String travelPlanId; // Unique identifier for the travel plan
     private String userId; // User who created the travel plan
     private String startDate;
