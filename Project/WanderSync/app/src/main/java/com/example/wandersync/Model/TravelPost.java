@@ -15,14 +15,16 @@ public class TravelPost implements Serializable {
     private String enteredDestination; // Entered destination as a string
     private String enteredAccommodation; // Entered accommodation as a string
     private String enteredDining; // Entered dining as a string
-    private List<com.example.wandersync.model.Destination> destinations; // List of destinations for the travel plan
-    private List<com.example.wandersync.model.Accommodation> accommodations; // List of accommodations for the travel plan
-    private List<com.example.wandersync.model.DiningReservation> diningReservations; // List of dining reservations for the travel plan
+    private List<com.example.wandersync.model.Destination> destinations;
+    private List<com.example.wandersync.model.Accommodation> accommodations;
+    private List<com.example.wandersync.model.DiningReservation> diningReservations;
 
     // Constructor
-    public TravelPost(String travelPlanId, String userId, String startDate, String endDate, String notes,
+    public TravelPost(String travelPlanId, String userId, String startDate, String endDate,
+                      String notes,
                       String enteredDestination, String enteredAccommodation, String enteredDining,
-                      List<com.example.wandersync.model.Destination> destinations, List<com.example.wandersync.model.Accommodation> accommodations,
+                      List<com.example.wandersync.model.Destination> destinations,
+                      List<com.example.wandersync.model.Accommodation> accommodations,
                       List<com.example.wandersync.model.DiningReservation> diningReservations) {
         this.travelPlanId = travelPlanId;
         this.userId = userId;
@@ -138,7 +140,8 @@ public class TravelPost implements Serializable {
         this.accommodations = accommodations;
     }
 
-    public void setDiningReservations(List<com.example.wandersync.model.DiningReservation> diningReservations) {
+    public void setDiningReservations(List<com.example.
+            wandersync.model.DiningReservation> diningReservations) {
         this.diningReservations = diningReservations;
     }
     // Method to get a list of destination names
@@ -146,7 +149,7 @@ public class TravelPost implements Serializable {
         List<String> destinationNames = new ArrayList<>();
         if (destinations != null) {
             for (com.example.wandersync.model.Destination destination : destinations) {
-                destinationNames.add(destination.getName()); // Assuming Destination has a `getName` method
+                destinationNames.add(destination.getName());
             }
         }
         return destinationNames;
@@ -157,7 +160,7 @@ public class TravelPost implements Serializable {
         List<String> accommodationNames = new ArrayList<>();
         if (accommodations != null) {
             for (com.example.wandersync.model.Accommodation accommodation : accommodations) {
-                accommodationNames.add(accommodation.getHotelName()); // Assuming Accommodation has a `getHotelName` method
+                accommodationNames.add(accommodation.getHotelName());
             }
         }
         return accommodationNames;
@@ -168,7 +171,7 @@ public class TravelPost implements Serializable {
         List<String> diningNames = new ArrayList<>();
         if (diningReservations != null) {
             for (com.example.wandersync.model.DiningReservation reservation : diningReservations) {
-                diningNames.add(reservation.getWebsite()); // Assuming DiningReservation has a `getWebsite` method
+                diningNames.add(reservation.getWebsite());
             }
         }
         return diningNames;
@@ -176,24 +179,31 @@ public class TravelPost implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         TravelPost that = (TravelPost) o;
-        return Objects.equals(travelPlanId, that.travelPlanId) &&
-                Objects.equals(userId, that.userId) &&
-                Objects.equals(startDate, that.startDate) &&
-                Objects.equals(endDate, that.endDate) &&
-                Objects.equals(notes, that.notes) &&
-                Objects.equals(enteredDestination, that.enteredDestination) &&
-                Objects.equals(enteredAccommodation, that.enteredAccommodation) &&
-                Objects.equals(enteredDining, that.enteredDining) &&
-                Objects.equals(destinations, that.destinations) &&
-                Objects.equals(accommodations, that.accommodations) &&
-                Objects.equals(diningReservations, that.diningReservations);
+        return Objects.equals(travelPlanId, that.travelPlanId)
+                && Objects.equals(userId, that.userId)
+                && Objects.equals(startDate, that.startDate)
+                && Objects.equals(endDate, that.endDate)
+                && Objects.equals(notes, that.notes)
+                && Objects.equals(enteredDestination, that.enteredDestination)
+                && Objects.equals(enteredAccommodation, that.enteredAccommodation)
+                && Objects.equals(enteredDining, that.enteredDining)
+                && Objects.equals(destinations, that.destinations)
+                && Objects.equals(accommodations, that.accommodations)
+                && Objects.equals(diningReservations, that.diningReservations);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(travelPlanId, userId, startDate, endDate, notes, enteredDestination, enteredAccommodation, enteredDining, destinations, accommodations, diningReservations);
+        return Objects.hash(travelPlanId, userId,
+                startDate, endDate, notes, enteredDestination,
+                enteredAccommodation, enteredDining, destinations,
+                accommodations, diningReservations);
     }
 }

@@ -16,8 +16,6 @@ import com.example.wandersync.R;
 import com.example.wandersync.Model.TravelPost;
 import com.example.wandersync.viewmodel.SimpleTextAdapter;
 
-import java.util.ArrayList;
-
 public class TravelPostDetailsDialog extends DialogFragment {
 
     private static final String ARG_TRAVEL_POST = "travel_post";
@@ -33,7 +31,8 @@ public class TravelPostDetailsDialog extends DialogFragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.dialog_travel_post_details, container, false);
 
         if (getArguments() != null) {
@@ -43,8 +42,10 @@ public class TravelPostDetailsDialog extends DialogFragment {
         TextView startDateTextView = rootView.findViewById(R.id.start_date_text);
         TextView endDateTextView = rootView.findViewById(R.id.end_date_text);
         TextView notesTextView = rootView.findViewById(R.id.notes_text);
-        RecyclerView destinationsRecyclerView = rootView.findViewById(R.id.destinations_recycler_view);
-        RecyclerView accommodationsRecyclerView = rootView.findViewById(R.id.accommodations_recycler_view);
+        RecyclerView destinationsRecyclerView = rootView.
+                findViewById(R.id.destinations_recycler_view);
+        RecyclerView accommodationsRecyclerView = rootView.
+                findViewById(R.id.accommodations_recycler_view);
         RecyclerView diningRecyclerView = rootView.findViewById(R.id.dining_recycler_view);
 
         if (travelPost != null) {
@@ -56,9 +57,12 @@ public class TravelPostDetailsDialog extends DialogFragment {
             accommodationsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             diningRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-            destinationsRecyclerView.setAdapter(new SimpleTextAdapter(travelPost.getDestinationNames()));
-            accommodationsRecyclerView.setAdapter(new SimpleTextAdapter(travelPost.getAccommodationNames()));
-            diningRecyclerView.setAdapter(new SimpleTextAdapter(travelPost.getDiningReservationNames()));
+            destinationsRecyclerView.setAdapter(new
+                    SimpleTextAdapter(travelPost.getDestinationNames()));
+            accommodationsRecyclerView.setAdapter(new
+                    SimpleTextAdapter(travelPost.getAccommodationNames()));
+            diningRecyclerView.setAdapter(new
+                    SimpleTextAdapter(travelPost.getDiningReservationNames()));
         }
 
         if (getDialog() != null && getDialog().getWindow() != null) {

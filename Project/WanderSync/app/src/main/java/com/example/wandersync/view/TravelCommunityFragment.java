@@ -43,7 +43,8 @@ public class TravelCommunityFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_travel_community, container, false);
 
         // Initialize views
@@ -90,9 +91,12 @@ public class TravelCommunityFragment extends Fragment {
         MaterialButton submitButton = dialog.findViewById(R.id.submit_button);
 
         // Populate spinners with data
-        viewModel.getDestinationsLiveData().observe(this, destinations -> populateSpinner(destinationSpinner, getNames(destinations)));
-        viewModel.getAccommodationsLiveData().observe(this, accommodations -> populateSpinner(accommodationSpinner, getNames(accommodations)));
-        viewModel.getDiningReservationsLiveData().observe(this, diningReservations -> populateSpinner(diningSpinner, getNames(diningReservations)));
+        viewModel.getDestinationsLiveData().observe(this,
+                destinations -> populateSpinner(destinationSpinner, getNames(destinations)));
+        viewModel.getAccommodationsLiveData().observe(this,
+                accommodations -> populateSpinner(accommodationSpinner, getNames(accommodations)));
+        viewModel.getDiningReservationsLiveData().observe(this,
+                diningReservations -> populateSpinner(diningSpinner, getNames(diningReservations)));
 
         // Setup date pickers
         setupDatePicker(startDateEditText);
@@ -107,7 +111,8 @@ public class TravelCommunityFragment extends Fragment {
             String endDate = endDateEditText.getText().toString();
             String notes = notesEditText.getText().toString();
 
-            if (TextUtils.isEmpty(startDate) || TextUtils.isEmpty(endDate) || TextUtils.isEmpty(notes)) {
+            if (TextUtils.isEmpty(startDate) || TextUtils.isEmpty(endDate)
+                    || TextUtils.isEmpty(notes)) {
                 Toast.makeText(getContext(), "All fields are required.", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -116,8 +121,10 @@ public class TravelCommunityFragment extends Fragment {
                 Date startDateParsed = dateFormat.parse(startDate);
                 Date endDateParsed = dateFormat.parse(endDate);
 
-                if (startDateParsed != null && endDateParsed != null && !endDateParsed.after(startDateParsed)) {
-                    Toast.makeText(getContext(), "End date must be after start date.", Toast.LENGTH_SHORT).show();
+                if (startDateParsed != null && endDateParsed != null
+                        && !endDateParsed.after(startDateParsed)) {
+                    Toast.makeText(getContext(),
+                            "End date must be after start date.", Toast.LENGTH_SHORT).show();
                     return;
                 }
             } catch (ParseException e) {
@@ -138,10 +145,12 @@ public class TravelCommunityFragment extends Fragment {
     private void setupDatePicker(EditText editText) {
         editText.setOnClickListener(v -> {
             final Calendar calendar = Calendar.getInstance();
-            DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view, year, month, dayOfMonth) -> {
-                calendar.set(year, month, dayOfMonth);
-                editText.setText(dateFormat.format(calendar.getTime()));
-            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+            DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+                    (view, year, month, dayOfMonth) -> {
+                    calendar.set(year, month, dayOfMonth);
+                    editText.setText(dateFormat.format(calendar.getTime()));
+                }, calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
             datePickerDialog.show();
         });
     }
@@ -155,7 +164,8 @@ public class TravelCommunityFragment extends Fragment {
     }
 
     private void populateSpinner(Spinner spinner, List<String> items) {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, items);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_spinner_item, items);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
     }
