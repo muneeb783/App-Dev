@@ -4,50 +4,73 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp">
+    android:background="@drawable/rounded_background"
+    android:padding="10dp"
+    android:layout_margin="12dp">
 
     <TextView
         android:id="@+id/start_date_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Start Date: "
+        android:textColor="@color/white"
         android:textSize="16sp"
-        />
+        android:textStyle="bold"
+        android:layout_marginBottom="6dp"
+        android:fontFamily="sans-serif-medium"/>
 
     <TextView
         android:id="@+id/end_date_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="End Date: "
-        android:textSize="16sp" />
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="6dp"
+        android:fontFamily="sans-serif-medium"/>
 
     <TextView
         android:id="@+id/user_id_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="User ID: "
+        android:textColor="@color/white"
         android:textSize="16sp"
         android:textStyle="bold"
-        />
+        android:layout_marginBottom="6dp"
+        android:fontFamily="sans-serif-medium"/>
 
     <TextView
         android:id="@+id/entered_destination_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Destination: "
-        android:textSize="16sp" />
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="6dp"
+        android:fontFamily="sans-serif-medium"/>
 
     <TextView
         android:id="@+id/entered_accommodation_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Accommodation: "
-        android:textSize="16sp" />
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="6dp"
+        android:fontFamily="sans-serif-medium"/>
 
     <TextView
         android:id="@+id/entered_dining_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Dining: "
-        android:textSize="16sp" />
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="6dp"
+        android:fontFamily="sans-serif-medium"/>
 </LinearLayout>

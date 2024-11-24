@@ -10,7 +10,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wandersync.R;
-import com.example.wandersync.model.TravelPost;
+import com.example.wandersync.Model.TravelPost;
 import com.example.wandersync.view.TravelPostDetailsDialog;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class TravelPostAdapter extends RecyclerView.Adapter<TravelPostAdapter.Tr
     @Override
     public TravelPostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_travel_post, parent, false); // Ensure this layout has required TextViews
+                .inflate(R.layout.item_travel_post, parent, false);
         return new TravelPostViewHolder(view);
     }
 
@@ -35,12 +35,10 @@ public class TravelPostAdapter extends RecyclerView.Adapter<TravelPostAdapter.Tr
     public void onBindViewHolder(@NonNull TravelPostViewHolder holder, int position) {
         TravelPost travelPost = travelPosts.get(position);
 
-        // Bind summary data
         holder.userIdTextView.setText("User ID: " + travelPost.getUserId());
         holder.startDateTextView.setText("Start Date: " + travelPost.getStartDate());
         holder.endDateTextView.setText("End Date: " + travelPost.getEndDate());
 
-        // Bind entered data
         holder.enteredDestinationTextView.setText("Destination: " + travelPost.getEnteredDestination());
         holder.enteredAccommodationTextView.setText("Accommodation: " + travelPost.getEnteredAccommodation());
         holder.enteredDiningTextView.setText("Dining: " + travelPost.getEnteredDining());

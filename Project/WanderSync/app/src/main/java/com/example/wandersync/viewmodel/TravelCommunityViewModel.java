@@ -9,7 +9,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.wandersync.model.TravelPost;
+import com.example.wandersync.Model.TravelPost;
 import com.example.wandersync.model.Accommodation;
 import com.example.wandersync.model.Destination;
 import com.example.wandersync.model.DiningReservation;
@@ -319,9 +319,13 @@ public class TravelCommunityViewModel extends AndroidViewModel {
                         travelPosts.add(travelPost);
                     }
                 }
+                if (travelPosts.isEmpty()) {
+                    addDefaultPost();
+                }
                 travelPostsLiveData.setValue(travelPosts);
                 isLoading.setValue(false);
             }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -334,5 +338,12 @@ public class TravelCommunityViewModel extends AndroidViewModel {
         this.sortStrategy = strategy;
     }
 
+    private void addDefaultPost() {
+        TravelPost defaultPost = new TravelPost("1", "1", "01/01/2023", "01/07/2023", "Default", "Default", "Default", "Default", null, null, null);
+
+        List<TravelPost> defaultList = new ArrayList<>();
+        defaultList.add(defaultPost);
+        travelPostsLiveData.setValue(defaultList);  // Set the default list to LiveData
+    }
 }
 

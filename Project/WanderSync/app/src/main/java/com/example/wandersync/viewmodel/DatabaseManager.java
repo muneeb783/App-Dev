@@ -1,6 +1,6 @@
 package com.example.wandersync.viewmodel;
 
-import com.example.wandersync.model.TravelPost;
+import com.example.wandersync.Model.TravelPost;
 import com.example.wandersync.model.Accommodation;
 import com.example.wandersync.model.Destination;
 import com.example.wandersync.model.DiningReservation;

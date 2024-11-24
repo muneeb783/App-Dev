@@ -10,4 +10,7 @@
     <color name="buttonTextColor">#FFFFFF</color>
     <color name="past_reservation">#FFFFFF</color>
     <color name="future_reservation">#FFFFFF</color>
+    <color name="primaryTextColor">#212121</color>
+    <color name="secondaryTextColor">#757575</color>
+    <color name="cardBackground">#F5F5F5</color>
 </resources>
