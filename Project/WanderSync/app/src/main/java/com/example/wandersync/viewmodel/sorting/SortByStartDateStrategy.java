@@ -8,14 +8,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class SortByStartDateStrategy implements SortStrategy<com.example.wandersync.model.Destination> {
+public class SortByStartDateStrategy
+        implements SortStrategy<com.example.wandersync.model.Destination> {
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
 
     @Override
-    public List<com.example.wandersync.model.Destination> sort(List<com.example.wandersync.model.Destination> destinations) {
+    public List<com.example.wandersync.model.
+            Destination> sort(List<com.example.wandersync.model.Destination> destinations) {
         Collections.sort(destinations, new Comparator<com.example.wandersync.model.Destination>() {
             @Override
-            public int compare(com.example.wandersync.model.Destination d1, com.example.wandersync.model.Destination d2) {
+            public int compare(com.example.wandersync.model.Destination d1,
+                               com.example.wandersync.model.Destination d2) {
                 try {
                     Date date1 = dateFormat.parse(d1.getStartDate());
                     Date date2 = dateFormat.parse(d2.getStartDate());

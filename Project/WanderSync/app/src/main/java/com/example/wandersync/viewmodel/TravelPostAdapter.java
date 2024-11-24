@@ -15,7 +15,8 @@ import com.example.wandersync.view.TravelPostDetailsDialog;
 
 import java.util.List;
 
-public class TravelPostAdapter extends RecyclerView.Adapter<TravelPostAdapter.TravelPostViewHolder> {
+public class TravelPostAdapter extends
+        RecyclerView.Adapter<TravelPostAdapter.TravelPostViewHolder> {
 
     private final List<TravelPost> travelPosts;
 
@@ -35,16 +36,18 @@ public class TravelPostAdapter extends RecyclerView.Adapter<TravelPostAdapter.Tr
     public void onBindViewHolder(@NonNull TravelPostViewHolder holder, int position) {
         TravelPost travelPost = travelPosts.get(position);
 
-        holder.userIdTextView.setText("User ID: " + travelPost.getUserId());
-        holder.startDateTextView.setText("Start Date: " + travelPost.getStartDate());
-        holder.endDateTextView.setText("End Date: " + travelPost.getEndDate());
+        holder.setUserIdTextView("User ID: " + travelPost.getUserId());
+        holder.setStartDateTextView("Start Date: " + travelPost.getStartDate());
+        holder.setEndDateTextView("End Date: " + travelPost.getEndDate());
+        holder.setEnteredDestinationTextView("Destination: " + travelPost.getEnteredDestination());
+        holder.setEnteredAccommodationTextView("Accommodation: "
+                + travelPost.getEnteredAccommodation());
+        holder.setEnteredDiningTextView("Dining: " + travelPost.getEnteredDining());
 
-        holder.enteredDestinationTextView.setText("Destination: " + travelPost.getEnteredDestination());
-        holder.enteredAccommodationTextView.setText("Accommodation: " + travelPost.getEnteredAccommodation());
-        holder.enteredDiningTextView.setText("Dining: " + travelPost.getEnteredDining());
         holder.itemView.setOnClickListener(v -> {
             TravelPostDetailsDialog dialog = TravelPostDetailsDialog.newInstance(travelPost);
-            dialog.show(((FragmentActivity) v.getContext()).getSupportFragmentManager(), "travel_post_details");
+            dialog.show(((FragmentActivity) v.getContext()).getSupportFragmentManager(),
+                    "travel_post_details");
         });
     }
 
@@ -54,17 +57,48 @@ public class TravelPostAdapter extends RecyclerView.Adapter<TravelPostAdapter.Tr
     }
 
     public static class TravelPostViewHolder extends RecyclerView.ViewHolder {
-    TextView startDateTextView, endDateTextView, userIdTextView;
-    TextView enteredDestinationTextView, enteredAccommodationTextView, enteredDiningTextView;
 
-    public TravelPostViewHolder(@NonNull View itemView) {
-        super(itemView);
-        startDateTextView = itemView.findViewById(R.id.start_date_text);
-        endDateTextView = itemView.findViewById(R.id.end_date_text);
-        userIdTextView = itemView.findViewById(R.id.user_id_text);
-        enteredDestinationTextView = itemView.findViewById(R.id.entered_destination_text);
-        enteredAccommodationTextView = itemView.findViewById(R.id.entered_accommodation_text);
-        enteredDiningTextView = itemView.findViewById(R.id.entered_dining_text);
+        private final TextView startDateTextView;
+        private final TextView endDateTextView;
+        private final TextView userIdTextView;
+        private final TextView enteredDestinationTextView;
+        private final TextView enteredAccommodationTextView;
+        private final TextView enteredDiningTextView;
+
+        public TravelPostViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            this.startDateTextView = itemView.findViewById(R.id.start_date_text);
+            this.endDateTextView = itemView.findViewById(R.id.end_date_text);
+            this.userIdTextView = itemView.findViewById(R.id.user_id_text);
+            this.enteredDestinationTextView = itemView.findViewById(R.id.entered_destination_text);
+            this.enteredAccommodationTextView = itemView.
+                    findViewById(R.id.entered_accommodation_text);
+            this.enteredDiningTextView = itemView.findViewById(R.id.entered_dining_text);
+        }
+
+        public void setStartDateTextView(String text) {
+            this.startDateTextView.setText(text);
+        }
+
+        public void setEndDateTextView(String text) {
+            this.endDateTextView.setText(text);
+        }
+
+        public void setUserIdTextView(String text) {
+            this.userIdTextView.setText(text);
+        }
+
+        public void setEnteredDestinationTextView(String text) {
+            this.enteredDestinationTextView.setText(text);
+        }
+
+        public void setEnteredAccommodationTextView(String text) {
+            this.enteredAccommodationTextView.setText(text);
+        }
+
+        public void setEnteredDiningTextView(String text) {
+            this.enteredDiningTextView.setText(text);
+        }
     }
-}
 }

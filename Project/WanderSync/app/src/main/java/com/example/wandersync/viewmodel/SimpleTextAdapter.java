@@ -31,7 +31,7 @@ public class SimpleTextAdapter extends RecyclerView.Adapter<SimpleTextAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String item = items.get(position);
-        holder.textView.setText(item);
+        holder.getTextView().setText(item); // Use getter to access the TextView
     }
 
     @Override
@@ -40,11 +40,15 @@ public class SimpleTextAdapter extends RecyclerView.Adapter<SimpleTextAdapter.Vi
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textView;
+        private final TextView textView; // Changed visibility to private
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.simple_text);
+        }
+
+        public TextView getTextView() { // Getter for textView
+            return textView;
         }
     }
 }
