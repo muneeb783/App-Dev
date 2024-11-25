@@ -351,6 +351,7 @@ public class TravelCommunityViewModel extends AndroidViewModel {
                 }
                 if (travelPosts.isEmpty()) {
                     addDefaultPost();
+                    return;
                 }
                 travelPostsLiveData.setValue(travelPosts);
                 isLoading.setValue(false);
