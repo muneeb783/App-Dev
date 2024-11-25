@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.wandersync.model.Accommodation;
+import com.example.wandersync.Model.Accommodation;
 import com.example.wandersync.R;
 
 import java.util.ArrayList;

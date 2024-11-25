@@ -1,6 +1,6 @@
 package com.example.wandersync.viewmodel.sorting;
 
-import com.example.wandersync.model.Accommodation;
+import com.example.wandersync.Model.Accommodation;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;

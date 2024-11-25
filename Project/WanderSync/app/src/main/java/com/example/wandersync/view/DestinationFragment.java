@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wandersync.R;
-import com.example.wandersync.model.Destination;
+import com.example.wandersync.Model.Destination;
 import com.example.wandersync.viewmodel.DestinationAdapter;
 import com.example.wandersync.viewmodel.DestinationViewModel;
 

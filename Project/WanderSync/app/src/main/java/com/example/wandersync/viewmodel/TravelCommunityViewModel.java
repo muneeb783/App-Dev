@@ -10,9 +10,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.wandersync.Model.TravelPost;
-import com.example.wandersync.model.Accommodation;
-import com.example.wandersync.model.Destination;
-import com.example.wandersync.model.DiningReservation;
+import com.example.wandersync.Model.Accommodation;
+import com.example.wandersync.Model.Destination;
+import com.example.wandersync.Model.DiningReservation;
 import com.example.wandersync.viewmodel.sorting.SortByStartDateStrategy;
 import com.example.wandersync.viewmodel.sorting.SortStrategy;
 import com.google.firebase.database.DataSnapshot;
@@ -370,5 +370,6 @@ public class TravelCommunityViewModel extends AndroidViewModel {
         defaultList.add(defaultPost);
         travelPostsLiveData.setValue(defaultList);  // Set the default list to LiveData
     }
+
 }
 

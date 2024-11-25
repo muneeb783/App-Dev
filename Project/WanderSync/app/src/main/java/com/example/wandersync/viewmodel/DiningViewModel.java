@@ -10,7 +10,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.wandersync.model.DiningReservation;
+import com.example.wandersync.Model.DiningReservation;
 import com.example.wandersync.viewmodel.sorting.SortStrategy;
 import com.example.wandersync.viewmodel.sorting.SortByReservationTime;
 import com.google.firebase.database.DataSnapshot;

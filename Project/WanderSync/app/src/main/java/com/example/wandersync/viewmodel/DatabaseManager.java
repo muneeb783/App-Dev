@@ -1,9 +1,9 @@
 package com.example.wandersync.viewmodel;
 
 import com.example.wandersync.Model.TravelPost;
-import com.example.wandersync.model.Accommodation;
-import com.example.wandersync.model.Destination;
-import com.example.wandersync.model.DiningReservation;
+import com.example.wandersync.Model.Accommodation;
+import com.example.wandersync.Model.Destination;
+import com.example.wandersync.Model.DiningReservation;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
