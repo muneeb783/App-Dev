@@ -18,6 +18,7 @@ public class TravelPost implements Serializable {
     private List<com.example.wandersync.Model.Destination> destinations;
     private List<com.example.wandersync.Model.Accommodation> accommodations;
     private List<com.example.wandersync.Model.DiningReservation> diningReservations;
+    private String rating;
 
     // Constructor
     public TravelPost(String travelPlanId, String userId, String startDate, String endDate,
@@ -25,7 +26,8 @@ public class TravelPost implements Serializable {
                       String enteredDestination, String enteredAccommodation, String enteredDining,
                       List<com.example.wandersync.Model.Destination> destinations,
                       List<com.example.wandersync.Model.Accommodation> accommodations,
-                      List<com.example.wandersync.Model.DiningReservation> diningReservations) {
+                      List<com.example.wandersync.Model.DiningReservation> diningReservations,
+                      String rating) {
         this.travelPlanId = travelPlanId;
         this.userId = userId;
         this.startDate = startDate;
@@ -37,6 +39,7 @@ public class TravelPost implements Serializable {
         this.destinations = destinations;
         this.accommodations = accommodations;
         this.diningReservations = diningReservations;
+        this.rating = rating;
     }
 
     // Default constructor for Firebase deserialization
@@ -52,6 +55,7 @@ public class TravelPost implements Serializable {
         this.destinations = null;
         this.accommodations = null;
         this.diningReservations = null;
+        this.rating = "";
     }
 
     // Getters
@@ -87,6 +91,8 @@ public class TravelPost implements Serializable {
         return enteredDining;
     }
 
+    public String getRating() {return this.rating;}
+
     public List<com.example.wandersync.Model.Destination> getDestinations() {
         return destinations;
     }
@@ -120,6 +126,8 @@ public class TravelPost implements Serializable {
         this.notes = notes;
     }
 
+    public void setRating(String rating) {this.rating = rating;}
+
     public void setEnteredDestination(String enteredDestination) {
         this.enteredDestination = enteredDestination;
     }
@@ -144,7 +152,6 @@ public class TravelPost implements Serializable {
             wandersync.Model.DiningReservation> diningReservations) {
         this.diningReservations = diningReservations;
     }
-    // Method to get a list of destination names
     public List<String> getDestinationNames() {
         List<String> destinationNames = new ArrayList<>();
         if (destinations != null) {
@@ -155,7 +162,6 @@ public class TravelPost implements Serializable {
         return destinationNames;
     }
 
-    // Method to get a list of accommodation names
     public List<String> getAccommodationNames() {
         List<String> accommodationNames = new ArrayList<>();
         if (accommodations != null) {
@@ -166,7 +172,6 @@ public class TravelPost implements Serializable {
         return accommodationNames;
     }
 
-    // Method to get a list of dining reservation names or websites
     public List<String> getDiningReservationNames() {
         List<String> diningNames = new ArrayList<>();
         if (diningReservations != null) {
@@ -196,7 +201,8 @@ public class TravelPost implements Serializable {
                 && Objects.equals(enteredDining, that.enteredDining)
                 && Objects.equals(destinations, that.destinations)
                 && Objects.equals(accommodations, that.accommodations)
-                && Objects.equals(diningReservations, that.diningReservations);
+                && Objects.equals(diningReservations, that.diningReservations)
+                && Objects.equals(rating, that.rating);
     }
 
     @Override
@@ -204,6 +210,6 @@ public class TravelPost implements Serializable {
         return Objects.hash(travelPlanId, userId,
                 startDate, endDate, notes, enteredDestination,
                 enteredAccommodation, enteredDining, destinations,
-                accommodations, diningReservations);
+                accommodations, diningReservations, rating);
     }
 }

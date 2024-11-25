@@ -85,6 +85,7 @@ public class TravelCommunityFragment extends Fragment {
         Spinner destinationSpinner = dialog.findViewById(R.id.destination_spinner);
         Spinner accommodationSpinner = dialog.findViewById(R.id.accommodation_spinner);
         Spinner diningSpinner = dialog.findViewById(R.id.dining_spinner);
+        Spinner ratingSpinner = dialog.findViewById(R.id.rating_spinner);
         EditText startDateEditText = dialog.findViewById(R.id.start_date);
         EditText endDateEditText = dialog.findViewById(R.id.end_date);
         EditText notesEditText = dialog.findViewById(R.id.notes);
@@ -98,15 +99,21 @@ public class TravelCommunityFragment extends Fragment {
         viewModel.getDiningReservationsLiveData().observe(this,
                 diningReservations -> populateSpinner(diningSpinner, getNames(diningReservations)));
 
-        // Setup date pickers
+        List<String> ratings = new ArrayList<>();
+        for (int i = 1; i <= 5; i++) {
+            ratings.add(String.valueOf(i));
+        }
+
+        populateSpinner(ratingSpinner, ratings);
+
         setupDatePicker(startDateEditText);
         setupDatePicker(endDateEditText);
 
-        // Handle form submission
         submitButton.setOnClickListener(v -> {
             String destination = destinationSpinner.getSelectedItem().toString();
             String accommodation = accommodationSpinner.getSelectedItem().toString();
             String dining = diningSpinner.getSelectedItem().toString();
+            String rating = ratingSpinner.getSelectedItem().toString();
             String startDate = startDateEditText.getText().toString();
             String endDate = endDateEditText.getText().toString();
             String notes = notesEditText.getText().toString();
@@ -133,7 +140,7 @@ public class TravelCommunityFragment extends Fragment {
             }
 
             // Submit the travel plan
-            viewModel.addTravelPlan(startDate, endDate, notes, destination, accommodation, dining);
+            viewModel.addTravelPlan(startDate, endDate, notes, destination, accommodation, dining, rating);
             dialog.dismiss();
             Toast.makeText(getContext(), "Travel plan submitted!", Toast.LENGTH_SHORT).show();
             viewModel.loadTravelPosts();
