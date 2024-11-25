@@ -43,6 +43,7 @@ public class TravelPostAdapter extends
         holder.setEnteredAccommodationTextView("Accommodation: "
                 + travelPost.getEnteredAccommodation());
         holder.setEnteredDiningTextView("Dining: " + travelPost.getEnteredDining());
+        holder.setRatingTextView("Rating: " + travelPost.getRating());
 
         holder.itemView.setOnClickListener(v -> {
             TravelPostDetailsDialog dialog = TravelPostDetailsDialog.newInstance(travelPost);
@@ -64,6 +65,7 @@ public class TravelPostAdapter extends
         private final TextView enteredDestinationTextView;
         private final TextView enteredAccommodationTextView;
         private final TextView enteredDiningTextView;
+        private final TextView ratingTextView;
 
         public TravelPostViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -75,6 +77,7 @@ public class TravelPostAdapter extends
             this.enteredAccommodationTextView = itemView.
                     findViewById(R.id.entered_accommodation_text);
             this.enteredDiningTextView = itemView.findViewById(R.id.entered_dining_text);
+            this.ratingTextView = itemView.findViewById(R.id.rating);
         }
 
         public void setStartDateTextView(String text) {
@@ -99,6 +102,9 @@ public class TravelPostAdapter extends
 
         public void setEnteredDiningTextView(String text) {
             this.enteredDiningTextView.setText(text);
+        }
+        public void setRatingTextView(String text) {
+            this.ratingTextView.setText(text);
         }
     }
 }

@@ -64,7 +64,7 @@ public class ExampleUnitTest {
         travelPost = new TravelPost(
                 "12345", "user1", "2024-01-01", "2024-01-10",
                 "Holiday trip", "Paris", "Hotel Paris", "www.restaurantparis.com",
-                destinations, accommodations, diningReservations
+                destinations, accommodations, diningReservations, "5"
         );
     }
 
@@ -409,7 +409,7 @@ public class ExampleUnitTest {
         TravelPost otherTravelPost = new TravelPost(
                 "12345", "user1", "2024-01-01", "2024-01-10",
                 "Holiday trip", "Paris", "Hotel Paris", "www.restaurantparis.com",
-                destinations, accommodations, diningReservations
+                destinations, accommodations, diningReservations, "5"
         );
         assertTrue(travelPost.equals(otherTravelPost));
     }
@@ -419,7 +419,7 @@ public class ExampleUnitTest {
         TravelPost otherTravelPost = new TravelPost(
                 "12345", "user1", "2024-01-01", "2024-01-10",
                 "Holiday trip", "Paris", "Hotel Paris", "www.restaurantparis.com",
-                destinations, accommodations, diningReservations
+                destinations, accommodations, diningReservations, "5"
         );
         assertEquals(travelPost.hashCode(), otherTravelPost.hashCode());
     }
