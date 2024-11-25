@@ -7,33 +7,32 @@ import java.io.Serializable;
 
 public class TravelPost implements Serializable {
     //added descriptions to this class..amm
-    private String travelPlanId; // Unique identifier for the travel plan
-    private String userId; // User who created the travel plan
+    private String travelPlanId;
+    private String userId;
     private String startDate;
     private String endDate;
     private String notes;
-    private String enteredDestination; // Entered destination as a string
-    private String enteredAccommodation; // Entered accommodation as a string
-    private String enteredDining; // Entered dining as a string
+    private String enteredDestination;
+    private String enteredAccommodation;
+    private String enteredDining;
     private List<com.example.wandersync.Model.Destination> destinations;
     private List<com.example.wandersync.Model.Accommodation> accommodations;
     private List<com.example.wandersync.Model.DiningReservation> diningReservations;
     private String rating;
-
+    private List<String> allStr;
     // Constructor
-    public TravelPost(String travelPlanId, String userId, String startDate, String endDate,
-                      String notes,
-                      String enteredDestination, String enteredAccommodation, String enteredDining,
+    public TravelPost(List<String> allStr,
+                      String enteredAccommodation, String enteredDining,
                       List<com.example.wandersync.Model.Destination> destinations,
                       List<com.example.wandersync.Model.Accommodation> accommodations,
                       List<com.example.wandersync.Model.DiningReservation> diningReservations,
                       String rating) {
-        this.travelPlanId = travelPlanId;
-        this.userId = userId;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.notes = notes;
-        this.enteredDestination = enteredDestination;
+        this.travelPlanId = allStr.get(0);
+        this.userId = allStr.get(1);
+        this.startDate = allStr.get(2);
+        this.endDate = allStr.get(3);
+        this.notes = allStr.get(4);
+        this.enteredDestination = allStr.get(5);
         this.enteredAccommodation = enteredAccommodation;
         this.enteredDining = enteredDining;
         this.destinations = destinations;
@@ -91,7 +90,9 @@ public class TravelPost implements Serializable {
         return enteredDining;
     }
 
-    public String getRating() {return this.rating;}
+    public String getRating() {
+        return this.rating;
+    }
 
     public List<com.example.wandersync.Model.Destination> getDestinations() {
         return destinations;
@@ -126,7 +127,9 @@ public class TravelPost implements Serializable {
         this.notes = notes;
     }
 
-    public void setRating(String rating) {this.rating = rating;}
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
 
     public void setEnteredDestination(String enteredDestination) {
         this.enteredDestination = enteredDestination;
