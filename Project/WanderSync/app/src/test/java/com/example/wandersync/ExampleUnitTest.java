@@ -53,18 +53,22 @@ public class ExampleUnitTest {
         accommodations = new ArrayList<>();
         diningReservations = new ArrayList<>();
 
-        // Add mock objects to lists with correct constructors
         LocalDate startDate = LocalDate.of(2024, 1, 1);
         LocalDate endDate = LocalDate.of(2024, 1, 10);
 
         destinations.add(new Destination("Paris", 10L, startDate, endDate));
         accommodations.add(new Accommodation("user1", "Paris", "Hotel Paris", "2024-01-01", "2024-01-10", "2", "Deluxe"));
         diningReservations.add(new DiningReservation("Paris", "www.restaurantparis.com", 1609459200L, "Great food!", "user1"));
-
-        travelPost = new TravelPost(
-                "12345", "user1", "2024-01-01", "2024-01-10",
-                "Holiday trip", "Paris", "Hotel Paris", "www.restaurantparis.com",
-                destinations, accommodations, diningReservations
+        List<String> allStr = new ArrayList<>();
+        allStr.add("12345");
+        allStr.add("user1");
+        allStr.add("2024-01-01");
+        allStr.add("2024-01-10");
+        allStr.add("Holiday trip");
+        allStr.add("Paris");
+        travelPost = new TravelPost(allStr,
+                "Hotel Paris", "www.restaurantparis.com",
+                destinations, accommodations, diningReservations, "5"
         );
     }
 
@@ -406,20 +410,32 @@ public class ExampleUnitTest {
 
     @Test
     public void testEquals_differentObject() {
-        TravelPost otherTravelPost = new TravelPost(
-                "12345", "user1", "2024-01-01", "2024-01-10",
-                "Holiday trip", "Paris", "Hotel Paris", "www.restaurantparis.com",
-                destinations, accommodations, diningReservations
+        List<String> allStr = new ArrayList<>();
+        allStr.add("12345");
+        allStr.add("user1");
+        allStr.add("2024-01-01");
+        allStr.add("2024-01-10");
+        allStr.add("Holiday trip");
+        allStr.add("Paris");
+        TravelPost otherTravelPost = new TravelPost(allStr,
+                "Hotel Paris", "www.restaurantparis.com",
+                destinations, accommodations, diningReservations, "5"
         );
         assertTrue(travelPost.equals(otherTravelPost));
     }
 
     @Test
     public void testHashCode() {
-        TravelPost otherTravelPost = new TravelPost(
-                "12345", "user1", "2024-01-01", "2024-01-10",
-                "Holiday trip", "Paris", "Hotel Paris", "www.restaurantparis.com",
-                destinations, accommodations, diningReservations
+        List<String> allStr = new ArrayList<>();
+        allStr.add("12345");
+        allStr.add("user1");
+        allStr.add("2024-01-01");
+        allStr.add("2024-01-10");
+        allStr.add("Holiday trip");
+        allStr.add("Paris");
+        TravelPost otherTravelPost = new TravelPost(allStr,
+                "Hotel Paris", "www.restaurantparis.com",
+                destinations, accommodations, diningReservations, "5"
         );
         assertEquals(travelPost.hashCode(), otherTravelPost.hashCode());
     }

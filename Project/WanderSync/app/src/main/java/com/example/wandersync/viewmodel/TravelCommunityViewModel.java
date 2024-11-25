@@ -178,7 +178,8 @@ public class TravelCommunityViewModel extends AndroidViewModel {
         });
     }
     public void addTravelPlan(String startDate, String endDate, String notes,
-                              String destination, String accommodation, String dining, String rating) {
+                              String destination, String accommodation,
+                              String dining, String rating) {
         if (userId == null) {
             errorLiveData.setValue("User ID is not available.");
             return;
@@ -200,8 +201,11 @@ public class TravelCommunityViewModel extends AndroidViewModel {
                                             String mainUserId = mainUserSnapshot.
                                                     getValue(String.class);
                                             if (mainUserId != null) {
+                                                List<String> date = new ArrayList<>();
+                                                date.add(startDate);
+                                                date.add(endDate);
                                                 loadAndSaveTravelPlan(mainUserId,
-                                                        startDate, endDate, notes,
+                                                        date, notes,
                                                         destination, accommodation, dining, rating);
                                             } else {
                                                 errorLiveData.setValue("Main user ID not "
@@ -218,7 +222,10 @@ public class TravelCommunityViewModel extends AndroidViewModel {
                                         }
                                     });
                         } else {
-                            loadAndSaveTravelPlan(userId, startDate, endDate,
+                            List<String> date = new ArrayList<>();
+                            date.add(startDate);
+                            date.add(endDate);
+                            loadAndSaveTravelPlan(userId, date,
                                     notes, destination, accommodation, dining, rating);
                         }
                     }
@@ -232,8 +239,8 @@ public class TravelCommunityViewModel extends AndroidViewModel {
                 });
     }
 
-    private void loadAndSaveTravelPlan(String dataUserId, String startDate,
-                                       String endDate, String notes, String destination,
+    private void loadAndSaveTravelPlan(String dataUserId, List<String> date,
+                                        String notes, String destination,
                                        String accommodation, String dining, String rating) {
         databaseManager.loadDestinations(dataUserId, new ValueEventListener() {
             @Override
@@ -269,16 +276,16 @@ public class TravelCommunityViewModel extends AndroidViewModel {
                                             diningReservations.add(reservation);
                                         }
                                     }
-
-
+                                    List<String> allStr = new ArrayList<>();
+                                    allStr.add(databaseManager.
+                                            getTravelPostsReference(userId).push().getKey());
+                                    allStr.add(userId);
+                                    allStr.add(date.get(0));
+                                    allStr.add(date.get(1));
+                                    allStr.add(notes);
+                                    allStr.add(destination);
                                     TravelPost travelPost = new TravelPost(
-                                            databaseManager.
-                                                    getTravelPostsReference(userId).push().getKey(),
-                                            userId,
-                                            startDate,
-                                            endDate,
-                                            notes,
-                                            destination,
+                                            allStr,
                                             accommodation,
                                             dining,
                                             destinations,
@@ -362,8 +369,15 @@ public class TravelCommunityViewModel extends AndroidViewModel {
     }
 
     private void addDefaultPost() {
-        TravelPost defaultPost = new TravelPost("1", "1", "01/01/2023", "01/07/2023",
-                "Default", "Default", "Default", "Default", null, null, null, "1");
+        List<String> allStr = new ArrayList<>();
+        allStr.add("1");
+        allStr.add("N/A");
+        allStr.add("01/01/2023");
+        allStr.add("01/07/2023");
+        allStr.add("Default");
+        allStr.add("Default");
+        TravelPost defaultPost = new TravelPost(allStr, "Default", "Default",
+                null, null, null, "1");
 
         List<TravelPost> defaultList = new ArrayList<>();
         defaultList.add(defaultPost);

@@ -73,4 +73,14 @@
         android:textStyle="bold"
         android:layout_marginBottom="6dp"
         android:fontFamily="sans-serif-medium"/>
+    <TextView
+        android:id="@+id/rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rating: "
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="6dp"
+        android:fontFamily="sans-serif-medium"/>
 </LinearLayout>

@@ -140,7 +140,8 @@ public class TravelCommunityFragment extends Fragment {
             }
 
             // Submit the travel plan
-            viewModel.addTravelPlan(startDate, endDate, notes, destination, accommodation, dining, rating);
+            viewModel.addTravelPlan(startDate, endDate, notes, destination, accommodation,
+                    dining, rating);
             dialog.dismiss();
             Toast.makeText(getContext(), "Travel plan submitted!", Toast.LENGTH_SHORT).show();
             viewModel.loadTravelPosts();
