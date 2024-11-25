@@ -1,24 +1,30 @@
 package com.example.wandersync;
+import com.example.wandersync.Model.Destination;
+import com.example.wandersync.Model.DiningReservation;
+import com.example.wandersync.Model.TravelPost;
 import com.example.wandersync.view.AccommodationFragment;
 import com.example.wandersync.view.DestinationFragment;
 import com.example.wandersync.view.DiningEstablishmentFragment;
 import com.example.wandersync.view.LogisticsFragment;
 import com.example.wandersync.viewmodel.DiningViewModel;
-import com.example.wandersync.viewmodel.sorting.SortByReservationTime;
+import com.example.wandersync.viewmodel.TravelPostAdapter;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Locale;
 import java.util.Date;
+
+import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.*;
-import com.example.wandersync.model.Accommodation;
+import com.example.wandersync.Model.Accommodation;
 public class ExampleUnitTest {
 
     private DestinationFragment fragment;
@@ -28,6 +34,10 @@ public class ExampleUnitTest {
     private DiningEstablishmentFragment diningFragment;
     private DiningViewModel diningViewModel;
     private Accommodation accommodation;
+    private TravelPost travelPost;
+    private List<Destination> destinations;
+    private List<Accommodation> accommodations;
+    private List<DiningReservation> diningReservations;
 
 
     @BeforeEach
@@ -39,6 +49,23 @@ public class ExampleUnitTest {
         diningFragment = new DiningEstablishmentFragment();
         accommodation = new Accommodation("user123", "Paris", "Grand Hotel", "12/01/2024", "12/10/2024", "2", "Single");
 
+        destinations = new ArrayList<>();
+        accommodations = new ArrayList<>();
+        diningReservations = new ArrayList<>();
+
+        // Add mock objects to lists with correct constructors
+        LocalDate startDate = LocalDate.of(2024, 1, 1);
+        LocalDate endDate = LocalDate.of(2024, 1, 10);
+
+        destinations.add(new Destination("Paris", 10L, startDate, endDate));
+        accommodations.add(new Accommodation("user1", "Paris", "Hotel Paris", "2024-01-01", "2024-01-10", "2", "Deluxe"));
+        diningReservations.add(new DiningReservation("Paris", "www.restaurantparis.com", 1609459200L, "Great food!", "user1"));
+
+        travelPost = new TravelPost(
+                "12345", "user1", "2024-01-01", "2024-01-10",
+                "Holiday trip", "Paris", "Hotel Paris", "www.restaurantparis.com",
+                destinations, accommodations, diningReservations
+        );
     }
 
     @Test
@@ -318,4 +345,82 @@ public class ExampleUnitTest {
         assertFalse("Accommodation's expired status should be false", accommodation.getIsExpired());
     }
 
+    @Test
+    public void testGetTravelPlanId() {
+        assertEquals("12345", travelPost.getTravelPlanId());
+    }
+
+    @Test
+    public void testSetTravelPlanId() {
+        travelPost.setTravelPlanId("67890");
+        assertEquals("67890", travelPost.getTravelPlanId());
+    }
+
+    @Test
+    public void testGetUserId() {
+        assertEquals("user1", travelPost.getUserId());
+    }
+
+    @Test
+    public void testSetUserId() {
+        travelPost.setUserId("user2");
+        assertEquals("user2", travelPost.getUserId());
+    }
+
+    @Test
+    public void testGetStartDate() {
+        assertEquals("2024-01-01", travelPost.getStartDate());
+    }
+
+    @Test
+    public void testSetStartDate() {
+        travelPost.setStartDate("2024-02-01");
+        assertEquals("2024-02-01", travelPost.getStartDate());
+    }
+
+    @Test
+    public void testGetDestinations() {
+        List<String> destinationNames = travelPost.getDestinationNames();
+        assertEquals(1, destinationNames.size());
+        assertEquals("Paris", destinationNames.get(0));
+    }
+
+    @Test
+    public void testGetAccommodationNames() {
+        List<String> accommodationNames = travelPost.getAccommodationNames();
+        assertEquals(1, accommodationNames.size());
+        assertEquals("Hotel Paris", accommodationNames.get(0));
+    }
+
+    @Test
+    public void testGetDiningReservationNames() {
+        List<String> diningNames = travelPost.getDiningReservationNames();
+        assertEquals(1, diningNames.size());
+        assertEquals("www.restaurantparis.com", diningNames.get(0));
+    }
+
+    @Test
+    public void testEquals_sameObject() {
+        assertTrue(travelPost.equals(travelPost));
+    }
+
+    @Test
+    public void testEquals_differentObject() {
+        TravelPost otherTravelPost = new TravelPost(
+                "12345", "user1", "2024-01-01", "2024-01-10",
+                "Holiday trip", "Paris", "Hotel Paris", "www.restaurantparis.com",
+                destinations, accommodations, diningReservations
+        );
+        assertTrue(travelPost.equals(otherTravelPost));
+    }
+
+    @Test
+    public void testHashCode() {
+        TravelPost otherTravelPost = new TravelPost(
+                "12345", "user1", "2024-01-01", "2024-01-10",
+                "Holiday trip", "Paris", "Hotel Paris", "www.restaurantparis.com",
+                destinations, accommodations, diningReservations
+        );
+        assertEquals(travelPost.hashCode(), otherTravelPost.hashCode());
+    }
 }

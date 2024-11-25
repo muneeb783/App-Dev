@@ -15,17 +15,17 @@ public class TravelPost implements Serializable {
     private String enteredDestination; // Entered destination as a string
     private String enteredAccommodation; // Entered accommodation as a string
     private String enteredDining; // Entered dining as a string
-    private List<com.example.wandersync.model.Destination> destinations;
-    private List<com.example.wandersync.model.Accommodation> accommodations;
-    private List<com.example.wandersync.model.DiningReservation> diningReservations;
+    private List<com.example.wandersync.Model.Destination> destinations;
+    private List<com.example.wandersync.Model.Accommodation> accommodations;
+    private List<com.example.wandersync.Model.DiningReservation> diningReservations;
 
     // Constructor
     public TravelPost(String travelPlanId, String userId, String startDate, String endDate,
                       String notes,
                       String enteredDestination, String enteredAccommodation, String enteredDining,
-                      List<com.example.wandersync.model.Destination> destinations,
-                      List<com.example.wandersync.model.Accommodation> accommodations,
-                      List<com.example.wandersync.model.DiningReservation> diningReservations) {
+                      List<com.example.wandersync.Model.Destination> destinations,
+                      List<com.example.wandersync.Model.Accommodation> accommodations,
+                      List<com.example.wandersync.Model.DiningReservation> diningReservations) {
         this.travelPlanId = travelPlanId;
         this.userId = userId;
         this.startDate = startDate;
@@ -87,15 +87,15 @@ public class TravelPost implements Serializable {
         return enteredDining;
     }
 
-    public List<com.example.wandersync.model.Destination> getDestinations() {
+    public List<com.example.wandersync.Model.Destination> getDestinations() {
         return destinations;
     }
 
-    public List<com.example.wandersync.model.Accommodation> getAccommodations() {
+    public List<com.example.wandersync.Model.Accommodation> getAccommodations() {
         return accommodations;
     }
 
-    public List<com.example.wandersync.model.DiningReservation> getDiningReservations() {
+    public List<com.example.wandersync.Model.DiningReservation> getDiningReservations() {
         return diningReservations;
     }
 
@@ -132,23 +132,23 @@ public class TravelPost implements Serializable {
         this.enteredDining = enteredDining;
     }
 
-    public void setDestinations(List<com.example.wandersync.model.Destination> destinations) {
+    public void setDestinations(List<com.example.wandersync.Model.Destination> destinations) {
         this.destinations = destinations;
     }
 
-    public void setAccommodations(List<com.example.wandersync.model.Accommodation> accommodations) {
+    public void setAccommodations(List<com.example.wandersync.Model.Accommodation> accommodations) {
         this.accommodations = accommodations;
     }
 
     public void setDiningReservations(List<com.example.
-            wandersync.model.DiningReservation> diningReservations) {
+            wandersync.Model.DiningReservation> diningReservations) {
         this.diningReservations = diningReservations;
     }
     // Method to get a list of destination names
     public List<String> getDestinationNames() {
         List<String> destinationNames = new ArrayList<>();
         if (destinations != null) {
-            for (com.example.wandersync.model.Destination destination : destinations) {
+            for (com.example.wandersync.Model.Destination destination : destinations) {
                 destinationNames.add(destination.getName());
             }
         }
@@ -159,7 +159,7 @@ public class TravelPost implements Serializable {
     public List<String> getAccommodationNames() {
         List<String> accommodationNames = new ArrayList<>();
         if (accommodations != null) {
-            for (com.example.wandersync.model.Accommodation accommodation : accommodations) {
+            for (com.example.wandersync.Model.Accommodation accommodation : accommodations) {
                 accommodationNames.add(accommodation.getHotelName());
             }
         }
@@ -170,7 +170,7 @@ public class TravelPost implements Serializable {
     public List<String> getDiningReservationNames() {
         List<String> diningNames = new ArrayList<>();
         if (diningReservations != null) {
-            for (com.example.wandersync.model.DiningReservation reservation : diningReservations) {
+            for (com.example.wandersync.Model.DiningReservation reservation : diningReservations) {
                 diningNames.add(reservation.getWebsite());
             }
         }

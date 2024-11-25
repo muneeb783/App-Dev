@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wandersync.R;
-import com.example.wandersync.model.DiningReservation;
+import com.example.wandersync.Model.DiningReservation;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package com.example.wandersync.viewmodel.sorting;
 
-import com.example.wandersync.model.DiningReservation;
+import com.example.wandersync.Model.DiningReservation;
 import java.util.List;
 
 public class SortByReservationTime implements SortStrategy<DiningReservation> {
