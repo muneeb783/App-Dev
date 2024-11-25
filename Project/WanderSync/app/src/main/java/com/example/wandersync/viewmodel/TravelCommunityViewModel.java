@@ -178,14 +178,13 @@ public class TravelCommunityViewModel extends AndroidViewModel {
         });
     }
     public void addTravelPlan(String startDate, String endDate, String notes,
-                              String destination, String accommodation, String dining) {
+                              String destination, String accommodation, String dining, String rating) {
         if (userId == null) {
             errorLiveData.setValue("User ID is not available.");
             return;
         }
         isLoading.setValue(true);
 
-        // Check if the user is a collaborator
         databaseManager.getUsersReference().child(userId).child("isCollaborator")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -203,7 +202,7 @@ public class TravelCommunityViewModel extends AndroidViewModel {
                                             if (mainUserId != null) {
                                                 loadAndSaveTravelPlan(mainUserId,
                                                         startDate, endDate, notes,
-                                                        destination, accommodation, dining);
+                                                        destination, accommodation, dining, rating);
                                             } else {
                                                 errorLiveData.setValue("Main user ID not "
                                                         + "found for collaborator.");
@@ -219,9 +218,8 @@ public class TravelCommunityViewModel extends AndroidViewModel {
                                         }
                                     });
                         } else {
-                            // If the user is not a collaborator, use their own userId
                             loadAndSaveTravelPlan(userId, startDate, endDate,
-                                    notes, destination, accommodation, dining);
+                                    notes, destination, accommodation, dining, rating);
                         }
                     }
 
@@ -236,7 +234,7 @@ public class TravelCommunityViewModel extends AndroidViewModel {
 
     private void loadAndSaveTravelPlan(String dataUserId, String startDate,
                                        String endDate, String notes, String destination,
-                                       String accommodation, String dining) {
+                                       String accommodation, String dining, String rating) {
         databaseManager.loadDestinations(dataUserId, new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -272,11 +270,11 @@ public class TravelCommunityViewModel extends AndroidViewModel {
                                         }
                                     }
 
-                                    // Create the TravelPost and save to the backend
+
                                     TravelPost travelPost = new TravelPost(
                                             databaseManager.
                                                     getTravelPostsReference(userId).push().getKey(),
-                                            userId, // Preserve the original userId
+                                            userId,
                                             startDate,
                                             endDate,
                                             notes,
@@ -285,7 +283,8 @@ public class TravelCommunityViewModel extends AndroidViewModel {
                                             dining,
                                             destinations,
                                             accommodations,
-                                            diningReservations
+                                            diningReservations,
+                                            rating
                                     );
 
                                     databaseManager.addTravelPost(travelPost, unused -> {
@@ -364,11 +363,11 @@ public class TravelCommunityViewModel extends AndroidViewModel {
 
     private void addDefaultPost() {
         TravelPost defaultPost = new TravelPost("1", "1", "01/01/2023", "01/07/2023",
-                "Default", "Default", "Default", "Default", null, null, null);
+                "Default", "Default", "Default", "Default", null, null, null, "1");
 
         List<TravelPost> defaultList = new ArrayList<>();
         defaultList.add(defaultPost);
-        travelPostsLiveData.setValue(defaultList);  // Set the default list to LiveData
+        travelPostsLiveData.setValue(defaultList);
     }
 
 }
