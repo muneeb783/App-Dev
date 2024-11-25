@@ -160,4 +160,5 @@ public class DiningViewModel extends AndroidViewModel {
     }
 }
 
-//coding logic checked for DCD as necessary
+//made certain changes, checking Logic
+//...
