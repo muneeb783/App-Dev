@@ -39,7 +39,7 @@ Step-by-step instructions to set up the project on a local machine:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/your-repo.git
+   git clone https://github.com/muneeb783/App-Dev.git
    ```
 
 2. Open the project in Android Studio.
